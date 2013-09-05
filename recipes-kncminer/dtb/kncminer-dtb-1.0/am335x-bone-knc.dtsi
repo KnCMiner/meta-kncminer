@@ -1,0 +1,72 @@
+/*
+ * Copyright (C) 2013 CircuitCo
+ *
+ * Virtual cape for SPI1 on connector pins P9.29 P9.31 P9.30 P9.28
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 2 as
+ * published by the Free Software Foundation.
+ */
+
+&am33xx_pinmux {
+    /* default state has all gpios released and mode set to uart1 */
+    bb_spi1_pins: pinmux_bb_spi1_pins {
+        pinctrl-single,pins = <
+            0x190 0x33	/* mcasp0_aclkx.spi1_sclk, INPUT_PULLUP | MODE3 */
+            0x194 0x33	/* mcasp0_fsx.spi1_d0, INPUT_PULLUP | MODE3 */
+            0x198 0x13	/* mcasp0_axr0.spi1_d1, OUTPUT_PULLUP | MODE3 */
+            0x19c 0x13	/* mcasp0_ahclkr.spi1_cs0, OUTPUT_PULLUP | MODE3 */
+            // 0x164 0x12	/* eCAP0_in_PWM0_out.spi1_cs1 OUTPUT_PULLUP | MODE2 */
+        >;
+    };
+};
+
+
+&spi1 {	/* spi1 is numbered correctly */
+    status = "okay";
+    pinctrl-names = "default";
+    pinctrl-0 = <&bb_spi1_pins>;
+    
+    #address-cells = <1>;
+    #size-cells = <0>;
+
+    channel@0 {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        compatible = "spidev";
+
+        reg = <0>;
+        spi-max-frequency = <16000000>;
+        spi-cpha;
+    };
+
+    channel@1 {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        compatible = "spidev";
+
+        reg = <1>;
+        spi-max-frequency = <16000000>;
+    };
+};
+
+
+&am33xx_pinmux {
+    bb_i2c1a1_pins: pinmux_bb_i2c1a1_pins {
+        pinctrl-single,pins = <
+	    0x180 0x73	/* uart1_rxd.i2c1_sda, SLEWCTRL_SLOW | INPUT_PULLUP | MODE3 */
+	    0x184 0x73	/* uart1_txdi2c1_scl, SLEWCTRL_SLOW | INPUT_PULLUP | MODE3 */
+	>;
+    };
+};
+
+&i2c1 {	/* i2c1 is numbered correctly */
+    status = "okay";
+    pinctrl-names = "default";
+    pinctrl-0 = <&bb_i2c1a1_pins>;
+
+    /* this is the configuration part */
+    clock-frequency = <100000>;	
+};
