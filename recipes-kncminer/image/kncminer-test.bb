@@ -11,7 +11,6 @@ IMAGE_INSTALL = " \
 	i2c-tools \
 	screen \
 	dropbear \
-	kernel-modules \
 	dtc \
 "
 
