@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+	<title>Miner</title>
+	<meta charset="UTF-8" />
+	<link href="style.css" rel="stylesheet" type="text/css">
+	<link href="grid.css" rel="stylesheet" type="text/css">
+	<link href="type/type.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+	<div id="wrapper">
+		<header>
+			<div id="logo" class="col span_6_of_12">
+				<img src="images/logo.png" alt="KnCMiner logo">
+			</div>
+			<nav class="section box">
+				<div id="sub_nav" class="span_12_of_12">
+					<a href="index.html">Status</a>
+					<a href="miner_setting.html">Mining</a>
+					<a href="network_setting.html">Networking</a>
+					<a href="security_management.html"class="active">Security</a>
+					<a href="firmware_upgrade.html">FW Upgrade</a>
+				</div>
+			</nav>
+
+		</header>
+		<div id="header" class="section">
+			<div class="span_12_of_12">
+				<div class="xbox box">
+					<div class="span_7_of_12">
+						<h1>Security settings</h1>
+						<p>
+							Change password used to login to the web management system.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="section">
+			<div class="span_12_of_12">
+				<div class="xbox news">
+					<form action="cgi-bin/passwd.cgi" class="span_12_of_12">
+						<div class="box">
+							<label>Current Password</label><input type="password" name="current_pw" placeholder="Current Password"><br>
+							<label>New Password</label><input type="password" name="new_pw" placeholder="New Password"><br>
+							<label>Re-enter New Password</label><input type="password" name="new_pw_ctrl" placeholder="Re-enter New Password"><br>
+						</div>
+						<button type="submit" class="btn btn-lg btn-primary">Apply</button>
+						
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>
