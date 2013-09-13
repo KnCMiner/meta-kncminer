@@ -44,6 +44,7 @@
 	vmmc-supply = <&vmmcsd_fixed>;
 };
 
+/*
 &mmc2 {
 	vmmc-supply = <&vmmcsd_fixed>;
 	bus-width = <8>;
@@ -53,7 +54,7 @@
 	reset = <&rstctl 0 0>;
 	reset-names = "eMMC_RSTn-CONSUMER";
 };
-
+*/
 
 &cpu {
 	/*
