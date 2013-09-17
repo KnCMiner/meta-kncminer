@@ -15,6 +15,7 @@ IMAGE_INSTALL = " \
 	lighttpd \
 	cgminer \
 	dtc \
+	stunnel \
 "
 
 inherit image
