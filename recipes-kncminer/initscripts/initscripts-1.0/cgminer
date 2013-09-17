@@ -29,7 +29,7 @@ case "$1" in
         echo -n "Restarting $DESC: "
         start-stop-daemon -K -x "$DAEMON"
         sleep 1
-        start-stop-daemon -S -x "$DAEMON"
+        start-stop-daemon -b -S -x "$DAEMON" -- -T -o $url -u $account -p $password
         echo "$NAME."
         ;;
   *)

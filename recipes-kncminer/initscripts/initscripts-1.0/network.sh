@@ -1,6 +1,6 @@
 #!/bin/sh
 
-dd if=/sys/bus/i2c/devices/2-0054/eeprom  count=8  of=/tmp/eeprom.$$ > /dev/null
+dd if=/sys/bus/i2c/devices/2-0054/eeprom  bs=32 count=1  of=/tmp/eeprom.$$ > /dev/null
 
 if [ -f /tmp/eeprom.$$ ] ; then
     if [ -s /tmp/eeprom.$$ ] ; then

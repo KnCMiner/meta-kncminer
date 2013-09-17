@@ -43,9 +43,9 @@
 				<div class="xbox news">
 					<form action="cgi-bin/miner.cgi" class="span_12_of_12">
 						<div class="box">
-							<label>Pool url</label><input type="text" name="url" placeholder="Pool url"><br>
-							<label>Account</label><input type="text" name="account" placeholder="Account"><br>
-							<label>Password</label><input type="text" name="password" placeholder="Password"><br>
+							<label>Pool url</label><input type="text" name="url" placeholder="@%@Pool_url@%@"><br>
+							<label>Account</label><input type="text" name="account" placeholder="@%@Account@%@"><br>
+							<label>Password</label><input type="text" name="password" placeholder="@%@Password@%@"><br>
 						</div>
 						<button type="submit" class="btn btn-lg btn-primary">Apply</button>
 						

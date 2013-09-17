@@ -44,8 +44,9 @@ else
     echo '</html>'
  fi
 
-#if [ "$error" = "false" ] ; then
-#    /etc/init.d/cgminer.sh restart
-#fi
+if [ "$error" = "false" ] ; then
+    /etc/init.d/miner_config.sh
+    /etc/init.d/cgminer restart > /dev/null
+fi
 
 exit 0
