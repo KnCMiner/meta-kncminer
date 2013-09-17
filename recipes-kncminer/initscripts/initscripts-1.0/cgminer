@@ -1,0 +1,42 @@
+#!/bin/sh
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+DAEMON=/usr/bin/cgminer
+NAME=cgminer
+DESC="Cgminer daemon"
+
+set -e
+
+if [ -r /boot/knc_config/miner.conf ] ; then
+    . /boot/knc_config/miner.conf
+else
+    exit 0
+fi
+test -x "$DAEMON" || exit 0
+
+case "$1" in
+  start)
+        echo -n "Starting $DESC: "
+        start-stop-daemon -b -S -x "$DAEMON" -- -T -o $url -u $account -p $password
+        echo "$NAME."
+        ;;
+  stop)
+        echo -n "Stopping $DESC: "
+        start-stop-daemon -K -x "$DAEMON"
+        echo "$NAME."
+        ;;
+  restart|force-reload)
+        echo -n "Restarting $DESC: "
+        start-stop-daemon -K -x "$DAEMON"
+        sleep 1
+        start-stop-daemon -S -x "$DAEMON"
+        echo "$NAME."
+        ;;
+  *)
+        N=/etc/init.d/$NAME
+        echo "Usage: $N {start|stop|restart|force-reload}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
