@@ -1,8 +1,6 @@
 #!/bin/sh
-#set -x
 
 dd if=/sys/bus/i2c/devices/2-0054/eeprom  count=8  of=/tmp/eeprom.$$ > /dev/null
-#dd if=/sys/bus/i2c/devices/2-0054/eeprom  count=8  of=/tmp/prod_data.conf.$$
 
 if [ -f /tmp/eeprom.$$ ] ; then
     if [ -s /tmp/eeprom.$$ ] ; then
@@ -35,16 +33,32 @@ ip link set eth0 up
 ip addr flush dev eth0
 
 if [ "$ipaddress" != "" ] && [ "$netmask" != "" ] && 
-    [ "$network" != "" ] && [ "$gateway" != "" ] ; then
+    [ "$gateway" != "" ] ; then
     # Manual setup
     ip addr add $ipaddress/$netmask dev eth0
     
     ip ro add default via $gateway
     echo nameserver $gateway >/etc/resolv.conf
+
+    # "create" webpage from template
+    sed  '
+s/@%@checked@%@//g
+s/@%@IP_Address@%@/'$ipaddress'/g
+s/@%@Netmask@%@/'$netmask'/g
+s/@%@Gateway@%@/'$gateway'/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
+
 else
     if [ "$QUIET" = "true" ] ; then
         udhcpc -v -x hostname:$serial eth0 > /dev/null
     else
         udhcpc -v -x hostname:$serial eth0
     fi
+
+    # "create" webpage from template
+    sed '
+s/@%@checked@%@/checked/g
+s/@%@IP_Address@%@/IP Address/g
+s/@%@Netmask@%@/Netmask/g
+s/@%@Gateway@%@/Gateway/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
+
 fi

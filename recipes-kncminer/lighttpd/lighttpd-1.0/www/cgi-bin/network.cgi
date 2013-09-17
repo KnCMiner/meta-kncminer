@@ -1,4 +1,5 @@
 #!/bin/sh
+. ./cgi_lib.cgi
 
 dhcp=false
 error=false
@@ -63,18 +64,15 @@ if [ "$dhcp" = false ] ; then
     fi
 fi
 
-echo "Content-type: text/html"
-echo ""
-	 
-echo '<html>'
-echo '<head>'
-echo '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'
 if [ "$error" = "false" ] ; then
-    echo '<title>OK</title>'
-    echo '</head>'
-    echo '<body>'
-    echo 'OK'
+    show_apply_changes
 else
+    echo "Content-type: text/html"
+    echo ""
+    
+    echo '<html>'
+    echo '<head>'
+    echo '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'
     echo '<title>NOK</title>'
     echo '</head>'
     echo '<body>'
@@ -84,19 +82,13 @@ else
     else
 	echo 'invalid value "'$invalid_value'" set for "'$invalid_parameter'" field'
     fi
+    echo '</body>'
+    echo '</html>'
 fi
-echo '</body>'
-echo '</html>'
- 
+
 if [ "$error" = "false" ] ; then
     # "restart" network
     QUIET=true /etc/init.d/network.sh
 fi
 
 exit 0
-
-# QUERY_STRING='ipaddress=sd&netmask=asd&network=asd&gateway=asd' /www/pages/cgi-bin/network.cgi
-
-# QUERY_STRING='ipaddress=192.168.109.62&netmask=255.255.255.0&network=192.168.109.0&gateway=192.168.109.1' /www/pages/cgi-bin/network.cgi
-
-# QUERY_STRING='dhcp=on' /www/pages/cgi-bin/network.cgi

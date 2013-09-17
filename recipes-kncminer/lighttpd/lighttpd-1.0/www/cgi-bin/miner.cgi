@@ -1,4 +1,5 @@
 #!/bin/sh
+. ./cgi_lib.cgi
 error=false
 
 IFS="&"
@@ -24,31 +25,27 @@ else
     rm /tmp/miner.conf.$$
 fi
 
-echo "Content-type: text/html"
-echo ""
-	 
-echo '<html>'
-echo '<head>'
-echo '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'
 if [ "$error" = "false" ] ; then
-    echo '<title>OK</title>'
-    echo '</head>'
-    echo '<body>'
-    echo 'OK'
+    show_apply_changes
 else
+    echo "Content-type: text/html"
+    echo ""
+    
+    echo '<html>'
+    echo '<head>'
+    echo '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'
     echo '<title>NOK</title>'
     echo '</head>'
     echo '<body>'
     echo 'NOK'
     echo 'missing mandatory "'$invalid_parameter'" field'
-fi
-echo '</body>'
-echo '</html>'
- 
+    
+    echo '</body>'
+    echo '</html>'
+ fi
 
 #if [ "$error" = "false" ] ; then
 #    /etc/init.d/cgminer.sh restart
 #fi
 
 exit 0
-

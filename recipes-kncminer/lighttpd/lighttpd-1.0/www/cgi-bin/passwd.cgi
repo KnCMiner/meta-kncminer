@@ -1,6 +1,6 @@
 #!/bin/sh
+. ./cgi_lib.cgi
 error=false
-#set -x
 
 IFS="&"
 set -- $QUERY_STRING
@@ -37,36 +37,33 @@ if [ "$new_pw" != "$new_pw_ctrl" ] ; then
     error=true
 fi
 
+# Need to show new page before actually apply'ing new password
 if [ "$error" = "false" ] ; then
-    # Create new lighttpd-htdigest.user
+    show_apply_changes
+else
+    echo "Content-type: text/html"
+    echo ""
+    
+    echo '<html>'
+    echo '<head>'
+    echo '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'
+    echo '<title>NOK</title>'
+    echo '</head>'
+    echo '<body>'
+    echo 'NOK'
+    echo 'missing mandatory "'$invalid_parameter'" field'
+    
+    echo '</body>'
+    echo '</html>'
+fi
+sleep 2
+
+# Apply the new password
+if [ "$error" = "false" ] ; then
+    # Create new lighttpd-htdigest.user file
     hash=`echo -n "admin:KnC Miner configuration:$new_pw" | md5sum | cut -b -32`
     echo "admin:KnC Miner configuration:$hash" > \
 	/boot/knc_config/lighttpd-htdigest.user
     # Use new passwd file
     /etc/init.d/httpdpasswd.sh
 fi
-
-
-echo "Content-type: text/html"
-echo ""
-	 
-echo '<html>'
-echo '<head>'
-echo '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'
-if [ "$error" = "false" ] ; then
-    echo '<title>OK</title>'
-    echo '</head>'
-    echo '<body>'
-    echo 'OK'
-else
-    echo '<title>NOK</title>'
-    echo '</head>'
-    echo '<body>'
-    echo 'NOK'
-    echo 'missing mandatory "'$invalid_parameter'" field'
-fi
-echo '</body>'
-echo '</html>'
-
-
-# QUERY_STRING='current_pw=sddf&new_pw=&new_pw_ctrl=sdf' /www/pages/cgi-bin/passwd.cgi

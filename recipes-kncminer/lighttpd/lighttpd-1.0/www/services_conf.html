@@ -17,10 +17,10 @@
 			<nav class="section box">
 				<div id="sub_nav" class="span_12_of_12">
 					<a href="index.html">Status</a>
-					<a href="miner_setting.html" class="active">Mining</a>
+					<a href="miner_setting.html">Mining</a>
 					<a href="network_setting.html">Networking</a>
-					<a href="services_conf.html">Services</a>
-					<a href="security_management.html">Security</a>
+					<a href="services_conf.html" class="active">Services</a>
+					<a href="security_management.html" >Security</a>
 					<a href="firmware_upgrade.html">Upgrade</a>
 				</div>
 			</nav>
@@ -30,9 +30,9 @@
 			<div class="span_12_of_12">
 				<div class="xbox box">
 					<div class="span_7_of_12">
-						<h1>Miner Settings</h1>
+						<h1>Services settings</h1>
 						<p>
-							Setup mining parameters.
+							Enable/Disable SSH service, or Enable/Disable remote management.
 						</p>
 					</div>
 				</div>
@@ -41,11 +41,18 @@
 		<div class="section">
 			<div class="span_12_of_12">
 				<div class="xbox news">
-					<form action="cgi-bin/miner.cgi" class="span_12_of_12">
+					<form action="cgi-bin/config_ssh.cgi" class="span_12_of_12">
 						<div class="box">
-							<label>Pool url</label><input type="text" name="url" placeholder="Pool url"><br>
-							<label>Account</label><input type="text" name="account" placeholder="Account"><br>
-							<label>Password</label><input type="password" name="password" placeholder="Password"><br>
+							<div class="inline"><input type="radio" name="ssh_on" id="ssh_on" value="0"><label for="ssh_on">Enable SSH</label></div>
+							<div class="inline"><input type="radio" name="ssh_on" id="ssh_off" value="1"><label for="ssh_off">Disable SSH</label></div>
+						</div>
+						<button type="submit" class="btn btn-lg btn-primary">Apply</button>
+						
+					</form>
+					<form action="cgi-bin/config_r_mgmt.cgi" class="span_12_of_12">
+						<div class="box">
+							<div class="inline"><input type="radio" name="r_mgmt_on" id="r_mgmt_on" value="0"><label for="r_mgmt_on">Enable Remote Management</label></div>
+							<div class="inline"><input type="radio" name="r_mgmt_on" id="r_mgmt_off" value="1"><label for="r_mgmt_off">Disable Remote Management</label></div>
 						</div>
 						<button type="submit" class="btn btn-lg btn-primary">Apply</button>
 						
