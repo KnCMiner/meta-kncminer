@@ -1,0 +1,2 @@
+#!/bin/sh
+/usr/bin/monitor-pwbtn /usr/bin/reset_config </dev/input/event0 &
