@@ -18,6 +18,9 @@ do_install_append() {
 	install -m 0755 ${WORKDIR}/miner_config.sh ${D}${sysconfdir}/init.d
 	update-rc.d -r ${D} miner_config.sh start 36 S .
 
+	install -m 0755 ${WORKDIR}/initc.sh ${D}${sysconfdir}/init.d
+	update-rc.d -r ${D} initc.sh start 36 S .
+
 	install -m 0755 ${WORKDIR}/cgminer ${D}${sysconfdir}/init.d
 	update-rc.d -r ${D} cgminer start 70 S .
 }
@@ -28,3 +31,4 @@ SRC_URI_append = " file://httpdpasswd.sh"
 SRC_URI_append = " file://ssh_config.sh"
 SRC_URI_append = " file://cgminer"
 SRC_URI_append = " file://miner_config.sh"
+SRC_URI_append = " file://initc.sh"

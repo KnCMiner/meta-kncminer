@@ -16,6 +16,7 @@ IMAGE_INSTALL = " \
 	cgminer \
 	dtc \
 	stunnel \
+	initc-bin \
 "
 
 inherit image
