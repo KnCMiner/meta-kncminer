@@ -14,22 +14,28 @@ else
 fi
 test -x "$DAEMON" || exit 0
 
+do_start() {
+        start-stop-daemon -b -S -x screen -- -S cgminer -t cgminer -m -d "$DAEMON" -o $url -u $account -p $password
+}
+
+do_stop() {
+        killall -9 cgminer
+}
 case "$1" in
   start)
         echo -n "Starting $DESC: "
-        start-stop-daemon -b -S -x "$DAEMON" -- -T -o $url -u $account -p $password
+	do_start
         echo "$NAME."
         ;;
   stop)
         echo -n "Stopping $DESC: "
-        start-stop-daemon -K -x "$DAEMON"
+	do_stop
         echo "$NAME."
         ;;
   restart|force-reload)
         echo -n "Restarting $DESC: "
-        start-stop-daemon -K -x "$DAEMON"
-        sleep 1
-        start-stop-daemon -b -S -x "$DAEMON" -- -T -o $url -u $account -p $password
+        do_stop
+        do_start
         echo "$NAME."
         ;;
   *)
