@@ -24,7 +24,7 @@ show_apply_changes ()
     echo '    <meta charset="UTF-8" />'
     echo '    <link href="../style.css" rel="stylesheet" type="text/css">'
     echo '    <link href="../grid.css" rel="stylesheet" type="text/css">'
-    echo '    <link href="type/type.css" rel="stylesheet" type="text/css">'
+    echo '    <link href="../type/type.css" rel="stylesheet" type="text/css">'
 
     echo '    <SCRIPT LANGUAGE="JavaScript">'
     echo '        function delayer(){'
