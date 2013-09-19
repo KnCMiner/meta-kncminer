@@ -18,8 +18,9 @@ for i in $@; do
     fi
 done
 
-/etc/init.d/services_config.sh > /dev/null
-/etc/init.d/dropbear restart > /dev/null
+/etc/init.d/dropbear stop > /dev/null
+/etc/init.d/ssh_config.sh > /dev/null
+/etc/init.d/dropbear start > /dev/null
 
 show_apply_changes
 
