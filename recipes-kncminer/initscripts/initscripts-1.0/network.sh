@@ -22,8 +22,8 @@ else
 fi
 
 # Read network configuration (if its there)
-if [ -s /boot/knc_config/network.conf ] ; then
-    . /boot/knc_config/network.conf
+if [ -s /boot/network.conf ] ; then
+    . /boot/network.conf
 fi
 
 # Setup link 

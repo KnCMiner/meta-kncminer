@@ -63,7 +63,7 @@ if [ "$error" = "false" ] ; then
     # Create new lighttpd-htdigest.user file
     hash=`echo -n "admin:KnC Miner configuration:$new_pw" | md5sum | cut -b -32`
     echo "admin:KnC Miner configuration:$hash" > \
-	/boot/knc_config/lighttpd-htdigest.user
+	/boot/lighttpd-htdigest.user
     # Use new passwd file
     /etc/init.d/httpdpasswd.sh
 fi

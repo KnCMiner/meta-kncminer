@@ -7,8 +7,8 @@ DESC="Cgminer daemon"
 
 set -e
 
-if [ -r /boot/knc_config/miner.conf ] ; then
-    . /boot/knc_config/miner.conf
+if [ -r /boot/miner.conf ] ; then
+    . /boot/miner.conf
 else
     exit 0
 fi

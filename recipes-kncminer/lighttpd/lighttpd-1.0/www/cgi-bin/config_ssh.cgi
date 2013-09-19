@@ -12,9 +12,9 @@ for i in $@; do
     IFS="="
     set -- $i
     if [ "$1" = "ssh_on" ] && [ $2 -eq 1 ] ; then
-	echo NO_START=1 > /boot/knc_config/dropbear
+	echo NO_START=1 > /boot/dropbear
     else
-	> /boot/knc_config/dropbear
+	> /boot/dropbear
     fi
 done
 

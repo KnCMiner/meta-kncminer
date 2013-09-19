@@ -31,7 +31,7 @@ set -- $QUERY_STRING
 for i in $@; do
     if [ "$i" = "dhcp=on" ] ; then
 	dhcp=true
-	rm /boot/knc_config/network.conf
+	rm /boot/network.conf
     fi
 done
 
@@ -58,7 +58,7 @@ if [ "$dhcp" = false ] ; then
 	fi
     done
     if [ "$error" = "false" ] ; then
-	mv /tmp/network.conf.$$ /boot/knc_config/network.conf
+	mv /tmp/network.conf.$$ /boot/network.conf
     else
 	rm /tmp/network.conf.$$
     fi

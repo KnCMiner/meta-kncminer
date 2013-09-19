@@ -20,7 +20,7 @@ for i in $@; do
 done
 
 if [ "$error" = "false" ] ; then
-    mv /tmp/miner.conf.$$ /boot/knc_config/miner.conf
+    mv /tmp/miner.conf.$$ /boot/miner.conf
 else
     rm /tmp/miner.conf.$$
 fi

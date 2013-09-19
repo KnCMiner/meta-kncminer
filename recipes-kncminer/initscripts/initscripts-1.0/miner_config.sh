@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # Read configuration file (if its there)
-if [ -s /boot/knc_config/miner.conf ] ; then
-    . /boot/knc_config/miner.conf
+if [ -s /boot/miner.conf ] ; then
+    . /boot/miner.conf
 fi
 
 # "create" webpage from template
