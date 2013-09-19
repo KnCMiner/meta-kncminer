@@ -7,15 +7,15 @@ DESC="Cgminer daemon"
 
 set -e
 
-if [ -r /boot/miner.conf ] ; then
-    . /boot/miner.conf
-else
-    exit 0
-fi
+#if [ -r /boot/miner.conf ] ; then
+#    . /boot/miner.conf
+#else
+#    exit 0
+#fi
 test -x "$DAEMON" || exit 0
 
 do_start() {
-        start-stop-daemon -b -S -x screen -- -S cgminer -t cgminer -m -d "$DAEMON" -o $url -u $account -p $password
+        start-stop-daemon -b -S -x screen -- -S cgminer -t cgminer -m -d "$DAEMON" --default-config /boot/cgminer.conf
 }
 
 do_stop() {

@@ -5,7 +5,6 @@ error=false
 IFS="&"
 set -- $QUERY_STRING
 
-> /tmp/miner.conf.$$
 for i in $@; do 
     IFS="="
     set -- $i
@@ -14,15 +13,30 @@ for i in $@; do
 	error=true
 	invalid_parameter=$1
 	break
-    else
-	echo $1=$2 >> /tmp/miner.conf.$$
+    elif [ "$1" = "url" ] ; then
+	url=$2
+    elif [ "$1" = "account" ] ; then
+	account=$2
+    elif [ "$1" = "password" ] ; then
+	password=$2
     fi
 done
 
 if [ "$error" = "false" ] ; then
-    mv /tmp/miner.conf.$$ /boot/miner.conf
-else
-    rm /tmp/miner.conf.$$
+(
+    cat <<EOF
+{
+"pools" : [
+        {
+                "url" : "$url",
+                "user" : "$account",
+                "pass" : "$password"
+        }
+]
+}
+EOF
+) > /boot/cgminer.conf
+
 fi
 
 if [ "$error" = "false" ] ; then
@@ -46,7 +60,7 @@ else
 
 if [ "$error" = "false" ] ; then
     /etc/init.d/miner_config.sh
-    /etc/init.d/cgminer restart > /dev/null
+    /etc/init.d/cgminer.sh restart > /dev/null
 fi
 
 exit 0
