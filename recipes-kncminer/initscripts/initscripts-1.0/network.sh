@@ -21,7 +21,11 @@ else
     serial=9999
 fi
 
-# Read network configuration (if its there)
+if [ ! -f /boot/network.conf ] ; then
+    cp /boot/network.conf.factory /boot/network.conf
+fi
+
+# Read network configuration
 if [ -s /boot/network.conf ] ; then
     . /boot/network.conf
 fi
@@ -32,22 +36,7 @@ ip link set eth0 up
 
 ip addr flush dev eth0
 
-if [ "$ipaddress" != "" ] && [ "$netmask" != "" ] && 
-    [ "$gateway" != "" ] ; then
-    # Manual setup
-    ip addr add $ipaddress/$netmask dev eth0
-    
-    ip ro add default via $gateway
-    echo nameserver $gateway >/etc/resolv.conf
-
-    # "create" webpage from template
-    sed  '
-s/#%#checked#%#//g
-s/#%#IP_Address#%#/'$ipaddress'/g
-s/#%#Netmask#%#/'$netmask'/g
-s/#%#Gateway#%#/'$gateway'/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
-
-else
+if [ "$dhcp" = "true" ] ; then
     if [ "$QUIET" = "true" ] ; then
         udhcpc -v -x hostname:$serial eth0 > /dev/null
     else
@@ -60,5 +49,18 @@ s/#%#checked#%#/checked/g
 s/#%#IP_Address#%#/IP Address/g
 s/#%#Netmask#%#/Netmask/g
 s/#%#Gateway#%#/Gateway/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
+else
+    # Manual setup
+    ip addr add $ipaddress/$netmask dev eth0
+    
+    ip ro add default via $gateway
+    echo nameserver $gateway >/etc/resolv.conf
+
+    # "create" webpage from template
+    sed  '
+s/#%#checked#%#//g
+s/#%#IP_Address#%#/'$ipaddress'/g
+s/#%#Netmask#%#/'$netmask'/g
+s/#%#Gateway#%#/'$gateway'/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
 
 fi

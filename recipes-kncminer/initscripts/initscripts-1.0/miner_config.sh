@@ -2,21 +2,7 @@
 
 # No configuration, create it!
 if [ ! -f /boot/cgminer.conf ] ; then
-(
-    cat <<'EOF'
-{
-"pools" : [
-        {
-                "url" : "http://192.168.1.45:3334",
-                "user" : "x",
-                "pass" : "x"
-        }
-]
-,
-"api-listen" : true
-}
-EOF
-) > /boot/cgminer.conf
+    cp /boot/cgminer.conf.factory /boot/cgminer.conf
 fi
 
 url=`cat /boot/cgminer.conf|grep '"url" :' | awk -F\" '{print $4}'`

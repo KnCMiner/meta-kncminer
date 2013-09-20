@@ -19,6 +19,7 @@ IMAGE_INSTALL = " \
 	initc-bin \
 	openssl \
 	curl \
+	monitor-pwbtn \
 "
 
 inherit image
