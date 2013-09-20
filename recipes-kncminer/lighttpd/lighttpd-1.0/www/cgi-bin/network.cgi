@@ -67,23 +67,11 @@ fi
 if [ "$error" = "false" ] ; then
     show_apply_changes
 else
-    echo "Content-type: text/html"
-    echo ""
-    
-    echo '<html>'
-    echo '<head>'
-    echo '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'
-    echo '<title>NOK</title>'
-    echo '</head>'
-    echo '<body>'
-    echo 'NOK'
     if [ "$invalid_value" = "" ] ; then
-	echo 'missing mandatory "'$invalid_parameter'" field'
+	show_error "Missing mandatory parameter \"$invalid_parameter\""
     else
-	echo 'invalid value "'$invalid_value'" set for "'$invalid_parameter'" field'
+	show_error "Invalide value \"$invalid_value\"  Missing mandatory parameter \"$invalid_parameter\""
     fi
-    echo '</body>'
-    echo '</html>'
 fi
 
 if [ "$error" = "false" ] ; then

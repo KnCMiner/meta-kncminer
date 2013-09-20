@@ -41,20 +41,7 @@ fi
 if [ "$error" = "false" ] ; then
     show_apply_changes
 else
-    echo "Content-type: text/html"
-    echo ""
-    
-    echo '<html>'
-    echo '<head>'
-    echo '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'
-    echo '<title>NOK</title>'
-    echo '</head>'
-    echo '<body>'
-    echo 'NOK'
-    echo 'missing mandatory "'$invalid_parameter'" field'
-    
-    echo '</body>'
-    echo '</html>'
+    show_error "Missing mandatory parameter \"$invalid_parameter\""
 fi
 sleep 2
 
