@@ -18,6 +18,7 @@ IMAGE_INSTALL = " \
 	stunnel \
 	initc-bin \
 	openssl \
+	curl \
 "
 
 inherit image
