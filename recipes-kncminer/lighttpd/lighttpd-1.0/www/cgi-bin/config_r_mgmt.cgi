@@ -13,32 +13,14 @@ for i in $@; do
     IFS="="
     set -- $i
     if [ "$1" = "r_mgmt_on" ] && [ $2 -eq 1 ] ; then
-	rm /boot/cgminer.conf
-	restart_cgminer=true
+	sed -i 's/"api-listen" :.*/"api-listen" : true/g' /boot/cgminer.conf
+    else
+	sed -i 's/"api-listen" :.*/"api-listen" : false/g' /boot/cgminer.conf	
     fi
 done
 
-if [ "$restart_cgminer" = "false" ] ; then
-(
-    cat <<'EOF'
-{
-"pools" : [
-        {
-                "url" : "",
-                "user" : "",
-                "pass" : ""
-        }
-]
-}
-EOF
-) > /boot/cgminer.conf
-fi
-
 /etc/init.d/miner_config.sh > /dev/null
-
-if [ "$restart_cgminer" = "false" ] ; then
-    /etc/init.d/cgminer.sh restart > /dev/null
-fi
+/etc/init.d/cgminer.sh restart > /dev/null
 
 show_apply_changes
 

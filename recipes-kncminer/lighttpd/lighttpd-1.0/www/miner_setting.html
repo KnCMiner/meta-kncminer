@@ -48,7 +48,13 @@
 							<label>Password</label><input type="text" name="password" placeholder="Password"><br>
 						</div>
 						<button type="submit" class="btn btn-lg btn-primary">Apply</button>
-						
+					</form>
+					<form action="cgi-bin/config_r_mgmt.cgi" class="span_12_of_12">
+						<div class="box">
+							<div class="inline"><input type="radio" name="r_mgmt_on" id="r_mgmt_on" value="1"><label for="r_mgmt_on">Enable Remote Management</label></div>
+							<div class="inline"><input type="radio" name="r_mgmt_on" id="r_mgmt_off" value="0"><label for="r_mgmt_off">Disable Remote Management</label></div>
+						</div>
+						<button type="submit" class="btn btn-lg btn-primary">Apply</button>
 					</form>
 				</div>
 			</div>

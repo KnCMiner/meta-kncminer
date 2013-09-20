@@ -42,10 +42,10 @@ if [ "$ipaddress" != "" ] && [ "$netmask" != "" ] &&
 
     # "create" webpage from template
     sed  '
-s/@%@checked@%@//g
-s/@%@IP_Address@%@/'$ipaddress'/g
-s/@%@Netmask@%@/'$netmask'/g
-s/@%@Gateway@%@/'$gateway'/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
+s/#%#checked#%#//g
+s/#%#IP_Address#%#/'$ipaddress'/g
+s/#%#Netmask#%#/'$netmask'/g
+s/#%#Gateway#%#/'$gateway'/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
 
 else
     if [ "$QUIET" = "true" ] ; then
@@ -56,9 +56,9 @@ else
 
     # "create" webpage from template
     sed '
-s/@%@checked@%@/checked/g
-s/@%@IP_Address@%@/IP Address/g
-s/@%@Netmask@%@/Netmask/g
-s/@%@Gateway@%@/Gateway/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
+s/#%#checked#%#/checked/g
+s/#%#IP_Address#%#/IP Address/g
+s/#%#Netmask#%#/Netmask/g
+s/#%#Gateway#%#/Gateway/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
 
 fi
