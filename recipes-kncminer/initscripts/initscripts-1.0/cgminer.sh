@@ -7,11 +7,6 @@ DESC="Cgminer daemon"
 
 set -e
 
-#if [ -r /boot/miner.conf ] ; then
-#    . /boot/miner.conf
-#else
-#    exit 0
-#fi
 test -x "$DAEMON" || exit 0
 
 do_start() {
