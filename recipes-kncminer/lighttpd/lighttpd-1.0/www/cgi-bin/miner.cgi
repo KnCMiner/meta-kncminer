@@ -23,40 +23,17 @@ for i in $@; do
 done
 
 if [ "$error" = "false" ] ; then
-(
-    cat <<EOF
-{
-"pools" : [
-        {
-                "url" : "$url",
-                "user" : "$account",
-                "pass" : "$password"
-        }
-]
-}
-EOF
-) > /boot/cgminer.conf
-
+    sed -i '
+s/"url" :.*/"url" : "'$url'"/g
+s/"user" :.*/"user" : "'$account'"/g
+s/"pass" :.*/"pass" : "'$password'"/g' /boot/cgminer.conf
 fi
 
 if [ "$error" = "false" ] ; then
     show_apply_changes
 else
-    echo "Content-type: text/html"
-    echo ""
-    
-    echo '<html>'
-    echo '<head>'
-    echo '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">'
-    echo '<title>NOK</title>'
-    echo '</head>'
-    echo '<body>'
-    echo 'NOK'
-    echo 'missing mandatory "'$invalid_parameter'" field'
-    
-    echo '</body>'
-    echo '</html>'
- fi
+    show_error "Missing mandatory parameter \"$invalid_parameter\""
+fi
 
 if [ "$error" = "false" ] ; then
     /etc/init.d/miner_config.sh
