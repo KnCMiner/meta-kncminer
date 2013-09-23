@@ -38,9 +38,9 @@ ip addr flush dev eth0
 
 if [ "$dhcp" = "true" ] ; then
     if [ "$QUIET" = "true" ] ; then
-        udhcpc -v -x hostname:$serial eth0 > /dev/null
+        udhcpc -b -x hostname:$serial eth0 > /dev/null
     else
-        udhcpc -v -x hostname:$serial eth0
+        udhcpc -b -x hostname:$serial eth0
     fi
 
     # "create" webpage from template
