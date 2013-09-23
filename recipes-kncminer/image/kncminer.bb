@@ -20,6 +20,7 @@ IMAGE_INSTALL = " \
 	openssl \
 	curl \
 	monitor-pwbtn \
+	ntp \
 "
 
 inherit image
