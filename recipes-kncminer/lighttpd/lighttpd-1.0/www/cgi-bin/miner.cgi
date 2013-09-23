@@ -32,7 +32,7 @@ fi
 if [ "$error" = "false" ] ; then
     show_apply_changes
 else
-    show_error "Missing mandatory parameter \"$invalid_parameter\""
+    show_msg "Missing mandatory parameter \"$invalid_parameter\""
 fi
 
 if [ "$error" = "false" ] ; then

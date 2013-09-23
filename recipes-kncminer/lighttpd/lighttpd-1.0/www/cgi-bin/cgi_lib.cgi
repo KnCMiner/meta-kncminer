@@ -59,7 +59,7 @@ show_apply_changes ()
     echo '</html>' 
 }
 
-show_error ()
+show_msg ()
 {
     echo '<!DOCTYPE html>'
     echo '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">'

@@ -32,7 +32,7 @@
 					<div class="span_7_of_12">
 						<h1>FW Upgrade</h1>
 						<p>
-							Upgrade the FW at the Miner.
+							Upgrade the Firmware.
 						</p>
 					</div>
 				</div>
@@ -41,14 +41,18 @@
 		<div class="section">
 			<div class="span_12_of_12">
 				<div class="xbox news">
-					<form  class="span_12_of_12">
-						<div class="box">
-							<label>Firmware URL</label><input type="text" placeholder="Firmware URL"><br>
-							<label>Firmware URL</label><input type="url" placeholder="Firmware URL"><br>
-						</div>
-						<button type="submit" class="btn btn-lg btn-primary">Apply</button>
-						
-					</form>
+				  <form action="cgi-bin/upgrade.cgi" class="span_12_of_12" 
+					enctype="multipart/form-data" method="post">
+				    <div class="box">
+				      <p>
+					Choose file to upload:<br>
+					<input type="file" name="datafile" size="40">
+				      </p>
+				      <div>
+					<button type="submit" class="btn btn-lg btn-primary">Apply</button>
+				      </div>
+				    </div>
+				  </form>
 				</div>
 			</div>
 		</div>

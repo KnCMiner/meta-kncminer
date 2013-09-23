@@ -68,9 +68,9 @@ if [ "$error" = "false" ] ; then
     show_apply_changes
 else
     if [ "$invalid_value" = "" ] ; then
-	show_error "Missing mandatory parameter \"$invalid_parameter\""
+	show_msg "Missing mandatory parameter \"$invalid_parameter\""
     else
-	show_error "Invalide value \"$invalid_value\"  Missing mandatory parameter \"$invalid_parameter\""
+	show_msg "Invalide value \"$invalid_value\"  Missing mandatory parameter \"$invalid_parameter\""
     fi
 fi
 
