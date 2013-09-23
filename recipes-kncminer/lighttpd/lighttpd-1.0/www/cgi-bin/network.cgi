@@ -30,7 +30,7 @@ set -- $QUERY_STRING
 
 for i in $@; do
     if [ "$i" = "dhcp=on" ] ; then
-	echo dhcp=true > /boot/network.conf
+	echo dhcp=true > /config/network.conf
 	dhcp=true
     fi
 done
@@ -58,7 +58,7 @@ if [ "$dhcp" = false ] ; then
 	fi
     done
     if [ "$error" = "false" ] ; then
-	mv /tmp/network.conf.$$ /boot/network.conf
+	mv /tmp/network.conf.$$ /config/network.conf
     else
 	rm /tmp/network.conf.$$
     fi

@@ -17,7 +17,7 @@ for i in $@; do
 	if [ "$1" = "current_pw" ] ; then 
 	    hash=`echo -n "admin:KnC Miner configuration:$2" | md5sum | cut -b -32` 
 	    echo "admin:KnC Miner configuration:$hash" > /tmp/validate_pw.tmp.$$
-	    diff /boot/lighttpd-htdigest.user /tmp/validate_pw.tmp.$$ > /dev/null
+	    diff /config/lighttpd-htdigest.user /tmp/validate_pw.tmp.$$ > /dev/null
 	    if [ $? -ne 0 ] ; then
 		error=true
 		invalid_parameter=$1
@@ -50,5 +50,5 @@ if [ "$error" = "false" ] ; then
     # Create new lighttpd-htdigest.user file
     hash=`echo -n "admin:KnC Miner configuration:$new_pw" | md5sum | cut -b -32`
     echo "admin:KnC Miner configuration:$hash" > \
-	/boot/lighttpd-htdigest.user
+	/config/lighttpd-htdigest.user
 fi

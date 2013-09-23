@@ -26,7 +26,7 @@ if [ "$error" = "false" ] ; then
     sed -i '
 s/"url" :.*/"url" : "'$url'"/g
 s/"user" :.*/"user" : "'$account'"/g
-s/"pass" :.*/"pass" : "'$password'"/g' /boot/cgminer.conf
+s/"pass" :.*/"pass" : "'$password'"/g' /config/cgminer.conf
 fi
 
 if [ "$error" = "false" ] ; then

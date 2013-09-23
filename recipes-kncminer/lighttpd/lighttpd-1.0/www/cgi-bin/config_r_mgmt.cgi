@@ -13,9 +13,9 @@ for i in $@; do
     IFS="="
     set -- $i
     if [ "$1" = "r_mgmt_on" ] && [ $2 -eq 1 ] ; then
-	sed -i 's/"api-listen" :.*/"api-listen" : true/g' /boot/cgminer.conf
+	sed -i 's/"api-listen" :.*/"api-listen" : true/g' /config/cgminer.conf
     else
-	sed -i 's/"api-listen" :.*/"api-listen" : false/g' /boot/cgminer.conf	
+	sed -i 's/"api-listen" :.*/"api-listen" : false/g' /config/cgminer.conf	
     fi
 done
 

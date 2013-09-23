@@ -10,7 +10,7 @@ set -e
 test -x "$DAEMON" || exit 0
 
 do_start() {
-        start-stop-daemon -b -S -x screen -- -S cgminer -t cgminer -m -d "$DAEMON" --default-config /boot/cgminer.conf
+        start-stop-daemon -b -S -x screen -- -S cgminer -t cgminer -m -d "$DAEMON" --default-config /config/cgminer.conf
 }
 
 do_stop() {

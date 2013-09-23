@@ -1,14 +1,14 @@
 #!/bin/sh
 
 # No configuration, create it!
-if [ ! -f /boot/cgminer.conf ] ; then
-    cp /boot/cgminer.conf.factory /boot/cgminer.conf
+if [ ! -f /config/cgminer.conf ] ; then
+    cp /config/cgminer.conf.factory /config/cgminer.conf
 fi
 
-url=`cat /boot/cgminer.conf|grep '"url" :' | awk -F\" '{print $4}'`
-account=`cat /boot/cgminer.conf|grep '"user" :' | awk -F\" '{print $4}'`
-password=`cat /boot/cgminer.conf|grep '"pass" :' | awk -F\" '{print $4}'`
-r_mgmt=`cat /boot/cgminer.conf|grep '"api-listen" :' | awk '{print $3}'`
+url=`cat /config/cgminer.conf|grep '"url" :' | awk -F\" '{print $4}'`
+account=`cat /config/cgminer.conf|grep '"user" :' | awk -F\" '{print $4}'`
+password=`cat /config/cgminer.conf|grep '"pass" :' | awk -F\" '{print $4}'`
+r_mgmt=`cat /config/cgminer.conf|grep '"api-listen" :' | awk '{print $3}'`
 
 if [ "$r_mgmt" = "true" ] ; then
     sed  '

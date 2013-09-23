@@ -1,10 +1,10 @@
 #!/bin/sh
 NO_START=0
 
-if [ ! -f /boot/dropbear ] ; then
-    echo NO_START=1 > /boot/dropbear
+if [ ! -f /config/dropbear ] ; then
+    echo NO_START=1 > /config/dropbear
 fi
-cp /boot/dropbear /etc/default/dropbear
+cp /config/dropbear /etc/default/dropbear
 . /etc/default/dropbear
 
 if [ $NO_START -eq 1 ] ; then

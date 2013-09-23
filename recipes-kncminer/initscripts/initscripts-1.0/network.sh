@@ -21,13 +21,13 @@ else
     serial=9999
 fi
 
-if [ ! -f /boot/network.conf ] ; then
-    cp /boot/network.conf.factory /boot/network.conf
+if [ ! -f /config/network.conf ] ; then
+    cp /config/network.conf.factory /config/network.conf
 fi
 
 # Read network configuration
-if [ -s /boot/network.conf ] ; then
-    . /boot/network.conf
+if [ -s /config/network.conf ] ; then
+    . /config/network.conf
 fi
 
 # Setup link 
