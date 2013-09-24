@@ -21,6 +21,7 @@ IMAGE_INSTALL = " \
 	curl \
 	monitor-pwbtn \
 	ntp \
+	ntpdate \
 	netbase \
 "
 

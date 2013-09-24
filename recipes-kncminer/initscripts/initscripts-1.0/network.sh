@@ -18,7 +18,7 @@ if [ -f /tmp/prod_data.conf.$$ ] ; then
     . /tmp/prod_data.conf.$$
     rm /tmp/prod_data.conf.$$
 else
-    serial=9999
+    serial=Unknown
 fi
 
 if [ ! -f /config/network.conf ] ; then

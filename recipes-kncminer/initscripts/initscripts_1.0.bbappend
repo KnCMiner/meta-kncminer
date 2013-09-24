@@ -20,6 +20,9 @@ do_install_append() {
 
 	install -m 0755 ${WORKDIR}/cgminer.sh ${D}${sysconfdir}/init.d
 	update-rc.d -r ${D} cgminer.sh start 70 S .
+
+	cd ${D}${sysconfdir}/rcS.d
+	ln -s ../init.d/ntpd S40ntpd
 }
 
 SRC_URI_append = " file://mountdevtmpfs.sh"
