@@ -21,6 +21,7 @@ IMAGE_INSTALL = " \
 	curl \
 	monitor-pwbtn \
 	ntp \
+	netbase \
 "
 
 inherit image
