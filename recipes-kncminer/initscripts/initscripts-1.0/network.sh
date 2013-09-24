@@ -49,13 +49,18 @@ s/#%#checked#%#/checked/g
 s/#%#IP_Address#%#/IP Address/g
 s/#%#Netmask#%#/Netmask/g
 s/#%#Gateway#%#/Gateway/g
-s/#%#DNSServers#%#/DNS Server/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
+s/#%#DNSServers#%#/DNS Servers/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
 else
     # Manual setup
     ip addr add $ipaddress/$netmask dev eth0
     
     ip ro add default via $gateway
-    echo nameserver $dnsservers > /etc/resolv.conf
+
+    dns=`echo $dnsservers|sed 's/,/ /g'`
+    > /etc/resolv.conf
+    for ip in $dns ; do
+	echo nameserver $ip >> /etc/resolv.conf
+    done
 
     # "create" webpage from template
     sed  '
@@ -63,6 +68,7 @@ s/#%#checked#%#//g
 s/#%#IP_Address#%#/'$ipaddress'/g
 s/#%#Netmask#%#/'$netmask'/g
 s/#%#Gateway#%#/'$gateway'/g
-s/#%#DNSServers#%#/'$dnsservers'/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
+s/#%#DNSServers#%#/'"$dns"'/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
+
 
 fi

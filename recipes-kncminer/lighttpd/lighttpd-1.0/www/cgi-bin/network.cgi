@@ -3,6 +3,7 @@
 
 dhcp=false
 error=false
+dnsservers=""
 
 valid_ip()
 {
@@ -40,7 +41,23 @@ if [ "$dhcp" = false ] ; then
     for i in $@; do 
 	IFS="="
 	set -- $i
-	if [ "$2" = "" ] ; then
+	if [ "$1" = "dnsservers" ] ; then
+	    IFS="+"
+	    set -- $2
+	    for j in $@; do
+		if [ "$j" != "" ] ; then
+		    valid_ip $j
+		    if [ $? -eq 0 ] ; then
+			if [ "$dnsservers" = "" ] ; then
+			    dnsservers=${j}
+			else
+			    dnsservers=${j},${dnsservers}
+			fi
+		    fi
+		fi
+	    done
+	    IFS="="
+	elif [ "$2" = "" ] ; then
 	    # error, all fields are mandatory
 	    error=true
 	    invalid_parameter=$1
@@ -49,6 +66,10 @@ if [ "$dhcp" = false ] ; then
 	    valid_ip $2
 	    if [ $? -eq 0 ] ; then
 		echo $1=$2 >> /tmp/network.conf.$$
+
+		if [ "$1" = "gateway" ] ; then
+		    gateway=$2
+		fi
 	    else
 		error=true
 		invalid_parameter=$1
@@ -57,6 +78,13 @@ if [ "$dhcp" = false ] ; then
 	    fi
 	fi
     done
+
+    if [ "$dnsservers" = "" ] ; then
+	echo "dnsservers="$gateway >> /tmp/network.conf.$$
+    else
+	echo "dnsservers="$dnsservers >> /tmp/network.conf.$$
+    fi
+
     if [ "$error" = "false" ] ; then
 	mv /tmp/network.conf.$$ /config/network.conf
     else

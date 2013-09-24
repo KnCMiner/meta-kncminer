@@ -48,7 +48,7 @@
 							<label>IP Address</label><input type="text" name="ipaddress" placeholder="#%#IP_Address#%#"><br>
 							<label>Netmask</label><input type="text" name="netmask" placeholder="#%#Netmask#%#"><br>
 							<label>Gateway</label><input type="text" name="gateway" placeholder="#%#Gateway#%#"><br>
-							<label>DNS Server</label><input type="text" name="dnsservers" placeholder="#%#DNSServers#%#"><br>
+							<label>DNS Servers</label><input type="text" name="dnsservers" placeholder="#%#DNSServers#%#"><br>
 						</div>
 						<button type="submit" class="btn btn-lg btn-primary">Apply</button>						
 					</form>
