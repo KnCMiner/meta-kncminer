@@ -93,6 +93,7 @@ if [ "$dhcp" = false ] ; then
 fi
 
 if [ "$error" = "false" ] ; then
+    QUIET=true /etc/init.d/network.sh
     show_apply_changes
 else
     if [ "$invalid_value" = "" ] ; then
@@ -100,11 +101,6 @@ else
     else
 	show_msg "Invalide value \"$invalid_value\"  Missing mandatory parameter \"$invalid_parameter\""
     fi
-fi
-
-if [ "$error" = "false" ] ; then
-    # "restart" network
-    QUIET=true /etc/init.d/network.sh
 fi
 
 exit 0

@@ -30,14 +30,11 @@ s/"pass" :.*/"pass" : "'$password'"/g' /config/cgminer.conf
 fi
 
 if [ "$error" = "false" ] ; then
+    /etc/init.d/miner_config.sh
+    /etc/init.d/cgminer.sh restart > /dev/null
     show_apply_changes
 else
     show_msg "Missing mandatory parameter \"$invalid_parameter\""
-fi
-
-if [ "$error" = "false" ] ; then
-    /etc/init.d/miner_config.sh
-    /etc/init.d/cgminer.sh restart > /dev/null
 fi
 
 exit 0
