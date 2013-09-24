@@ -11,7 +11,7 @@
 # ^M    <--------- extra empty line
 # -----------------------------29995809218093749221856446032--^M
 
-file=/tmp/$$-$RANDOM
+file=/tmp/$$
 
 trap atexit 0
 
@@ -20,14 +20,16 @@ atexit() {
 	umount $file.boot 2>/dev/null || true
 	rmdir $file.boot 2>/dev/null || true
 	sync
-	if [ $pre ]; then
-		printf "\n</pre>\n"
-		pre=
-	fi
 	if [ ! $ok ]; then
-		printf "<H1>FAILED!</H1>\r\nAn error occurred. See log above<"
+	    print "<h1>System upgrade failed</h1>"
 	fi
-	printf "</body></html>\n"
+	printf "</div>"
+	printf "</div>"
+	printf "</div>"
+	printf "</div>"
+	printf "</div>"
+	printf "</body>"
+	printf "</html>"
 }
 
 CR=`printf '\r'`
@@ -57,10 +59,8 @@ cat <<-EOH
         <div class="span_12_of_12">
         <div class="xbox box">
         <div class="span_7_of_12">
-	<h1>System upgrade</h1>
-	<pre>
+	<h1>System upgrade in progress</h1>
 EOH
-pre=1
 
 exec 2>&1
 
@@ -86,7 +86,6 @@ else
     sync
 fi
 
-printf "</pre>\r\n"
 cat <<EOT
 <h1>System upgraded</h1>
 <p>The upgrade installed successfully. Please <a href="/cgi-bin/reboot.cgi">reboot</a> to activate.</p>

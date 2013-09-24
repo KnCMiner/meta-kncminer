@@ -72,7 +72,11 @@ show_msg ()
 
     echo '    <SCRIPT LANGUAGE="JavaScript">'
     echo '        function delayer(){'
-    echo '            window.location = "'$HTTP_REFERER'";'
+    if [ "$2" = "" ] ; then
+       echo '            window.location = "'$HTTP_REFERER'";'
+    else
+        echo '            window.location = "http://'$SERVER_NAME'/'$2'";'
+    fi
     echo '        }'
     echo '    </SCRIPT>'
 
