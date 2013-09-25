@@ -1,15 +1,5 @@
 #!/bin/sh
 
-dd if=/sys/bus/i2c/devices/1-0054/eeprom  bs=32 count=1  of=/tmp/eeprom.$$ > /dev/null
-
-# Find the serial number
-if [ -f /tmp/eeprom.$$ ] ; then
-    serial=$(cat /tmp/eeprom.$$)
-    rm /tmp/eeprom.$$
-else
-    serial=Unknown
-fi
-
 if [ ! -f /config/network.conf ] ; then
     cp /config/network.conf.factory /config/network.conf
 fi
@@ -19,6 +9,8 @@ if [ -s /config/network.conf ] ; then
     . /config/network.conf
 fi
 
+hostname $hostname
+
 # Setup link 
 ip link set lo up
 ip link set eth0 up
@@ -27,9 +19,9 @@ ip addr flush dev eth0
 
 if [ "$dhcp" = "true" ] ; then
     if [ "$QUIET" = "true" ] ; then
-        udhcpc -b -x hostname:$serial eth0 > /dev/null
+        udhcpc -b -x hostname:$hostname eth0 > /dev/null
     else
-        udhcpc -b -x hostname:$serial eth0
+        udhcpc -b -x hostname:$hostname eth0
     fi
 
     # "create" webpage from template
