@@ -2,21 +2,10 @@
 
 dd if=/sys/bus/i2c/devices/1-0054/eeprom  bs=32 count=1  of=/tmp/eeprom.$$ > /dev/null
 
-if [ -f /tmp/eeprom.$$ ] ; then
-    if [ -s /tmp/eeprom.$$ ] ; then
-	> /tmp/prod_data.conf.$$
-	
-	while read line ; do
-	    echo $line >> /tmp/prod_data.conf.$$
-	done < /tmp/eeprom.$$
-    fi
-    rm /tmp/eeprom.$$
-fi
-
 # Find the serial number
-if [ -f /tmp/prod_data.conf.$$ ] ; then
-    . /tmp/prod_data.conf.$$
-    rm /tmp/prod_data.conf.$$
+if [ -f /tmp/eeprom.$$ ] ; then
+    serial=$(cat /tmp/eeprom.$$)
+    rm /tmp/eeprom.$$
 else
     serial=Unknown
 fi
