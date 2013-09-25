@@ -19,9 +19,9 @@ echo in > /sys/class/gpio/gpio69/direction
 echo 59 > /sys/class/gpio/export
 echo high > /sys/class/gpio/gpio59/direction
 
-# Turn ON red LED, turn OFF green LED
+# Turn ON red LED, turn ON green LED
 echo low > /sys/class/gpio/gpio70/direction
-echo high > /sys/class/gpio/gpio71/direction
+echo low > /sys/class/gpio/gpio71/direction
 
 echo Starting initc
 cd /usr/bin
@@ -30,5 +30,9 @@ if [[ $? = 0 ]] ; then
 	# Turn OFF red, Turn ON green
 	echo high > /sys/class/gpio/gpio70/direction
 	echo low > /sys/class/gpio/gpio71/direction
+else
+	# Turn ON red, Turn OFF green
+	echo low > /sys/class/gpio/gpio70/direction
+	echo high > /sys/class/gpio/gpio71/direction
 fi
 
