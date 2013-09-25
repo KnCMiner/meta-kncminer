@@ -9,7 +9,10 @@ if [ -s /config/network.conf ] ; then
     . /config/network.conf
 fi
 
-hostname $hostname
+if [ -n "$hostname" ] ; then
+	hostname $hostname
+	echo $hostname > /etc/hostname
+fi
 
 # Setup link 
 ip link set lo up
