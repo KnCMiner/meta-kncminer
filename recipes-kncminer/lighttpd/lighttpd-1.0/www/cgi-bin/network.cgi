@@ -51,7 +51,7 @@ if [ "$dhcp" = false ] ; then
 			if [ "$dnsservers" = "" ] ; then
 			    dnsservers=${j}
 			else
-			    dnsservers=${j},${dnsservers}
+			    dnsservers="${j} ${dnsservers}"
 			fi
 		    fi
 		fi
@@ -80,9 +80,9 @@ if [ "$dhcp" = false ] ; then
     done
 
     if [ "$dnsservers" = "" ] ; then
-	echo "dnsservers="$gateway >> /tmp/network.conf.$$
+	echo "dnsservers=\""$gateway\" >> /tmp/network.conf.$$
     else
-	echo "dnsservers="$dnsservers >> /tmp/network.conf.$$
+	echo "dnsservers=\""$dnsservers\" >> /tmp/network.conf.$$
     fi
 
     if [ "$error" = "false" ] ; then

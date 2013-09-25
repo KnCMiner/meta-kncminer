@@ -45,9 +45,8 @@ else
     
     ip ro add default via $gateway
 
-    dns=`echo $dnsservers|sed 's/,/ /g'`
     > /etc/resolv.conf
-    for ip in $dns ; do
+    for ip in $dnsservers ; do
 	echo nameserver $ip >> /etc/resolv.conf
     done
 
@@ -57,7 +56,6 @@ s/#%#checked#%#//g
 s/#%#IP_Address#%#/'$ipaddress'/g
 s/#%#Netmask#%#/'$netmask'/g
 s/#%#Gateway#%#/'$gateway'/g
-s/#%#DNSServers#%#/'"$dns"'/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
-
+s/#%#DNSServers#%#/'"$dnsservers"'/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
 
 fi
