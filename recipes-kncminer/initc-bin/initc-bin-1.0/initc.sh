@@ -2,6 +2,9 @@
 
 # gpio 49 = PWR_EN
 echo 49 > /sys/class/gpio/export
+# P8.39 = gpio2_12 = DC/DC reset
+echo 76 > /sys/class/gpio/export
+echo high > /sys/class/gpio/gpio76/direction
 # gpio2_6 = 70 = red LED
 echo 70 > /sys/class/gpio/export
 # gpio2_7 = 71 = green LED 
