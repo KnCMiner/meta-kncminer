@@ -108,3 +108,7 @@ show_msg ()
     echo '</body>'
     echo '</html>' 
 }
+
+urldecode () {
+    printf  '%b' "${1//%/\\x}"
+}

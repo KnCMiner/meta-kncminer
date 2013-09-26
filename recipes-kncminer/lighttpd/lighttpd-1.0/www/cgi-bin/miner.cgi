@@ -14,11 +14,11 @@ for i in $@; do
 	invalid_parameter=$1
 	break
     elif [ "$1" = "url" ] ; then
-	url=`echo $2 | sed -f url_escape.sed`
+	url=`urldecode "$2"`
     elif [ "$1" = "account" ] ; then
-	account=`echo $2 | sed -f url_escape.sed`
+	account=`urldecode "$2"`
     elif [ "$1" = "password" ] ; then
-	password=`echo $2 | sed -f url_escape.sed`
+	password=`urldecode "$2"`
     fi
 done
 
