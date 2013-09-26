@@ -48,7 +48,8 @@ fi
 
 if [ "$error" = "false" ] ; then
     /etc/init.d/miner_config.sh
-    /etc/init.d/cgminer.sh restart > /dev/null
+    /etc/init.d/cgminer.sh stop > /dev/null
+    /etc/init.d/cgminer.sh start > /dev/null
     show_apply_changes
 else
     if [ "$invalid_value" = "" ] ; then
