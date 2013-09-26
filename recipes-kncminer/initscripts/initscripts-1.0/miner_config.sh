@@ -9,9 +9,11 @@ url=`cat /config/cgminer.conf|grep '"url" :' | awk -F\" '{print $4}'`
 account=`cat /config/cgminer.conf|grep '"user" :' | awk -F\" '{print $4}'`
 password=`cat /config/cgminer.conf|grep '"pass" :' | awk -F\" '{print $4}'`
 r_mgmt=`cat /config/cgminer.conf|grep '"api-listen" :' | awk '{print $3}'`
+dat=`date`
 
 if [ "`echo $r_mgmt | grep true`" != "" ] ; then
     sed  '
+s&#%#DATE#%.*&#%#DATE#% '"$dat"'&g
 s&#%#Pool_url#%#&'"$url"'&g
 s&#%#Account#%#&'"$account"'&g
 s&#%#Password#%#&'"$password"'&g
@@ -19,6 +21,7 @@ s&#%#r_mgmt_on_checked#%#&checked&g
 s&#%#r_mgmt_off_checked#%#&&g' < /www/tmpl/miner_setting.html_tmpl > /www/pages/miner_setting.html
 else
     sed  '
+s&#%#DATE#%.*&#%#DATE#% '"$dat"'&g
 s&#%#Pool_url#%#&'"$url"'&g
 s&#%#Account#%#&'"$account"'&g
 s&#%#Password#%#&'"$password"'&g
