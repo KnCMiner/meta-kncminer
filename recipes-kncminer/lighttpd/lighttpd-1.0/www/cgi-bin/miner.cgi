@@ -43,7 +43,7 @@ done
 if [ "$error" = "false" ] ; then
     sed -i 's#"url" :.*#"url" : "'${url}'",#g' /config/cgminer.conf
     sed -i 's#"user" :.*#"user" : "'${account}'",#g' /config/cgminer.conf
-    sed -i 's#"pass" :.*#"pass" : "'${password}'",#g' /config/cgminer.conf
+    sed -i 's#"pass" :.*#"pass" : "'${password}'"#g' /config/cgminer.conf
 fi
 
 if [ "$error" = "false" ] ; then
