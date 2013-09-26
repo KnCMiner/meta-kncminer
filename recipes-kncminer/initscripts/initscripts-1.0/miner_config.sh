@@ -10,7 +10,7 @@ account=`cat /config/cgminer.conf|grep '"user" :' | awk -F\" '{print $4}'`
 password=`cat /config/cgminer.conf|grep '"pass" :' | awk -F\" '{print $4}'`
 r_mgmt=`cat /config/cgminer.conf|grep '"api-listen" :' | awk '{print $3}'`
 
-if [ "$r_mgmt" = "true" ] ; then
+if [ "`echo $r_mgmt | grep true`" != "" ] ; then
     sed  '
 s&#%#Pool_url#%#&'"$url"'&g
 s&#%#Account#%#&'"$account"'&g
