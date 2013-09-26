@@ -23,6 +23,7 @@ IMAGE_INSTALL = " \
 	ntp \
 	ntpdate \
 	netbase \
+	avahi \
 "
 
 inherit image
