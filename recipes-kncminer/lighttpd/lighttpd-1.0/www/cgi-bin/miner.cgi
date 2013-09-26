@@ -15,10 +15,28 @@ for i in $@; do
 	break
     elif [ "$1" = "url" ] ; then
 	url=`urldecode "$2"`
+	if [ "`echo "$url" | grep \&`" != "" ] ;then
+	    error=true
+	    invalid_parameter=$1
+	    invalid_value="&"
+	    break
+	fi
     elif [ "$1" = "account" ] ; then
 	account=`urldecode "$2"`
+	if [ "`echo "$account" | grep \&`" != "" ] ;then
+	    error=true
+	    invalid_parameter=$1
+	    invalid_value="&"
+	    break
+	fi
     elif [ "$1" = "password" ] ; then
 	password=`urldecode "$2"`
+	if [ "`echo "$password" | grep \&`" != "" ] ;then
+	    error=true
+	    invalid_parameter=$1
+	    invalid_value="&"
+	    break
+	fi
     fi
 done
 
@@ -33,7 +51,11 @@ if [ "$error" = "false" ] ; then
     /etc/init.d/cgminer.sh restart > /dev/null
     show_apply_changes
 else
-    show_msg "Missing mandatory parameter \"$invalid_parameter\""
+    if [ "$invalid_value" = "" ] ; then
+	show_msg "Missing mandatory parameter \"$invalid_parameter\""
+    else
+	show_msg "Invalid value \"$invalid_value\" in parameter \"$invalid_parameter\""
+    fi
 fi
 
 exit 0
