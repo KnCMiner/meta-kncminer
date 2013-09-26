@@ -99,7 +99,7 @@ else
     if [ "$invalid_value" = "" ] ; then
 	show_msg "Missing mandatory parameter \"$invalid_parameter\""
     else
-	show_msg "Invalide value \"$invalid_value\"  Missing mandatory parameter \"$invalid_parameter\""
+	show_msg "Invalid value \"$invalid_value\" in parameter \"$invalid_parameter\""
     fi
 fi
 
