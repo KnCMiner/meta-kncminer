@@ -14,19 +14,18 @@ for i in $@; do
 	invalid_parameter=$1
 	break
     elif [ "$1" = "url" ] ; then
-	url=$2
+	url=`echo $2 | sed -f url_escape.sed`
     elif [ "$1" = "account" ] ; then
-	account=$2
+	account=`echo $2 | sed -f url_escape.sed`
     elif [ "$1" = "password" ] ; then
-	password=$2
+	password=`echo $2 | sed -f url_escape.sed`
     fi
 done
 
 if [ "$error" = "false" ] ; then
-    sed -i '
-s/"url" :.*/"url" : "'$url'"/g
-s/"user" :.*/"user" : "'$account'"/g
-s/"pass" :.*/"pass" : "'$password'"/g' /config/cgminer.conf
+    sed -i 's#"url" :.*#"url" : "'${url}'"#g' /config/cgminer.conf
+    sed -i 's#"user" :.*#"user" : "'${account}'"#g' /config/cgminer.conf
+    sed -i 's#"pass" :.*#"pass" : "'${password}'"#g' /config/cgminer.conf
 fi
 
 if [ "$error" = "false" ] ; then

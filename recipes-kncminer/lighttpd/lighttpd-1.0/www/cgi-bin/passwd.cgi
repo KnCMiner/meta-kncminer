@@ -14,8 +14,9 @@ for i in $@; do
 	invalid_parameter=$1
 	break
     else
-	if [ "$1" = "current_pw" ] ; then 
-	    hash=`echo -n "admin:KnC Miner configuration:$2" | md5sum | cut -b -32` 
+	if [ "$1" = "current_pw" ] ; then
+	    curr_pw=`echo $2 | sed -f url_escape.sed`
+	    hash=`echo -n "admin:KnC Miner configuration:$curr_pw" | md5sum | cut -b -32` 
 	    echo "admin:KnC Miner configuration:$hash" > /tmp/validate_pw.tmp.$$
 	    diff /config/lighttpd-htdigest.user /tmp/validate_pw.tmp.$$ > /dev/null
 	    if [ $? -ne 0 ] ; then
@@ -25,10 +26,10 @@ for i in $@; do
 	    fi
 	fi
 	if [ "$1" = "new_pw" ] ; then
-	    new_pw=$2
+	    new_pw=`echo $2 | sed -f url_escape.sed`
 	fi
 	if [ "$1" = "new_pw_ctrl" ] ; then
-	    new_pw_ctrl=$2
+	    new_pw_ctrl=`echo $2 | sed -f url_escape.sed`
 	fi
     fi
 done
