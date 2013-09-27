@@ -30,10 +30,10 @@ if [ "$dhcp" = "true" ] ; then
     # "create" webpage from template
     sed '
 s/#%#checked#%#/checked/g
-s/#%#IP_Address#%#/IP Address/g
-s/#%#Netmask#%#/Netmask/g
-s/#%#Gateway#%#/Gateway/g
-s/#%#DNSServers#%#/DNS Servers/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
+s/#%#IP_Address#%#//g
+s/#%#Netmask#%#//g
+s/#%#Gateway#%#//g
+s/#%#DNSServers#%#//g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
 else
     # Manual setup
     ip addr add $ipaddress/$netmask dev eth0
