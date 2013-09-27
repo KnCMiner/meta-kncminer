@@ -20,8 +20,6 @@ ip link set eth0 up
 
 ip addr flush dev eth0
 
-dat=`date`
-
 if [ "$dhcp" = "true" ] ; then
     if [ "$QUIET" = "true" ] ; then
         udhcpc -b -x hostname:$hostname eth0 > /dev/null
@@ -31,7 +29,6 @@ if [ "$dhcp" = "true" ] ; then
 
     # "create" webpage from template
     sed '
-s&#%#DATE#%.*&#%#DATE#% '"$dat"'&g
 s/#%#checked#%#/checked/g
 s/#%#IP_Address#%#/IP Address/g
 s/#%#Netmask#%#/Netmask/g
@@ -50,7 +47,6 @@ else
 
     # "create" webpage from template
     sed  '
-s&#%#DATE#%.*&#%#DATE#% '"$dat"'&g
 s/#%#checked#%#//g
 s/#%#IP_Address#%#/'$ipaddress'/g
 s/#%#Netmask#%#/'$netmask'/g
