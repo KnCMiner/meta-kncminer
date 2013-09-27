@@ -14,4 +14,7 @@ if [ ! -f /config/shadow ] ; then
     chmod 0400 /config/shadow
     rm -f /etc/shadow
     ln -s /config/shadow /etc/shadow
+else
+    rm -f /etc/shadow
+    ln -s /config/shadow /etc/shadow
 fi
