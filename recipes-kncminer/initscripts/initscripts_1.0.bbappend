@@ -26,6 +26,8 @@ do_install_append() {
 
 	cd ${D}${sysconfdir}/rcS.d
 	ln -s ../init.d/ntpd S40ntpd
+
+	install -m 0400 ${WORKDIR}/shadow.factory ${D}${sysconfdir}/shadow.factory
 }
 
 SRC_URI_append = " file://mountdevtmpfs.sh"
@@ -35,3 +37,4 @@ SRC_URI_append = " file://ssh_config.sh"
 SRC_URI_append = " file://cgminer.sh"
 SRC_URI_append = " file://miner_config.sh"
 SRC_URI_append = " file://ntpdate.sh"
+SRC_URI_append = " file://shadow.factory"

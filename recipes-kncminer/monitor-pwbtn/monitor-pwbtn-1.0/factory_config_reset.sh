@@ -10,6 +10,7 @@ rm -f /config/cgminer.conf
 /etc/init.d/cgminer start
 
 rm -f /config/lighttpd-htdigest.user
+rm -f /config/shadow
 /etc/init.d/httpdpasswd.sh
 
 rm -f /config/network.conf

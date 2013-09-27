@@ -26,18 +26,10 @@ show_apply_changes ()
     echo '    <link href="../grid.css" rel="stylesheet" type="text/css">'
     echo '    <link href="../type/type.css" rel="stylesheet" type="text/css">'
 
-    echo '    <SCRIPT LANGUAGE="JavaScript">'
-    echo '        function delayer(){'
-    echo '            window.location = "'$HTTP_REFERER'";'
-    echo '        }'
-    echo '    </SCRIPT>'
-
     echo '</head>'
 
     echo '<body>'
-    echo -n '<body onLoad="setTimeout('
-    echo -n "'delayer()'"
-    echo ', 1000)">'
+    echo "<body onLoad='window.location=\"`echo "$HTTP_REFERER"|cut -d? -f1`?`date +%s`\"'>"
     echo '<div id="wrapper">'
     echo '    <header>'
     echo '        <div id="logo" class="col span_6_of_12">'
@@ -70,22 +62,14 @@ show_msg ()
     echo '    <link href="../grid.css" rel="stylesheet" type="text/css">'
     echo '    <link href="../type/type.css" rel="stylesheet" type="text/css">'
 
-    echo '    <SCRIPT LANGUAGE="JavaScript">'
-    echo '        function delayer(){'
-    if [ "$2" = "" ] ; then
-       echo '            window.location = "'$HTTP_REFERER'";'
-    else
-        echo '            window.location = "http://'$SERVER_NAME'/'$2'";'
-    fi
-    echo '        }'
-    echo '    </SCRIPT>'
-
     echo '</head>'
 
     echo '<body>'
-    echo -n '<body onLoad="setTimeout('
-    echo -n "'delayer()'"
-    echo ', 1000)">'
+    if [ "$2" = "" ] ; then
+        echo "<body onLoad='window.location=\"`echo "$HTTP_REFERER"|cut -d? -f1`?`date +%s`\"'>"
+    else
+        echo "<body onLoad='window.location=\"`echo "http://$SERVER_NAME/$2"|cut -d? -f1`?`date +%s`\"'>"
+    fi
     echo '<div id="wrapper">'
     echo '    <header>'
     echo '        <div id="logo" class="col span_6_of_12">'

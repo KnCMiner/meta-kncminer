@@ -52,4 +52,5 @@ if [ "$error" = "false" ] ; then
     hash=`echo -n "admin:KnC Miner configuration:$new_pw" | md5sum | cut -b -32`
     echo "admin:KnC Miner configuration:$hash" > \
 	/config/lighttpd-htdigest.user
+    printf "$new_pw\n$new_pw_ctrl" | passwd root > /dev/null
 fi

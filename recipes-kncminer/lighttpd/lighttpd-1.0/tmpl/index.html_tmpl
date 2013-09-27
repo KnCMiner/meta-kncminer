@@ -40,6 +40,9 @@
 				<div class="xbox news">				
 					<form action="cgi-bin/get_status.cgi" class="span_12_of_12">
 						  <p>
+						    CGMiner
+						  </p>
+						  <p>
 						    <font color="#%#Color#%#">
 						      #%#Status#%#
 						    </font> 						    
