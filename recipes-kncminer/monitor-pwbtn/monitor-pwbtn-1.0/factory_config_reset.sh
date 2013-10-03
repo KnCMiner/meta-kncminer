@@ -1,17 +1,19 @@
 #!/bin/sh
 
 /etc/init.d/dropbear stop
+/etc/init.d/cgminer.sh stop
+
+#remove configuration
 rm -f /config/dropbear
-/etc/init.d/dropbear start
-
-/etc/init.d/cgminer stop
 rm -f /config/cgminer.conf
-/etc/init.d/miner_config.sh
-/etc/init.d/cgminer start
-
 rm -f /config/lighttpd-htdigest.user
 rm -f /config/shadow
-/etc/init.d/httpdpasswd.sh
-
+rm -f /config/shadow.factory
 rm -f /config/network.conf
+
+# restore factory settings
+/etc/init.d/kncminer_setup.sh
+
 /etc/init.d/network.sh
+/etc/init.d/dropbear start
+/etc/init.d/cgminer.sh start

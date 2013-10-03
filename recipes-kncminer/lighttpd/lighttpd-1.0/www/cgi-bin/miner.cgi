@@ -37,6 +37,15 @@ for i in $@; do
 	    invalid_value="&"
 	    break
 	fi
+    elif [ "$1" = "r_mgmt_on" ] ; then
+	if [ $2 -eq 1 ] ; then
+	    sed -i 's#"api-listen".*:.* false#"api-listen" : true#g' /config/cgminer.conf
+	    sed -i 's#"api-network".*:.*false#"api-network" : true#g' /config/cgminer.conf
+	else
+#	    sed -i 's#"api-listen".*:.*true#"api-listen" : false#g' /config/cgminer.conf	
+	    sed -i 's#"api-listen".*:.*true#"api-listen" : true#g' /config/cgminer.conf	
+	    sed -i 's#"api-network".*:.*true#"api-network" : false#g' /config/cgminer.conf
+	fi
     fi
 done
 
@@ -47,16 +56,10 @@ if [ "$error" = "false" ] ; then
 fi
 
 if [ "$error" = "false" ] ; then
-    /etc/init.d/miner_config.sh
     /etc/init.d/cgminer.sh stop > /dev/null
     /etc/init.d/cgminer.sh start > /dev/null
-    show_apply_changes
-else
-    if [ "$invalid_value" = "" ] ; then
-	show_msg "Missing mandatory parameter \"$invalid_parameter\""
-    else
-	show_msg "Invalid value \"$invalid_value\" in parameter \"$invalid_parameter\""
-    fi
 fi
+
+./get_miner_conf.cgi
 
 exit 0

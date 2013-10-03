@@ -1,5 +1,4 @@
 #!/bin/sh
-. ./cgi_lib.cgi
 
 if [ -z "$QUERY_STRING" ] ; then
     show_same_page
@@ -19,9 +18,8 @@ for i in $@; do
 done
 
 /etc/init.d/dropbear stop > /dev/null
-/etc/init.d/ssh_config.sh > /dev/null
 /etc/init.d/dropbear start > /dev/null
 
-show_apply_changes
+./get_services_conf.cgi
 
 exit 0

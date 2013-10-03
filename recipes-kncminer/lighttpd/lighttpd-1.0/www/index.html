@@ -17,9 +17,9 @@
 			<nav class="section box">
 				<div id="sub_nav" class="span_12_of_12">
 					<a href="index.html" class="active">Status</a>
-					<a href="miner_setting.html">Mining</a>
-					<a href="network_setting.html">Networking</a>
-					<a href="services_conf.html">Services</a>
+					<a href="cgi-bin/get_miner_conf.cgi">Mining</a>
+					<a href="cgi-bin/get_network_conf.cgi">Networking</a>
+					<a href="cgi-bin/get_services_conf.cgi">Services</a>
 					<a href="security_management.html">Security</a>
 					<a href="firmware_upgrade.html">Upgrade</a>
 				</div>
@@ -38,21 +38,28 @@
 		<div class="section">
 			<div class="span_12_of_12">
 				<div class="xbox news">				
-					<form action="cgi-bin/get_status.cgi" class="span_12_of_12">
+<!--					<form action="cgi-bin/get_status.cgi" class="span_12_of_12"> -->
 						  <p>
 						    CGMiner
 						  </p>
 						  <p>
-						    <font color="green">
-						      Running
-						    </font> 						    
 						  </p>
-						<button type="submit" class="btn btn-lg btn-primary">Check Status</button>
+<!--						<button type="submit" class="btn btn-lg btn-primary">Check Status</button>
 					</form>
-
+-->
 			</div>
 		</div>
 	</div>
 
+  <form name="HiddenForm" method="POST" action="/cgi-bin/get_status.cgi">
+    <input type="hidden" name="ThisPageURL" value="">
+    <input type="hidden" name="TimeZoneOffset" value="">
+  </form>	
+  <script type="text/javascript" language="JavaScript">
+    document.HiddenForm.ThisPageURL.value = document.URL;
+    var visitortime = new Date();
+    document.HiddenForm.TimeZoneOffset.value = visitortime.getTimezoneOffset();
+    document.HiddenForm.submit();
+  </script>
 </body>
 </html>

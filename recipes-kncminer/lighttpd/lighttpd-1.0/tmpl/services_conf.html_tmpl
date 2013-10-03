@@ -3,25 +3,25 @@
 <head>
 	<title>Miner</title>
 	<meta charset="UTF-8" />
-	<link href="style.css" rel="stylesheet" type="text/css">
-	<link href="grid.css" rel="stylesheet" type="text/css">
-	<link href="type/type.css" rel="stylesheet" type="text/css">
+	<link href="../style.css" rel="stylesheet" type="text/css">
+	<link href="../grid.css" rel="stylesheet" type="text/css">
+	<link href="../type/type.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
 	<div id="wrapper">
 		<header>
 			<div id="logo" class="col span_6_of_12">
-				<img src="images/logo.png" alt="KnCMiner logo">
+				<img src="../images/logo.png" alt="KnCMiner logo">
 			</div>
 			<nav class="section box">
 				<div id="sub_nav" class="span_12_of_12">
-					<a href="index.html">Status</a>
-					<a href="miner_setting.html">Mining</a>
-					<a href="network_setting.html">Networking</a>
-					<a href="services_conf.html" class="active">Services</a>
-					<a href="security_management.html" >Security</a>
-					<a href="firmware_upgrade.html">Upgrade</a>
+					<a href="../index.html">Status</a>
+					<a href="get_miner_conf.cgi">Mining</a>
+					<a href="get_network_conf.cgi">Networking</a>
+					<a href="get_services_conf.cgi" class="active">Services</a>
+					<a href="../security_management.html" >Security</a>
+					<a href="../firmware_upgrade.html">Upgrade</a>
 				</div>
 			</nav>
 
@@ -41,7 +41,7 @@
 		<div class="section">
 			<div class="span_12_of_12">
 				<div class="xbox news">
-					<form action="cgi-bin/config_ssh.cgi" class="span_12_of_12">
+					<form action="config_ssh.cgi" class="span_12_of_12">
 						<div class="box">
 							<div class="inline"><input type="radio" name="ssh_on" id="ssh_on" value="0" #%#ssh_on_checked#%#><label for="ssh_on">SSH Enabled</label></div>
 							<div class="inline"><input type="radio" name="ssh_on" id="ssh_off" value="1" #%#ssh_off_checked#%# ><label for="ssh_off">SSH Disabled</label></div>

@@ -41,8 +41,12 @@ fi
 # Need to show new page before actually apply'ing new password
 if [ "$error" = "false" ] ; then
     show_apply_changes
+elif [ "$invalid_parameter" = "current_pw" ] ; then 
+    show_msg "Missing mandatory parameter <br>\"Current Password\""
+elif [ "$invalid_parameter" = "new_pw" ] ; then 
+    show_msg "Missing mandatory parameter <br>\"New Password\""
 else
-    show_msg "Missing mandatory parameter \"$invalid_parameter\""
+    show_msg "Missing mandatory parameter <br>\"Re-enter New Password\""
 fi
 sleep 2
 

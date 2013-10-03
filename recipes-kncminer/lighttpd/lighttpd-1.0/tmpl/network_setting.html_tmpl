@@ -3,25 +3,78 @@
 <head>
 	<title>Miner</title>
 	<meta charset="UTF-8" />
-	<link href="style.css" rel="stylesheet" type="text/css">
-	<link href="grid.css" rel="stylesheet" type="text/css">
-	<link href="type/type.css" rel="stylesheet" type="text/css">
+	<link href="/style.css" rel="stylesheet" type="text/css">
+	<link href="/grid.css" rel="stylesheet" type="text/css">
+	<link href="/type/type.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" language="JavaScript">
+function ValidateForm()
+{
+    var dhcp=document.forms["param"]["dhcp"].checked;
+    if (dhcp == true) {
+	document.param.submit();
+    }
+    else {
+	var ipformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+	
+	var ipaddr=document.forms["param"]["ipaddress"].value;
+	if (ipaddr==null || ipaddr=="") {
+	    alert("Ip Address must be filled out");
+	    document.param.ipaddress.focus();
+	    return false;
+	}
+	if(!ipaddr.match(ipformat)) {
+	    alert("You have entered an invalid IP Address!");
+	    document.param.ipaddress.focus();
+	    return false;
+	}
+	
+	var netm=document.forms["param"]["netmask"].value;
+	if (netm==null || netm=="") {
+    	    alert("Netmask must be set");
+	    document.param.netmask.focus();
+    	    return false;
+    	}
+	if(!netm.match(ipformat)) {
+	    alert("You have entered an invalid IP Address!");
+	    document.param.netmask.focus();
+	    return false;
+	}
+	
+	var gw=document.forms["param"]["gateway"].value;
+	if (gw==null || gw=="") {
+    	    alert("Gateway must be set");
+	    document.param.gateway.focus();
+    	    return false;
+    	}
+	if(!gw.match(ipformat)) {
+	    alert("You have entered an invalid IP Address!");
+	    document.param.gateway.focus();
+	    return false;
+	}
+
+	// add checking of dnsservers later
+
+	// Ok to submit
+	document.param.submit();
+    }
+}
+	</script>
 </head>
 
 <body>
 	<div id="wrapper">
 		<header>
 			<div id="logo" class="col span_6_of_12">
-				<img src="images/logo.png" alt="KnCMiner logo">
+				<img src="/images/logo.png" alt="KnCMiner logo">
 			</div>
 			<nav class="section box">
 				<div id="sub_nav" class="span_12_of_12">
-					<a href="index.html">Status</a>
-					<a href="miner_setting.html">Mining</a>
-					<a href="network_setting.html" class="active">Networking</a>
-					<a href="services_conf.html">Services</a>
-					<a href="security_management.html">Security</a>
-					<a href="firmware_upgrade.html">Upgrade</a>
+					<a href="/index.html">Status</a>
+					<a href="/cgi-bin/get_miner_conf.cgi">Mining</a>
+					<a href="/cgi-bin/get_network_conf.cgi" class="active">Networking</a>
+					<a href="/cgi-bin/get_services_conf.cgi">Services</a>
+					<a href="/security_management.html">Security</a>
+					<a href="/firmware_upgrade.html">Upgrade</a>
 				</div>
 			</nav>
 
@@ -41,17 +94,17 @@
 		<div class="section">
 			<div class="span_12_of_12">
 				<div class="xbox news">
-					<form action="cgi-bin/network.cgi" class="span_12_of_12" method="GET">
+					<form name="param" action="network.cgi" class="span_12_of_12" method="GET">
 						<div class="box">
-							<div class="block"><input type="checkbox" name="dhcp" value="on" #%#checked#%#><label>DHCP</label></div>
+							<div class="block"><input type="checkbox" name="dhcp" #%#checked#%# ><label>DHCP</label></div>
 
 							<label>IP Address</label><input type="text" name="ipaddress" value="#%#IP_Address#%#"><br>
 							<label>Netmask</label><input type="text" name="netmask" value="#%#Netmask#%#"><br>
 							<label>Gateway</label><input type="text" name="gateway" value="#%#Gateway#%#"><br>
-							<label>DNS Servers</label><input type="text" name="dnsservers" value="#%#DNSServers#%#"><p>Space separated.</p><br>
+							<label>DNS Servers</label><input type="text" name="dnsservers" value="#%#DNSServers#%#" placeholder="Space separated"><br>
 							
 						</div>
-						<button type="submit" class="btn btn-lg btn-primary">Apply</button>						
+						<button type="submit" class="btn btn-lg btn-primary" onclick=" return ValidateForm()">Apply</button>						
 					</form>
 				</div>
 			</div>

@@ -94,13 +94,16 @@ fi
 
 if [ "$error" = "false" ] ; then
     QUIET=true /etc/init.d/network.sh
-    show_apply_changes
-else
-    if [ "$invalid_value" = "" ] ; then
-	show_msg "Missing mandatory parameter \"$invalid_parameter\""
-    else
-	show_msg "Invalid value \"$invalid_value\" in parameter \"$invalid_parameter\""
-    fi
+#    show_same_page
+#    ./get_network_conf.cgi
+#else
+#    if [ "$invalid_value" = "" ] ; then
+#	show_msg "Missing mandatory parameter \"$invalid_parameter\""
+#    else
+#	show_msg "Invalid value \"$invalid_value\" in parameter \"$invalid_parameter\""
+#    fi
 fi
+
+./get_network_conf.cgi
 
 exit 0

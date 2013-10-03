@@ -3,25 +3,38 @@
 <head>
 	<title>Miner</title>
 	<meta charset="UTF-8" />
-	<link href="style.css" rel="stylesheet" type="text/css">
-	<link href="grid.css" rel="stylesheet" type="text/css">
-	<link href="type/type.css" rel="stylesheet" type="text/css">
+	<link href="../style.css" rel="stylesheet" type="text/css">
+	<link href="../grid.css" rel="stylesheet" type="text/css">
+	<link href="../type/type.css" rel="stylesheet" type="text/css">
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+	<script type="text/javascript">
+	  $(document).ready(function() {
+	    var requesting=false;
+	    var int=self.setInterval(function(){
+	      if (!requesting) {
+	        requesting=true;
+	        $('#resultWrapper').load( "/cgi-bin/fetch_mining_stat.cgi #result", function(){requesting=false;} );
+	      }
+	    },5000);
+	  });
+	</script>
 </head>
 
 <body>
 	<div id="wrapper">
 		<header>
 			<div id="logo" class="col span_6_of_12">
-				<img src="images/logo.png" alt="KnCMiner logo">
+				<img src="../images/logo.png" alt="KnCMiner logo">
 			</div>
 			<nav class="section box">
 				<div id="sub_nav" class="span_12_of_12">
-					<a href="index.html" class="active">Status</a>
-					<a href="miner_setting.html">Mining</a>
-					<a href="network_setting.html">Networking</a>
-					<a href="services_conf.html">Services</a>
-					<a href="security_management.html">Security</a>
-					<a href="firmware_upgrade.html">Upgrade</a>
+					<a href="../index.html" class="active">Status</a>
+					<a href="get_miner_conf.cgi">Mining</a>
+					<a href="get_network_conf.cgi">Networking</a>
+					<a href="get_services_conf.cgi">Services</a>
+					<a href="../security_management.html">Security</a>
+					<a href="../firmware_upgrade.html">Upgrade</a>
 				</div>
 			</nav>
 
@@ -38,18 +51,25 @@
 		<div class="section">
 			<div class="span_12_of_12">
 				<div class="xbox news">				
-					<form action="cgi-bin/get_status.cgi" class="span_12_of_12">
+<!--					<form action="get_status.cgi" class="span_12_of_12"> -->
 						  <p>
-						    CGMiner
-						  </p>
-						  <p>
+<!--						    CGMiner -->
+<!--						  </p>
+						  <p> -->
+<!--
 						    <font color="#%#Color#%#">
 						      #%#Status#%#
-						    </font> 						    
+						    </font>
+-->
+<!--						    <p>
+						      #%#Output#%#
+						    </p> -->
 						  </p>
-						<button type="submit" class="btn btn-lg btn-primary">Check Status</button>
+						  <div id="resultWrapper">
+						  </div>
+<!--						<button type="submit" class="btn btn-lg btn-primary">Check Status</button>
 					</form>
-
+-->
 			</div>
 		</div>
 	</div>
