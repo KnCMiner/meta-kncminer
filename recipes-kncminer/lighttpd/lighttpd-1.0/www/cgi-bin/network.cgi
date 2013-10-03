@@ -26,18 +26,26 @@ valid_ip()
     return $stat
 }
 
+if [ -f /etc/hostname ] ; then
+    hn=`cat /etc/hostname`
+else
+    hn=Jupiter-XXX
+fi
+
 IFS="&"
 set -- $QUERY_STRING
 
 for i in $@; do
     if [ "$i" = "dhcp=on" ] ; then
 	echo dhcp=true > /config/network.conf
+	echo "hostname=$hn" >> /config/network.conf
 	dhcp=true
     fi
 done
 
 if [ "$dhcp" = false ] ; then
     > /tmp/network.conf.$$
+    echo "hostname=$hn" >> /tmp/network.conf.$$
     for i in $@; do 
 	IFS="="
 	set -- $i
