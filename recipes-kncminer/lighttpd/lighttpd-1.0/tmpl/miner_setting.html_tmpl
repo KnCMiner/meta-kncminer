@@ -3,6 +3,7 @@
 <head>
 	<title>Miner</title>
 	<meta charset="UTF-8" />
+        <meta http-equiv="cache-control" content="no-cache" />
 	<link href="style.css" rel="stylesheet" type="text/css">
 	<link href="grid.css" rel="stylesheet" type="text/css">
 	<link href="type/type.css" rel="stylesheet" type="text/css">
@@ -46,11 +47,6 @@
 							<label>Pool url</label><input type="text" name="url" value="#%#Pool_url#%#"><br>
 							<label>Account</label><input type="text" name="account" value="#%#Account#%#"><br>
 							<label>Password</label><input type="text" name="password" value="#%#Password#%#"><br>
-						</div>
-						<button type="submit" class="btn btn-lg btn-primary">Apply</button>
-					</form>
-					<form action="cgi-bin/config_r_mgmt.cgi" class="span_12_of_12">
-						<div class="box">
 							<div class="inline"><input type="radio" name="r_mgmt_on" id="r_mgmt_on" value="1" #%#r_mgmt_on_checked#%#><label for="r_mgmt_on">CGMiner Remote Management Enabled</label></div>
 							<div class="inline"><input type="radio" name="r_mgmt_on" id="r_mgmt_off" value="0" #%#r_mgmt_off_checked#%#><label for="r_mgmt_off">CGMiner Remote Management Disabled</label></div>
 						</div>
