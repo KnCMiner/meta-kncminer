@@ -38,14 +38,46 @@ for i in $@; do
 	if [ "`echo "$password" | grep \&`" != "" ] ; then
             password=`echo "$password" | sed 's!\&!\\\&!g'`
 	fi
+    elif [ "$1" = "r_mgmt_on" ] ; then
+	if [ $2 -eq 1 ] ; then
+	    remote_mgmt=true
+	else
+	    remote_mgmt=false
+	fi
     fi
 done
 IFS=$OIFS
 
 if [ "$error" = "false" ] ; then
+    (
+	cat <<'EOF'
+{
+"pools" : [
+{
+"url" : "a",
+"user" : "b",
+"pass" : "c"
+}
+]
+,
+"api-listen" : true,
+"api-network" : true,
+"api-allow" : "W:0/0"
+}
+
+EOF
+    ) > /config/cgminer.conf
+
     sed -i 's"\"url\" :.*"\"url\" : \"'${url}'\","g' /config/cgminer.conf
     sed -i 's"\"user\" :.*"\"user\" : \"'${account}'\","g' /config/cgminer.conf
     sed -i 's"\"pass\" :.*"\"pass\" : \"'${password}'\""g' /config/cgminer.conf
+    if [ $remote_mgmt = true ] ; then 
+	sed -i 's#"api-listen".*:.* false#"api-listen" : true#g' /config/cgminer.conf
+	sed -i 's#"api-network".*:.*false#"api-network" : true#g' /config/cgminer.conf
+    else
+	sed -i 's#"api-listen".*:.*true#"api-listen" : false#g' /config/cgminer.conf	
+	sed -i 's#"api-network".*:.*true#"api-network" : false#g' /config/cgminer.conf
+    fi
 fi
 
 if [ "$error" = "false" ] ; then

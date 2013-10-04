@@ -27,9 +27,15 @@ for i in $@; do
 	fi
 	if [ "$1" = "new_pw" ] ; then
 	    new_pw=`urldecode $2`
+	    if [ "$new_pw" = "" ] ; then
+		error=true
+	    fi
 	fi
 	if [ "$1" = "new_pw_ctrl" ] ; then
 	    new_pw_ctrl=`urldecode $2`
+	    if [ "$new_pw_ctrl" = "" ] ; then
+		error=true
+	    fi
 	fi
     fi
 done
@@ -42,7 +48,15 @@ fi
 if [ "$error" = "false" ] ; then
     show_apply_changes
 else
-    show_msg "Missing mandatory parameter \"$invalid_parameter\""
+    if [ "$invalid_parameter" = "current_pw" ] ; then
+	show_msg "Invalid Password"
+    else
+	if [ "$new_pw" = "" ] || [ "$new_pw_ctrl" = "" ] ; then	    
+	    show_msg "New Password must be set"
+	else
+	    show_msg "New Password does not match"
+	fi
+    fi
 fi
 sleep 2
 
@@ -52,5 +66,11 @@ if [ "$error" = "false" ] ; then
     hash=`echo -n "admin:KnC Miner configuration:$new_pw" | md5sum | cut -b -32`
     echo "admin:KnC Miner configuration:$hash" > \
 	/config/lighttpd-htdigest.user
+
     printf "$new_pw\n$new_pw_ctrl" | passwd root > /dev/null
+    if [ $? -eq 0 ] ; then
+	rm -f /config/shadow
+	mv /etc/shadow /config/shadow
+	ln -s /config/shadow /etc/shadow
+    fi
 fi

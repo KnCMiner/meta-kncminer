@@ -5,6 +5,7 @@ PRINC := "${@int(PRINC) + 1}"
 RDEPENDS_${PN} += " \
                lighttpd-module-auth \
                lighttpd-module-cgi \
+               lighttpd-module-expire \
 "
 
 do_install_append() {

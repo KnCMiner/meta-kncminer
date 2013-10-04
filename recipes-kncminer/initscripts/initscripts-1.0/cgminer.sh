@@ -111,4 +111,6 @@ case "$1" in
         ;;
 esac
 
+/www/pages/cgi-bin/get_status.cgi >> /dev/null
+
 exit 0
