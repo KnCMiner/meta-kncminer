@@ -13,6 +13,7 @@ do_install() {
         install -d ${D}${bindir}
         install -m 0755 ${S}/initc ${D}${bindir}
         install -m 0644 ${S}/spitop_bitrev_pad.rbf ${D}${bindir}
+        install -m 0755 ${S}/spi-test ${D}${bindir}
 
         install -d ${D}${sysconfdir}/init.d
 	install -m 0755 ${WORKDIR}/initc.sh ${D}${sysconfdir}/init.d
