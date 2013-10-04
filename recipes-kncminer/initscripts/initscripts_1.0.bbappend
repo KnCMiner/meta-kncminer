@@ -29,7 +29,8 @@ do_install_append() {
 
 	install -m 0400 ${WORKDIR}/shadow.factory ${D}${sysconfdir}/shadow.factory
 
-	echo "dcdc:2345:respawn:${base_sbindir}/monitordcdc" >> ${D}${sysconfdir}/inittab
+	install -d ${D}${base_sbindir}
+	install -m 0755 ${WORKDIR}/monitordcdc ${D}${base_sbindir}/
 }
 
 SRC_URI_append = " file://mountdevtmpfs.sh"
