@@ -85,7 +85,7 @@ do_start() {
 }
 
 do_stop() {
-        killall -9 cgminer
+        killall -9 cgminer || true
 }
 case "$1" in
   start)
