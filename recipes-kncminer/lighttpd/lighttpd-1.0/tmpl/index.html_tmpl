@@ -3,7 +3,6 @@
 <head>
 	<title>Miner</title>
 	<meta charset="UTF-8" />
-        <meta http-equiv="cache-control" content="no-cache" />
 	<link href="style.css" rel="stylesheet" type="text/css">
 	<link href="grid.css" rel="stylesheet" type="text/css">
 	<link href="type/type.css" rel="stylesheet" type="text/css">
