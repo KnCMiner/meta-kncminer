@@ -3,6 +3,7 @@
 <head>
 	<title>Miner</title>
 	<meta charset="UTF-8" />
+        <meta http-equiv="cache-control" content="no-cache" />
 	<link href="style.css" rel="stylesheet" type="text/css">
 	<link href="grid.css" rel="stylesheet" type="text/css">
 	<link href="type/type.css" rel="stylesheet" type="text/css">
@@ -39,9 +40,9 @@
 			</div>
 		</div>
 		<div class="section">
-			<div class="span_12_of_12">
+			<div class="col span_7_of_12">
 				<div class="xbox news">
-					<form action="cgi-bin/passwd.cgi" class="span_12_of_12">
+					<form action="cgi-bin/passwd.cgi" class="span_7_of_12">
 						<div class="box">
 							<label>Current Password</label><input type="password" name="current_pw" placeholder="Current Password"><br>
 							<label>New Password</label><input type="password" name="new_pw" placeholder="New Password"><br>
@@ -49,15 +50,20 @@
 						</div>
 						<button type="submit" class="btn btn-lg btn-primary">Apply</button>						
 					</form>
+				</div>
+			</div>
+			<div class="col span_5_of_12">
+				<div class="xbox news">
 					<p>Restart Miner</p>
-					<form action="cgi-bin/reboot.cgi" class="span_12_of_12">
+					<form action="cgi-bin/reboot.cgi" class="span_5_of_12">
 						<button type="submit" class="btn btn-lg btn-primary">Restart</button>
 					</form>
 				</div>
 			</div>
 		</div>
-		<footer>
-			<div class="xbox news">
+		<div class="section">
+			<div class="span_12_of_12">
+				<div class="xbox box">
 				<p>
 KnCMiner products are carefully engineered and are not designed to be user serviceable in hardware or software other 
 than when specifically directed by a member of the KncMiner team.<br>
@@ -66,8 +72,9 @@ tamper with the running software in memory or otherwise, attempt to under or ove
 or interfere in anyway that is in contradiction to the intended use of the product.<br>
 Any performance altering changes to the hardware or software are logged/stored and will be used to validate any warranty claims
 				  </p>
+				</div>
 			</div>
-		</footer>
+		</div>
 	</div>
 
 </body>
