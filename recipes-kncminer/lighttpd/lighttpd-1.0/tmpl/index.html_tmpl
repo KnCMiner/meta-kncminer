@@ -3,6 +3,7 @@
 <head>
 	<title>Miner</title>
 	<meta charset="UTF-8" />
+        <meta http-equiv="cache-control" content="no-cache" />
 	<link href="style.css" rel="stylesheet" type="text/css">
 	<link href="grid.css" rel="stylesheet" type="text/css">
 	<link href="type/type.css" rel="stylesheet" type="text/css">
@@ -40,7 +41,7 @@
 				<div class="xbox news">				
 					<form action="cgi-bin/get_status.cgi" class="span_12_of_12">
 						  <p>
-						    CGMiner
+						    CGMiner status:
 						  </p>
 						  <p>
 						    <font color="#%#Color#%#">
@@ -49,7 +50,7 @@
 						  </p>
 						<button type="submit" class="btn btn-lg btn-primary">Check Status</button>
 					</form>
-
+				</div>
 			</div>
 		</div>
 	</div>
