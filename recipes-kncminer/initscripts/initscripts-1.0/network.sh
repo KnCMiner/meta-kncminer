@@ -7,6 +7,9 @@ fi
 # Read network configuration
 if [ -s /config/network.conf ] ; then
     . /config/network.conf
+else
+    dhcp=true
+    hostname=Jupiter-XXX
 fi
 
 if [ -n "$hostname" ] ; then

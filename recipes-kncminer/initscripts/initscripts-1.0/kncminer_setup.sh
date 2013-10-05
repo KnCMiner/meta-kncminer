@@ -8,16 +8,13 @@ if [ ! -f /config/dropbear ] ; then
     echo NO_START=1 > /config/dropbear
 fi
 
-if [ -e /etc/default/dropbear ] ; then 
-    rm /etc/default/dropbear
-fi
+cp /config/dropbear /etc/default/dropbear
 
-ln -s /config/dropbear /etc/default/dropbear
 ###########################
 
 
 ###########################
-# cgminer.conf
+# miner.conf
 # No configuration, create it!
 if [ ! -f /config/cgminer.conf ] ; then
     cp /config/cgminer.conf.factory /config/cgminer.conf

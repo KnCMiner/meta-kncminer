@@ -8,7 +8,7 @@ fi
 # "create" webpage from template
 if [ "$dhcp" = "true" ] ; then
     sed '
-s/#%#checked#%#/checked="yes"/g
+s/#%#checked#%#/checked/g
 s/#%#Hostname#%#/'$hostname'/g
 s/#%#IP_Address#%#//g
 s/#%#Netmask#%#//g
