@@ -33,6 +33,7 @@ if [ "$dhcp" = "true" ] ; then
     # "create" webpage from template
     sed '
 s/#%#checked#%#/checked/g
+s/#%#Hostname#%#/'$hostname'/g
 s/#%#IP_Address#%#//g
 s/#%#Netmask#%#//g
 s/#%#Gateway#%#//g
@@ -51,6 +52,7 @@ else
     # "create" webpage from template
     sed  '
 s/#%#checked#%#//g
+s/#%#Hostname#%#/'$hostname'/g
 s/#%#IP_Address#%#/'$ipaddress'/g
 s/#%#Netmask#%#/'$netmask'/g
 s/#%#Gateway#%#/'$gateway'/g
