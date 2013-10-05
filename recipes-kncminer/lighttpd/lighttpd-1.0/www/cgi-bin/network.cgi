@@ -26,17 +26,47 @@ valid_ip()
     return $stat
 }
 
+valid_hostname()
+{
+    local  hostname=$1
+    local  stat=0
+    
+}
+
+if [ -f /etc/hostname ] ; then
+    current_hostname=`cat /etc/hostname`
+else
+    current_hostname=Jupiter-XXX
+fi
+
 IFS="&"
 set -- $QUERY_STRING
 
+> /tmp/network.conf.$$
 for i in $@; do
-    if [ "$i" = "dhcp=on" ] ; then
-	echo dhcp=true > /config/network.conf
+    IFS="="
+    set -- $i
+    if [ "$1" = "dhcp" ] ; then
+	echo $1=$2 >> /tmp/network.conf.$$
 	dhcp=true
+    elif [ "$1" = "hostname" ] ; then
+	if [ "$2" != "" ] ; then
+	    echo $1="`urldecode $2`" >> /tmp/network.conf.$$
+	    input_hostname=$2
+	else
+	    echo "hostname=$current_hostname" >> /tmp/network.conf.$$
+	fi
     fi
 done
 
-if [ "$dhcp" = false ] ; then
+IFS="&"
+set -- $QUERY_STRING
+
+if [ "$dhcp" = true ] ; then
+    rm /config/network.conf
+    mv /tmp/network.conf.$$ /config/network.conf
+
+else
     > /tmp/network.conf.$$
     for i in $@; do 
 	IFS="="
@@ -57,6 +87,13 @@ if [ "$dhcp" = false ] ; then
 		fi
 	    done
 	    IFS="="
+	elif [ "$1" = "hostname" ] ; then
+	    if [ "$2" != "" ] ; then
+		echo $1="`urldecode $2`" >> /tmp/network.conf.$$
+		input_hostname=$2
+	    else
+		echo "hostname=$current_hostname" >> /tmp/network.conf.$$
+	    fi
 	elif [ "$2" = "" ] ; then
 	    # error, all fields are mandatory
 	    error=true
@@ -94,6 +131,9 @@ fi
 
 if [ "$error" = "false" ] ; then
     QUIET=true /etc/init.d/network.sh
+    if [ "$current_hostname" != "$input_hostname" ] ; then
+	/etc/init.d/avahi restart > /dev/null
+    fi
 #    show_same_page
 #    ./get_network_conf.cgi
 #else

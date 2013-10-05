@@ -1,6 +1,8 @@
 #!/bin/sh
 
-. /etc/default/dropbear
+if [ -f /etc/default/dropbear ] ; then
+    . /etc/default/dropbear
+fi
 
 if [ $NO_START -eq 1 ] ; then
     sed '

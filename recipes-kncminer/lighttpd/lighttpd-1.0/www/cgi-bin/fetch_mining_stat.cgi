@@ -1,14 +1,21 @@
 #!/bin/sh
 #set -x
 
-killall -0 cgminer
+killall -0 cgminer 2&> /dev/null
 if [ $? = 0 ] ; then
-    proc_running="Running"
+    pid=`pidof cgminer`
+    tasks=`ls /proc/$pid/task/|wc -l`
+    if [ $tasks -gt 1 ] ; then
+	proc_running="Running (pid="$pid")"
+    else
+	proc_running="Halted (Check Miner Settings)"
+    fi
 else
     proc_running="Stopped"
 fi
 
-> /tmp/x
+
+> /tmp/mining_stats.$$
 
 if [ "$proc_running" = "Running" ] ; then
     
@@ -22,10 +29,10 @@ if [ "$proc_running" = "Running" ] ; then
     set -- $data
     
     for d in $data ; do
-	echo $d >> /tmp/x
+	echo $d >> /tmp/mining_stats.$$
     done
     
-    . /tmp/x
+    . /tmp/mining_stats.$$
     probe_time=`date -d @"$When"`
 fi
 
