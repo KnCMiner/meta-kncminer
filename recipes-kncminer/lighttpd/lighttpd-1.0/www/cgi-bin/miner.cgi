@@ -81,16 +81,10 @@ EOF
 fi
 
 if [ "$error" = "false" ] ; then
-    /etc/init.d/miner_config.sh
     /etc/init.d/cgminer.sh stop > /dev/null
     /etc/init.d/cgminer.sh start > /dev/null
-    show_apply_changes
-else
-    if [ "$invalid_value" = "" ] ; then
-	show_msg "Missing mandatory parameter \"$invalid_parameter\""
-    else
-	show_msg "Invalid value \"$invalid_value\" in parameter \"$invalid_parameter\""
-    fi
 fi
+
+./get_miner_conf.cgi
 
 exit 0

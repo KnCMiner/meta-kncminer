@@ -29,15 +29,6 @@ if [ "$dhcp" = "true" ] ; then
     else
         udhcpc -b -x hostname:$hostname eth0
     fi
-
-    # "create" webpage from template
-    sed '
-s/#%#checked#%#/checked/g
-s/#%#Hostname#%#/'$hostname'/g
-s/#%#IP_Address#%#//g
-s/#%#Netmask#%#//g
-s/#%#Gateway#%#//g
-s/#%#DNSServers#%#//g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
 else
     # Manual setup
     ip addr add $ipaddress/$netmask dev eth0
@@ -48,14 +39,4 @@ else
     for ip in $dnsservers ; do
 	echo nameserver $ip >> /etc/resolv.conf
     done
-
-    # "create" webpage from template
-    sed  '
-s/#%#checked#%#//g
-s/#%#Hostname#%#/'$hostname'/g
-s/#%#IP_Address#%#/'$ipaddress'/g
-s/#%#Netmask#%#/'$netmask'/g
-s/#%#Gateway#%#/'$gateway'/g
-s/#%#DNSServers#%#/'"$dnsservers"'/g' < /www/tmpl/network_setting.html_tmpl > /www/pages/network_setting.html
-
 fi
