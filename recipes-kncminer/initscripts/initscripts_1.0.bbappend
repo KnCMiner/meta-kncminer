@@ -22,6 +22,9 @@ do_install_append() {
 	ln -s ../init.d/ntpd S40ntpd
 
 	install -m 0400 ${WORKDIR}/shadow.factory ${D}${sysconfdir}/shadow.factory
+
+	install -d ${D}${base_sbindir}
+	install -m 0755 ${WORKDIR}/monitordcdc ${D}${base_sbindir}/
 }
 
 SRC_URI_append = " file://mountdevtmpfs.sh"
@@ -30,3 +33,4 @@ SRC_URI_append = " file://cgminer.sh"
 SRC_URI_append = " file://ntpdate.sh"
 SRC_URI_append = " file://shadow.factory"
 SRC_URI_append = " file://kncminer_setup.sh"
+SRC_URI_append = " file://monitordcdc"

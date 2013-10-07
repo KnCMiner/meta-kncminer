@@ -1,0 +1,29 @@
+#!/bin/sh
+
+while true; do
+	failed=
+	for channel in 0 1 2 3 4 5; do
+		bus=`expr $channel + 3`
+		for d in 0 1 2 3 4 5 6 7; do
+			if [ "`i2cget -y $bus 0x1$d 0x2 2>/dev/null`" != "0x17" ]; then
+				continue
+			fi
+			if [ "`i2cget -y $bus 0x1$d 0x8c w | cut -c3-4`" = e0 ]; then
+				failed=1
+				echo "DCDC $channel:$d too low current"
+			fi
+			if [ $failed ]; then
+				break
+			fi
+			sleep 1
+		done
+		if [ $failed ]; then
+			break
+		fi
+	done
+	if [ $failed ]; then
+		/etc/init.d/cgminer.sh restart
+	fi
+	sleep 60
+done
+

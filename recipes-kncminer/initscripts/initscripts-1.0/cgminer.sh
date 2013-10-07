@@ -20,7 +20,7 @@ do_start() {
 	# CLear faults in megadlynx's
 	for b in 3 4 5 6 7 8 ; do
 		for d in 0 1 2 3 4 5 6 7 ; do
-			i2cset -y $b 0x1$d 3 >/dev/null 2>&1
+			i2cset -y $b 0x1$d 3 >/dev/null 2>&1 || true
 		done
 	done
 
@@ -50,7 +50,7 @@ do_start() {
 			# re-enable all cores
 			i=0
 			while [[ $i -lt 192 ]] ; do
-				i2cset -y 2 0x2$p $i 0xF7
+				i2cset -y 2 0x2$p $i 1
 				i=$((i+1))
 			done
 			spi_ena=$(( spi_ena | (1 << $p) ))
@@ -68,7 +68,7 @@ do_start() {
 			# disable all cores
 			i=0
 			while [[ $i -lt 192 ]] ; do
-				i2cset -y 2 0x2$p $i 0xF4
+				i2cset -y 2 0x2$p $i 0
 				i=$((i+1))
 			done
 			spi_ena=$(( spi_ena & ~(1 << $p) ))
@@ -85,7 +85,7 @@ do_start() {
 }
 
 do_stop() {
-        killall -9 cgminer
+        killall -9 cgminer || true
 }
 case "$1" in
   start)
