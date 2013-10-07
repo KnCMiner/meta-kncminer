@@ -46,7 +46,7 @@ fi
 
 # Need to show new page before actually apply'ing new password
 if [ "$error" = "false" ] ; then
-    show_apply_changes
+    show_msg "Updating Password"
 else
     if [ "$invalid_parameter" = "current_pw" ] ; then
 	show_msg "Invalid Password"
@@ -58,7 +58,7 @@ else
 	fi
     fi
 fi
-sleep 2
+sleep 1
 
 # Apply the new password
 if [ "$error" = "false" ] ; then

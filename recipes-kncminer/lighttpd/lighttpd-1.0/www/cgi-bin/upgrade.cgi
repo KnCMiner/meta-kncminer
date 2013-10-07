@@ -44,15 +44,15 @@ cat <<-EOH
 	<head>
 	<title>Miner</title>
         <meta charset="UTF-8" />
-        <link href="../style.css" rel="stylesheet" type="text/css">
-        <link href="../grid.css" rel="stylesheet" type="text/css">
-        <link href="../type/type.css" rel="stylesheet" type="text/css">
+        <link href="/style.css" rel="stylesheet" type="text/css">
+        <link href="/grid.css" rel="stylesheet" type="text/css">
+        <link href="/type/type.css" rel="stylesheet" type="text/css">
 	</head>
 	<body>
         <div id="wrapper">
         <header>
         <div id="logo" class="col span_6_of_12">
-        <img src="../images/logo.png" alt="KnCMiner logo">
+        <img src="/images/logo.png" alt="KnCMiner logo">
         </div>
         </header>
         <div id="header" class="section">

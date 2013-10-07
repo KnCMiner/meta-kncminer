@@ -1,5 +1,4 @@
 #!/bin/sh
-. /www/pages/cgi-bin/cgi_lib.cgi
 
 usleep 100
 killall -0 cgminer 2&> /dev/null
