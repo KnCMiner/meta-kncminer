@@ -13,8 +13,8 @@ for i in $@; do
     fi
 done
 
-cp /config/dropbear /etc/default/dropbear
 /etc/init.d/dropbear stop > /dev/null
+cp /config/dropbear /etc/default/dropbear
 /etc/init.d/dropbear start > /dev/null
 
 ./get_services_conf.cgi
