@@ -1,8 +1,8 @@
 <div id="result">
   <p><span>CGMiner Status: </span><span>#%#Status#%#</span></p>
-  <p><span>Time: </span><span>#%#time#%#</span></p>
+  <p><span>Last Checked: </span><span>#%#time#%#</span></p>
   <p><span>Rate: </span><span>#%#hashrate#%#</span></p>
-  <p><span>Accepted: </span><span>#%#accepted#%#</span></p>
-  <p><span>Rejected: </span><span>#%#rejected#%#</span></p>
+  <p><span>Accepted Shares: </span><span>#%#accepted#%#</span></p>
+  <p><span>Rejected Shares: </span><span>#%#rejected#%#</span></p>
 </div>
 

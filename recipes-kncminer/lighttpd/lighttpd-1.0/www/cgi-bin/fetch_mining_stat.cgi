@@ -17,7 +17,7 @@ fi
 
 > /tmp/mining_stats.$$
 
-if [ "$proc_running" = "Running" ] ; then
+if [ "`echo $proc_running | grep Running`" != "" ] ; then
     
     data=`/usr/bin/api-cgminer -o summary | sed '
     s#|SUMMARY##g
@@ -43,4 +43,4 @@ s/#%#hashrate#%#/'"$Work_Utility"'/g
 s/#%#accepted#%#/'"$Accepted"'/g
 s/#%#rejected#%#/'"$Rejected"'/g' < /www/tmpl/mining_stat.html_tmpl
 
-rm /tmp/x
+rm /tmp/mining_stats.$$
