@@ -36,7 +36,7 @@ int main(int argc, char **argv)
 		if (ev.type == EV_KEY && ev.code == KEY_POWER && ev.value == 1) {
 			struct timeval diff;
 			timersub(&ev.time, &last, &diff);
-			if (state == 0 && count == 0) {
+			if (diff.tv_sec > 10) {
 				signal(SIGALRM, do_poweroff);
 				alarm(5);
 			} else {

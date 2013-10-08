@@ -28,9 +28,13 @@ valid_ip()
 
 valid_hostname()
 {
-    local  hostname=$1
-    local  stat=0
-    
+    local  hostname="$1"
+    local  stat=1
+
+    if [ -n "$hostname" ] && [ "`echo $hostname | grep -E '^[0-9a-zA-Z-]{1,63}$'`" = "$hostname" ]; then
+	stat=0;
+    fi
+    return $stat
 }
 
 if [ -f /etc/hostname ] ; then
@@ -51,8 +55,19 @@ for i in $@; do
 	dhcp=true
     elif [ "$1" = "hostname" ] ; then
 	if [ "$2" != "" ] ; then
-	    echo $1="`urldecode $2`" >> /tmp/network.conf.$$
-	    input_hostname=$2
+	    input_hostname=`urldecode $2`
+	    if [ "`echo "$input_hostname" | grep '\\\'`" != "" ] ; then
+		input_hostname=`echo "$input_hostname" | sed 's!\\\!\\\\\\\!g'`
+	    fi
+	    if [ "`echo "$input_hostname" | grep \&`" != "" ] ;then
+		input_hostname=`echo "$input_hostname" | sed 's!\&!\\\&!g'`
+	    fi
+	    valid_hostname "$input_hostname"
+	    if [ $? -eq 0 ] ; then
+		echo $1="$input_hostname" >> /tmp/network.conf.$$
+	    else
+		echo "hostname=$current_hostname" >> /tmp/network.conf.$$
+	    fi
 	else
 	    echo "hostname=$current_hostname" >> /tmp/network.conf.$$
 	fi
@@ -89,8 +104,19 @@ else
 	    IFS="="
 	elif [ "$1" = "hostname" ] ; then
 	    if [ "$2" != "" ] ; then
-		echo $1="`urldecode $2`" >> /tmp/network.conf.$$
-		input_hostname=$2
+		input_hostname=`urldecode $2`
+		if [ "`echo "$input_hostname" | grep '\\\'`" != "" ] ; then
+		    input_hostname=`echo "$input_hostname" | sed 's!\\\!\\\\\\\!g'`
+		fi
+		if [ "`echo "$input_hostname" | grep \&`" != "" ] ;then
+		    input_hostname=`echo "$input_hostname" | sed 's!\&!\\\&!g'`
+		fi
+		valid_hostname "$input_hostname"
+		if [ $? -eq 0 ] ; then
+		    echo $1="$input_hostname" >> /tmp/network.conf.$$
+		else
+		    echo "hostname=$current_hostname" >> /tmp/network.conf.$$
+		fi
 	    else
 		echo "hostname=$current_hostname" >> /tmp/network.conf.$$
 	    fi

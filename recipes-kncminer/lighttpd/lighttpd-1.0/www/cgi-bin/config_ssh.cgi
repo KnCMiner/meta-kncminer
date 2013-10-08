@@ -1,9 +1,5 @@
 #!/bin/sh
 
-if [ -z "$QUERY_STRING" ] ; then
-    show_same_page
-    exit 0
-fi
 IFS="&"
 set -- $QUERY_STRING
 
@@ -18,6 +14,7 @@ for i in $@; do
 done
 
 /etc/init.d/dropbear stop > /dev/null
+cp /config/dropbear /etc/default/dropbear
 /etc/init.d/dropbear start > /dev/null
 
 ./get_services_conf.cgi

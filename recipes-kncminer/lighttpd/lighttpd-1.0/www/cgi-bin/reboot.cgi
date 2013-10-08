@@ -1,8 +1,7 @@
 #!/bin/sh
 . ./cgi_lib.cgi
 
-show_msg "Rebooting System" index.html
-sleep 1
+show_msg "Rebooting System (please wait for 90 seconds)" index.html 90000
 
-reboot
+reboot.safe
 

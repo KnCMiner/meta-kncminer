@@ -4,10 +4,10 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d32239bcb673463ab874e80d47fae504"
 
 DEPENDS = "ncurses curl"
 
-SRCREV = "ac3365c70c4458660038522fd015fa0561842b07"
+SRCREV = "bf8a5416ba2876c849ea732f670e6fb4499f866d"
 PV = "3.3.1+git${SRCPV}"
 
-SRC_URI = "git://git@192.168.1.33/projects/kncminer/cgminer;protocol=ssh;branch=spi-fpga"
+SRC_URI = "git://git@orsoc.no-ip.biz/projects/kncminer/cgminer;protocol=ssh;branch=spi-fpga"
 
 S = "${WORKDIR}/git"
 
