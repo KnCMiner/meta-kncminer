@@ -10,12 +10,15 @@ if [ -f $asic_stat_file ] ; then
     IFS="="
     while read status ; do
 	set -- $status
-	if [ "$2" != "OFF" ] ; then
-	    asic_status="${asic_status}ASIC slot #$i: $2 \&#x2103;<br>"
-	else
-	    asic_status="${asic_status}ASIC slot #$i: -<br>"
+	if [ "$1" != "" ] ; then  
+	    if [ "$2" != "OFF" ] ; then
+		asic_status="${asic_status}ASIC slot #$i: $2 \&#x2103;<br>"
+		i=`expr $i + 1`
+	    else
+		asic_status="${asic_status}ASIC slot #$i: -<br>"
+		i=`expr $i + 1`
+	    fi
 	fi
-	i=`expr $i + 1`
 	
     done <  $asic_stat_file
     IFS=$OIFS
