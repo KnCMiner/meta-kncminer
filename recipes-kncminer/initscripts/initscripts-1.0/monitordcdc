@@ -1,9 +1,37 @@
 #!/bin/sh
 
+TMP_FILE="/tmp/stat_tmp"
+STAT_FILE="/var/run/stats.knc"
+
 while true; do
 	failed=
+	echo > $TMP_FILE
 	for channel in 0 1 2 3 4 5; do
 		bus=`expr $channel + 3`
+		asic=$((channel+1))
+
+		id=$(i2cget -y $bus 0x48 7 2>/dev/null)
+		if [[ "x$id" != "x0xa1" ]] ; then
+			echo "asic$asic=OFF" >> $TMP_FILE
+		else
+			temp1=$(i2cget -y $bus 0x48 0 w 2>/dev/null)
+			deg=$(echo $temp1 | cut -c5-6)
+			half=$(echo $temp1 | cut -c3)
+			if [ -n "$deg" -a -n "$half" ] ; then
+				if [ "$half" = "8" ] ; then
+					half=5
+				fi
+				temp=$(printf "%u.%u" 0x$deg $half)
+				echo "asic$asic=$temp" >> $TMP_FILE
+			else
+				echo "asic$asic=OFF" >> $TMP_FILE
+			fi
+		fi
+		
+		if [ $failed ] ; then
+			continue
+		fi
+
 		for d in 0 1 2 3 4 5 6 7; do
 			if [ "`i2cget -y $bus 0x1$d 0x2 2>/dev/null`" != "0x17" ]; then
 				continue
@@ -17,10 +45,10 @@ while true; do
 			fi
 			sleep 1
 		done
-		if [ $failed ]; then
-			break
-		fi
 	done
+
+	mv $TMP_FILE $STAT_FILE
+
 	if [ $failed ]; then
 		/etc/init.d/cgminer.sh restart
 	fi
