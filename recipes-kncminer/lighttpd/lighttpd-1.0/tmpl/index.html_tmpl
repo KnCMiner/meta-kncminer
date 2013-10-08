@@ -40,12 +40,16 @@
 				<div class="xbox news">				
 					<form action="cgi-bin/get_status.cgi" class="span_12_of_12">
 						  <p>
-						    CGMiner status:
-						  </p>
-						  <p>
+						    CGMiner status: 
 						    <font color="#%#Color#%#">
 						      #%#Status#%#
 						    </font> 						    
+						  </p>
+						  <p>
+						    HW status:
+						  </p>
+						  <p>
+						    #%#ASIC_STATUS#%#
 						  </p>
 						<button type="submit" class="btn btn-lg btn-primary">Check Status</button>
 					</form>
