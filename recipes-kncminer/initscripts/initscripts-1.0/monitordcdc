@@ -49,7 +49,10 @@ while true; do
 				echo "asic$asic=OFF" >> $TMP_FILE
 			fi
 		fi
-		
+
+		sleep 1
+		continue
+	
 		if [ $failed ] ; then
 			continue
 		fi
