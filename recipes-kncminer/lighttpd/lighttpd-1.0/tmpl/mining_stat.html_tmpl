@@ -1,8 +1,14 @@
 <div id="result">
-  <p><span>CGMiner Status: </span><span>#%#Status#%#</span></p>
-  <p><span>Last Checked: </span><span>#%#time#%#</span></p>
-  <p><span>Rate: </span><span>#%#hashrate#%#</span></p>
-  <p><span>Accepted Shares: </span><span>#%#accepted#%#</span></p>
-  <p><span>Rejected Shares: </span><span>#%#rejected#%#</span></p>
+  <p>
+    <span>CGMiner Status: </span><span>#%#Status#%#</span><br>
+    <span>Last Checked: </span><span>#%#time#%#</span><br>
+    <span>Hash Rate: </span><span>#%#hashrate#%#</span><br>
+    <span>Accepted Shares: </span><span>#%#accepted#%#</span><br>
+    <span>Rejected Shares: </span><span>#%#rejected#%#</span><br>
+  </p>
+  <p>
+    HW Status:<br>
+    #%#ASIC_STATUS#%#
+  </p>
 </div>
 
