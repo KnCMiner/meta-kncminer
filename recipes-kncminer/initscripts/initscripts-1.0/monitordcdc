@@ -3,6 +3,9 @@
 TMP_FILE="/tmp/stat_tmp"
 STAT_FILE="/var/run/stats.knc"
 
+INTERVAL=15
+THRESHOLD=10
+
 for channel in 0 1 2 3 4 5 ; do
 	for d in 0 1 2 3 ; do
 		good=0
@@ -18,18 +21,18 @@ for channel in 0 1 2 3 4 5 ; do
 			i=$((i+1))
 		done
 		if [ "x$good" != "x1" ] ; then
-			echo 48 > /var/run/die${channel}${d}
+			echo 1000 > /var/run/die${channel}${d}
 		else
 			echo 0 > /var/run/die${channel}${d}
 		fi
 	done
 done
+echo 0 > /var/run/tm
 
 while true; do
-	failed=
 	echo > $TMP_FILE
 	for channel in 0 1 2 3 4 5; do
-		bus=`expr $channel + 3`
+		bus=$((channel+3))
 		asic=$((channel+1))
 
 		id=$(i2cget -y $bus 0x48 7 2>/dev/null)
@@ -50,13 +53,6 @@ while true; do
 			fi
 		fi
 
-		sleep 1
-		continue
-	
-		if [ $failed ] ; then
-			continue
-		fi
-
 		for d in 0 1 2 3 4 5 6 7; do
 			if [ "`i2cget -y $bus 0x1$d 0x2 2>/dev/null`" != "0x17" ]; then
 				continue
@@ -66,21 +62,58 @@ while true; do
                         if [ -z "$cnt" ] ; then
                                 cnt=0
                         fi
-                        if [ $cnt -ge 3 ] ; then
-                                continue
-                        fi
 			if [ "`i2cget -y $bus 0x1$d 0x8c w | cut -c3-4`" = e0 ]; then
-				failed=1
-				echo "DCDC $channel:$d too low current"
+				cnt=$((cnt+1))
 			fi
-			if [ $failed ]; then
-				break
-			fi
+			echo $cnt > /var/run/die${channel}${q}
 			sleep 1
 		done
 	done
 
 	mv $TMP_FILE $STAT_FILE
+
+	tm=$(cat /var/run/tm 2>/dev/null)
+	if [ -z "$tm" ] ; then
+		tm=0
+	fi
+	tm=$((tm+1))
+	if [ $tm -lt $INTERVAL ] ; then
+		echo $tm > /var/run/tm
+		sleep 60
+		continue
+	fi
+	echo 0 > /var/run/tm
+
+	failed=
+	for channel in 0 1 2 3 4 5; do
+		bus=$((channel+3))
+		for q in 0 1 2 3; do
+                        cnt=$(cat /var/run/die${channel}${q} 2>/dev/null)
+                        if [ -z "$cnt" ] ; then
+                                cnt=0
+                        fi
+                        if [ $cnt -ge 1000 ] ; then
+				echo 1000 > /var/run/die${channel}${q}
+				continue
+                        fi
+			echo 0 > /var/run/die${channel}${q}
+                        if [ $cnt -le $THRESHOLD ] ; then
+				continue
+                        fi
+                        d=$((q*2))
+                        if [ $d = 6 ] ; then
+				d=7
+                        fi
+			if [ "`i2cget -y $bus 0x1$d 0x8c w | cut -c3-4`" != e0 ]; then
+				continue
+			fi
+			failed=1
+			break
+		done
+		if [ $failed ]; then
+			break
+		fi
+	done
 
 	if [ $failed ]; then
 		/etc/init.d/cgminer.sh restart
