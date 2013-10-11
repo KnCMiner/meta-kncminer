@@ -3,6 +3,28 @@
 TMP_FILE="/tmp/stat_tmp"
 STAT_FILE="/var/run/stats.knc"
 
+for channel in 0 1 2 3 4 5 ; do
+	for d in 0 1 2 3 ; do
+		good=0
+		i=$((d*48))
+		end=$((d*48+48))
+		while [ $i -lt $end ] ; do
+			a=$(i2cget -y 2 0x2$channel $i)
+			b=$((a))
+			if [ $b -ge 2 ] ; then
+				good=1
+				break
+			fi
+			i=$((i+1))
+		done
+		if [ "x$good" != "x1" ] ; then
+			echo 48 > /var/run/die${channel}${d}
+		else
+			echo 0 > /var/run/die${channel}${d}
+		fi
+	done
+done
+
 while true; do
 	failed=
 	echo > $TMP_FILE
@@ -27,7 +49,10 @@ while true; do
 				echo "asic$asic=OFF" >> $TMP_FILE
 			fi
 		fi
-		
+
+		sleep 1
+		continue
+	
 		if [ $failed ] ; then
 			continue
 		fi
@@ -36,6 +61,14 @@ while true; do
 			if [ "`i2cget -y $bus 0x1$d 0x2 2>/dev/null`" != "0x17" ]; then
 				continue
 			fi
+			q=$((d/2))
+                        cnt=$(cat /var/run/die${channel}${q} 2>/dev/null)
+                        if [ -z "$cnt" ] ; then
+                                cnt=0
+                        fi
+                        if [ $cnt -ge 3 ] ; then
+                                continue
+                        fi
 			if [ "`i2cget -y $bus 0x1$d 0x8c w | cut -c3-4`" = e0 ]; then
 				failed=1
 				echo "DCDC $channel:$d too low current"
