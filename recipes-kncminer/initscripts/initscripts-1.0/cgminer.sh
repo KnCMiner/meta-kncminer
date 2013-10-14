@@ -26,7 +26,7 @@ do_start() {
 
 	for p in 0 1 2 3 4 5 ; do
 		i2cset -y 2 0x71 1 $((p+1))
-		ar="$(spi-test -OHC -D /dev/spidev1.0 0x80,3,0,0,0,0,0,0 | tail -c 13)"
+		ar="$(spi-test -s 50000 -OHC -D /dev/spidev1.0 0x80,3,0,0,0,0,0,0 | tail -c 13)"
                 if [ "x$ar" = "x00 30 A0 01" ] ; then
 			good_ports=$good_ports" $p"
 		else
@@ -40,11 +40,11 @@ do_start() {
 			i2cset -y 2 0x71 1 $((p+1))
 			for c in 0 1 2 3 ; do
 				cmd=$(printf "0x84,0x%02X,0,0" $c)
-				spi-test -OHC -D /dev/spidev1.0 $cmd >/dev/null
+				spi-test -s 50000 -OHC -D /dev/spidev1.0 $cmd >/dev/null
 				cmd=$(printf "0x86,0x%02X,0x01,0xD1" $c)
-				spi-test -OHC -D /dev/spidev1.0 $cmd >/dev/null
+				spi-test -s 50000 -OHC -D /dev/spidev1.0 $cmd >/dev/null
 				cmd=$(printf "0x85,0x%02X,0,0" $c)
-				spi-test -OHC -D /dev/spidev1.0 $cmd >/dev/null
+				spi-test -s 50000 -OHC -D /dev/spidev1.0 $cmd >/dev/null
 			done
 			
 			# re-enable all cores
@@ -62,7 +62,7 @@ do_start() {
 			i2cset -y 2 0x71 1 $((p+1))
 			for c in 0 1 2 3 ; do
 				cmd=$(printf "0x84,0x%02X,0,0" $c)
-				spi-test -OHC -D /dev/spidev1.0 $cmd >/dev/null
+				spi-test -s 50000 -OHC -D /dev/spidev1.0 $cmd >/dev/null
 			done
 			
 			# disable all cores
