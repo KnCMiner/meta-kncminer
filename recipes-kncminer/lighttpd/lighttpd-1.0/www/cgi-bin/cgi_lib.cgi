@@ -8,7 +8,7 @@ show_msg ()
     if [ "$2" = "" ] ; then
 	return_page="$HTTP_REFERER"
     else
-	return_page="http://$SERVER_NAME/$2"
+	return_page="http://$SERVER_NAME$2"
     fi
     if [ "$3" = "" ] ; then
 	delay_time=1000

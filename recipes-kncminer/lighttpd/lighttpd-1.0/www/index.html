@@ -1,11 +1,30 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 <head>
-	<title>Miner</title>
+	<title>KnCMiner - Status</title>
 	<meta charset="UTF-8" />
 	<link href="/style.css" rel="stylesheet" type="text/css">
 	<link href="/grid.css" rel="stylesheet" type="text/css">
 	<link href="/type/type.css" rel="stylesheet" type="text/css">
+	<script src="/jquery-1.10.2.js"></script>
+
+	<script type="text/javascript">
+	  $(document).ready(function() {
+	    var requesting=false;
+	    var initialized=false;
+
+	    if (!initialized) { 
+	      $('#resultWrapper').load( "/cgi-bin/fetch_mining_stat.cgi #result");
+	      initialized = true;
+	    }
+	    var int=self.setInterval(function(){
+	      if (!requesting) {
+	        requesting=true;
+	        $('#resultWrapper').load( "/cgi-bin/fetch_mining_stat.cgi #result", function(){requesting=false;} );
+	      }
+	    },5000);
+	  });
+	</script>
 </head>
 
 <body>
@@ -16,7 +35,7 @@
 			</div>
 			<nav class="section box">
 				<div id="sub_nav" class="span_12_of_12">
-					<a href="/index.html" class="active">Status</a>
+					<a href="/" class="active">Status</a>
 					<a href="/miner_setting.html">Mining</a>
 					<a href="/cgi-bin/get_network_conf.cgi">Networking</a>
 					<a href="/cgi-bin/get_services_conf.cgi">Services</a>
@@ -36,23 +55,11 @@
 			</div>
 		</div>
 		<div class="section">
-			<div class="span_12_of_12">
-				<div class="xbox news">
-				</div>
+			<div class="xbox">
+			     <div id="resultWrapper"></div>
+			     <div class="section"></div>
 			</div>
 		</div>
 	</div>
-
-  <form name="HiddenForm" method="POST" action="/cgi-bin/get_status.cgi">
-    <input type="hidden" name="ThisPageURL" value="">
-    <input type="hidden" name="TimeZoneOffset" value="">
-  </form>	
-  <script type="text/javascript" language="JavaScript">
-    document.HiddenForm.ThisPageURL.value = document.URL;
-    var visitortime = new Date();
-    document.HiddenForm.TimeZoneOffset.value = visitortime.getTimezoneOffset();
-    document.HiddenForm.submit();
-  </script>
 </body>
 </html>
-

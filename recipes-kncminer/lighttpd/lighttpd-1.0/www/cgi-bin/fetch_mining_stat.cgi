@@ -1,11 +1,12 @@
 #!/bin/sh
 #set -x
 
+asic_status="<table border=\"1\">"
+
 asic_stat_file=/var/run/stats.knc
 if [ -f $asic_stat_file ] ; then
     i=1
     
-    asic_status="<table border=\"1\">"
     OIFS=$IFS
     IFS="="
     while read status ; do
@@ -22,8 +23,13 @@ if [ -f $asic_stat_file ] ; then
 	
     done <  $asic_stat_file
     IFS=$OIFS
+else
+    for line in 1 2 3 4 5 6 ; do
+	asic_status="${asic_status}<tr><td>ASIC slot #$i</td><td>-</td></tr>"
+    done
 fi
 
+asic_status="${asic_status}</table>"
 
 killall -0 cgminer 2&> /dev/null
 if [ $? = 0 ] ; then
