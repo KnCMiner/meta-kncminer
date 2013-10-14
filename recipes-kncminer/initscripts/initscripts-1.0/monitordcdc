@@ -108,11 +108,7 @@ while true; do
 				continue
 			fi
 			failed=1
-			break
 		done
-		if [ $failed ]; then
-			break
-		fi
 	done
 
 	if [ $failed ]; then
