@@ -116,7 +116,47 @@ button:active {
 	top:1px;
 }
 
+/************************
+FOR MINING PAGE
+*************************/
+.del-btn, #addBtn {
+	float: right;
+	margin-top: 0px;
+}
 
+.factoryDefaultBtn {
+	float: right;
+}
+
+#pools {
+	clear:both;
+}
+
+.pool-form {
+	padding: 8px;
+	margin: 8px 0;
+	background-color: rgba(0,0,0,0.1);
+		
+}
+
+/* Note: This affects labels on all pages */
+.box label {
+	display: inline-block;
+	margin-right: 10px;
+	width: 190px;
+}
+
+button[disabled=disabled], button:hover[disabled=disabled], button:active[disabled=disabled] {
+	-moz-box-shadow: inset 0px 1px 0px 0px #c0c0c0;
+	-webkit-box-shadow: inset 0px 1px 0px 0px #c0c0c0;
+	box-shadow: inset 0px 1px 0px 0px #c0c0c0;
+	background: -webkit-gradient( linear, left top, left bottom, color-stop(0.05, #cfcfcf), color-stop(1, #8e8e8e) );
+	background: -moz-linear-gradient( center top, #cfcfcf 5%, #8e8e8e 100% );
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#cfcfcf', endColorstr='#8e8e8e');
+	background-color: #cfcfcf;
+	border: 1px solid #afafaf;
+
+}
 
 
 

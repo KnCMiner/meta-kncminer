@@ -1,14 +1,18 @@
-<div id="result">
-  <p>
-    <span>CGMiner Status: </span><span>#%#Status#%#</span><br>
-    <span>Last Checked: </span><span>#%#time#%#</span><br>
-    <span>Hash Rate: </span><span>#%#hashrate#%#</span><br>
-    <span>Accepted Shares: </span><span>#%#accepted#%#</span><br>
-    <span>Rejected Shares: </span><span>#%#rejected#%#</span><br>
-  </p>
-  <p>
-    HW Status:<br>
+<div id="result" class="section">
+  <div class="col span_6_of_12">
+    <h4>Mining Status</h4>
+    <table border="1">
+      <tr><td>CGMiner Status</td><td>#%#Status#%#</td></tr>
+      <tr><td>Last Checked</td><td>#%#time#%#</td></tr>
+      <tr><td>Avg. Hash Rate</td><td>#%#hashrate#%#</td></tr>
+      <tr><td>Accepted Shares</td><td>#%#accepted#%#</td></tr>
+      <tr><td>Rejected Shares</td><td>#%#rejected#%#</td></tr>
+    </table>
+  </div>
+  
+  <div class="col span_6_of_12">
+    <h4>HW Status</h4>
     #%#ASIC_STATUS#%#
-  </p>
+  </div>		
 </div>
 

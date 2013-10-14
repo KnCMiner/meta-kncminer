@@ -6,7 +6,6 @@
 	<link href="/style.css" rel="stylesheet" type="text/css">
 	<link href="/grid.css" rel="stylesheet" type="text/css">
 	<link href="/type/type.css" rel="stylesheet" type="text/css">
-<!--	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
 	<script src="/jquery-1.10.2.js"></script>
 
 	<script type="text/javascript">
@@ -37,7 +36,7 @@
 			<nav class="section box">
 				<div id="sub_nav" class="span_12_of_12">
 					<a href="/index.html" class="active">Status</a>
-					<a href="/cgi-bin/get_miner_conf.cgi">Mining</a>
+					<a href="/miner_setting.html">Mining</a>
 					<a href="/cgi-bin/get_network_conf.cgi">Networking</a>
 					<a href="/cgi-bin/get_services_conf.cgi">Services</a>
 					<a href="/security_management.html">Security</a>
@@ -56,14 +55,11 @@
 			</div>
 		</div>
 		<div class="section">
-			<div class="span_12_of_12">
-				<div class="xbox news">
-					<div id="resultWrapper">
-					</div>
-				</div>
+			<div class="xbox">
+			     <div id="resultWrapper"></div>
+			     <div class="section"></div>
 			</div>
 		</div>
 	</div>
-
 </body>
 </html>

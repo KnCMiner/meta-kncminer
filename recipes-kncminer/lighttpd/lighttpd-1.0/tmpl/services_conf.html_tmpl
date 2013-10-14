@@ -17,7 +17,7 @@
 			<nav class="section box">
 				<div id="sub_nav" class="span_12_of_12">
 					<a href="/index.html">Status</a>
-					<a href="/cgi-bin/get_miner_conf.cgi">Mining</a>
+					<a href="/miner_setting.html">Mining</a>
 					<a href="/cgi-bin/get_network_conf.cgi">Networking</a>
 					<a href="/cgi-bin/get_services_conf.cgi" class="active">Services</a>
 					<a href="/security_management.html" >Security</a>
