@@ -63,11 +63,11 @@ if [ "`echo $proc_running | grep Running`" != "" ] ; then
 	if [ "$1" = "When" ] ; then
 	    probe_time=`date -d @"$2"`
 	elif [ "$1" = "MHS av" ] ; then
-	    hashrate=$2
-	elif [ "$1" = "Accepted" ] ; then
-	    accepted=$2
-	elif [ "$1" = "Rejected" ] ; then
-	    rejected=$2
+            hashrate="`expr ${2/.*} / 1000` Gh/s"
+	elif [ "$1" = "Work Utility" ] ; then
+	    work_utility=${2/.*}
+	elif [ "$1" = "Difficulty Accepted" ] ; then
+	    difficulty_accepted=${2/.*}
 	fi
     done
 fi
@@ -75,7 +75,7 @@ fi
 sed '
 s/#%#Status#%#/'"$proc_running"'/g
 s/#%#time#%#/'"$probe_time"'/g
-s/#%#hashrate#%#/'"$hashrate"'/g
-s/#%#accepted#%#/'"$accepted"'/g
-s/#%#rejected#%#/'"$rejected"'/g
+s!#%#hashrate#%#!'"$hashrate"'!g
+s/#%#workUtility#%#/'"$work_utility"'/g
+s/#%#difficultyAccepted#%#/'"$difficulty_accepted"'/g
 s!#%#ASIC_STATUS#%#!'"$asic_status"'!g' < /www/tmpl/mining_stat.html_tmpl

@@ -5,8 +5,8 @@
       <tr><td>CGMiner Status</td><td>#%#Status#%#</td></tr>
       <tr><td>Last Checked</td><td>#%#time#%#</td></tr>
       <tr><td>Avg. Hash Rate</td><td>#%#hashrate#%#</td></tr>
-      <tr><td>Accepted Shares</td><td>#%#accepted#%#</td></tr>
-      <tr><td>Rejected Shares</td><td>#%#rejected#%#</td></tr>
+      <tr><td>WU</td><td>#%#workUtility#%#</td></tr>
+      <tr><td>Difficulty Accepted</td><td>#%#difficultyAccepted#%#</td></tr>
     </table>
   </div>
   
