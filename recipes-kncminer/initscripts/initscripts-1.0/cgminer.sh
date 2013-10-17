@@ -26,8 +26,25 @@ do_start() {
 
 	for p in 0 1 2 3 4 5 ; do
 		i2cset -y 2 0x71 1 $((p+1))
+		good_flag=0
 		ar="$(spi-test -s 50000 -OHC -D /dev/spidev1.0 0x80,3,0,0,0,0,0,0 | tail -c 13)"
                 if [ "x$ar" = "x00 30 A0 01" ] ; then
+			good_flag=1
+		fi
+		ar="$(spi-test -s 50000 -OHC -D /dev/spidev1.0 0x80,2,0,0,0,0,0,0 | tail -c 13)"
+                if [ "x$ar" = "x00 30 A0 01" ] ; then
+			good_flag=1
+		fi
+		ar="$(spi-test -s 50000 -OHC -D /dev/spidev1.0 0x80,1,0,0,0,0,0,0 | tail -c 13)"
+                if [ "x$ar" = "x00 30 A0 01" ] ; then
+			good_flag=1
+		fi
+		ar="$(spi-test -s 50000 -OHC -D /dev/spidev1.0 0x80,0,0,0,0,0,0,0 | tail -c 13)"
+                if [ "x$ar" = "x00 30 A0 01" ] ; then
+			good_flag=1
+		fi
+
+		if [ "$good_flag" = "1" ] ; then
 			good_ports=$good_ports" $p"
 		else
 			bad_ports=$bad_ports" $p"
