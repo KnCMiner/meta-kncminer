@@ -24,6 +24,7 @@ IMAGE_INSTALL = " \
 	ntpdate \
 	netbase \
 	avahi \
+	led-blink \
 "
 
 inherit image

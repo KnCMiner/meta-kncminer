@@ -6,9 +6,79 @@
 	<link href="/style.css" rel="stylesheet" type="text/css">
 	<link href="/grid.css" rel="stylesheet" type="text/css">
 	<link href="/type/type.css" rel="stylesheet" type="text/css">
+	<script src="/jquery-1.10.2.js"></script>
+	<script src="/json2.min.js"></script>
+	<script>
+		function renderServicesSettnings() {
+			var timer_running=false;
+			$('#ssh_on').prop('checked', config.ssh_on || false);
+			$('#light_on').prop('checked', config.light_on || false);
+
+			if(config.time_left > 0) {
+				if(!timer_running) {
+					timer_running=true;
+					var int=self.setTimeout(function(){
+						config.light_on = false;
+						submitAndGetConfig(); 
+						timer_running=false;
+					}, config.time_left * 1000);
+				}
+			}
+
+		}
+
+		function submitAndGetConfig(doReset) {
+			var reqParamStr;
+			if (doReset) {
+				reqParamStr = config;
+			} else {
+				reqParamStr = JSON.stringify(config, undefined, 2);
+			}
+			
+			var jqxhr = $.post("/cgi-bin/fetch_services_conf.cgi", reqParamStr, function(configStr) {
+				try
+				{
+					config = JSON.parse(configStr);
+					renderServicesSettnings();
+				}
+				catch(err)
+				{
+					alert('Fetch services configuration failed.');
+				}
+			}, "text");
+			jqxhr
+				.fail(function() {
+					alert('Ajax Error: ' + config);
+				});
+		}
+
+		function createConfig() {
+			config["ssh_on"] = $('#ssh_on').prop('checked');	
+			config["light_on"] = $('#light_on').prop('checked');	
+		}		
+		
+		function submitConfig() {
+			createConfig();
+			submitAndGetConfig();
+		}
+
+		$(document).ready(function() {
+			
+			config = null;
+			submitAndGetConfig();
+
+			// Wire up event handlers
+			$('#servicesConfig').on('change keydown', function() {
+				//e.preventDefault();
+				submitConfig(); 
+			});
+		});
+	</script>
 </head>
 
 <body>
+  <form action="#">
+    <input name="servicesConfig" type="hidden"/>
 	<div id="wrapper">
 		<header>
 			<div id="logo" class="col span_6_of_12">
@@ -18,7 +88,7 @@
 				<div id="sub_nav" class="span_12_of_12">
 					<a href="/">Status</a>
 					<a href="/miner_setting.html">Mining</a>
-					<a href="/network_setting.html">Networking</a>
+					<a href="/cgi-bin/get_network_conf.cgi">Networking</a>
 					<a href="/services_conf.html" class="active">Services</a>
 					<a href="/security_management.html" >Security</a>
 					<a href="/firmware_upgrade.html">Upgrade</a>
@@ -40,19 +110,13 @@
 		</div>
 		<div class="section">
 			<div class="span_12_of_12">
-				<div class="xbox news">
-					<form action="/cgi-bin/config_ssh.cgi" class="span_12_of_12">
-						<div class="box">
-							<div class="inline"><input type="radio" name="ssh_on" id="ssh_on" value="0"><label for="ssh_on">SSH Enabled</label></div>
-							<div class="inline"><input type="radio" name="ssh_on" id="ssh_off" value="1"><label for="ssh_off">SSH Disable</label></div>
-						</div>
-						<button type="submit" class="btn btn-lg btn-primary">Apply</button>
-						
-					</form>
+				<div id="servicesConfig" class="xbox news">
+				  <div class="inline"><input type="checkbox" name="ssh_on" id="ssh_on"><label for="ssh_on">Enable SSH</label></div><br>
+				  <div class="inline"><input type="checkbox" name="light_on" id="light_on"><label for="light_on">Find my Miner</label></div>
 				</div>
 			</div>
 		</div>
 	</div>
-
+  </form>
 </body>
 </html>
