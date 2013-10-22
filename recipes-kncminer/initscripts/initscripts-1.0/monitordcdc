@@ -111,9 +111,6 @@ while true; do
 		done
 	done
 
-	if [ $failed ]; then
-		/etc/init.d/cgminer.sh restart
-	fi
 	sleep 60
 done
 
