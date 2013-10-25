@@ -7,7 +7,7 @@ DEPENDS = "ncurses curl"
 SRCREV = "v3.4.0-knc-0.96.1"
 PV = "${SRCREV}"
 
-SRC_URI = "https://github.com/KnCMiner/cgminer.git;branch=knc-spi-fpga"
+SRC_URI = "git://github.com/KnCMiner/cgminer.git;protocol=https;branch=knc-spi-fpga"
 
 S = "${WORKDIR}/git"
 
