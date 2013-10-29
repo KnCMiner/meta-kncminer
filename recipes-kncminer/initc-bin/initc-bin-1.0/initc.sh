@@ -35,28 +35,6 @@ echo low > /sys/class/gpio/gpio71/direction
 echo Starting initc
 cd /usr/bin
 
-if [[ ! -f /config/asic_test ]] ; then
-	exit_code=252
-	i=0
-	while [ $exit_code -eq 252 ] ; do
-		echo low > /sys/class/gpio/gpio49/direction # !pwr_en
-		echo low > /sys/class/gpio/gpio76/direction # reset
-		sleep 1
-		echo high > /sys/class/gpio/gpio76/direction # !reset
-		./inita
-		exit_code=$?
-		i=$((i+1))
-		if [[ $i -gt 10 ]] ; then
-			break
-		fi
-	done
-	if [[ $exit_code = 0 ]] ; then
-		for b in 0 1 2 3 4 5 ; do
-			./asic_test $b 1 >> /config/asic_test
-		done
-	fi
-fi
-
 exit_code=252
 i=0
 while [ $exit_code -eq 252 ] ; do
@@ -64,7 +42,7 @@ while [ $exit_code -eq 252 ] ; do
         echo low > /sys/class/gpio/gpio76/direction # reset
         sleep 1
         echo high > /sys/class/gpio/gpio76/direction # !reset
-        ./initc
+        ./initc.high
         exit_code=$?
         i=$((i+1))
         if [[ $i -gt 10 ]] ; then
