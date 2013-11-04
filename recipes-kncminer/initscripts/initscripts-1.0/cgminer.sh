@@ -98,6 +98,9 @@ do_start() {
 	# Enable SPI poller
 	i2cset -y 2 0x71 2 $spi_ena
 
+	/usr/bin/wa3.3v 1
+	usleep 300000
+
         start-stop-daemon -b -S -x screen -- -S cgminer -t cgminer -m -d "$DAEMON" --default-config /config/cgminer.conf
 }
 

@@ -3,8 +3,11 @@
 TMP_FILE="/tmp/stat_tmp"
 STAT_FILE="/var/run/stats.knc"
 
-INTERVAL=15
-THRESHOLD=10
+INTERVAL=5
+THRESHOLD=3
+
+/usr/bin/wa3.3v 1
+usleep 300000
 
 for channel in 0 1 2 3 4 5 ; do
 	for d in 0 1 2 3 ; do
@@ -26,9 +29,19 @@ for channel in 0 1 2 3 4 5 ; do
 			echo 0 > /var/run/die${channel}${d}
 		fi
 	done
+
+	# Give them a kick!
+	i2cset -y 2 0x2$channel 0xe5 0 >/dev/null 2>&1
+	usleep 300000
+	i2cset -y 2 0x2$channel 0xe5 1 >/dev/null 2>&1
+	usleep 300000
+	i2cset -y 2 0x2$channel 0xe5 2 >/dev/null 2>&1
+	usleep 300000
+	i2cset -y 2 0x2$channel 0xe5 3 >/dev/null 2>&1 
 done
 echo 0 > /var/run/tm
 
+sum_failed_4=0
 while true; do
 	echo > $TMP_FILE
 	for channel in 0 1 2 3 4 5; do
@@ -79,14 +92,20 @@ while true; do
 	tm=$((tm+1))
 	if [ $tm -lt $INTERVAL ] ; then
 		echo $tm > /var/run/tm
-		sleep 60
+		sleep 4
 		continue
 	fi
 	echo 0 > /var/run/tm
 
-	failed=
+	sum_failed=0
+	sum_all=0
 	for channel in 0 1 2 3 4 5; do
 		bus=$((channel+3))
+		failed0=0
+		failed_non0=0
+		failed1=0
+		failed2=0
+		failed3=0
 		for q in 0 1 2 3; do
                         cnt=$(cat /var/run/die${channel}${q} 2>/dev/null)
                         if [ -z "$cnt" ] ; then
@@ -96,21 +115,70 @@ while true; do
 				echo 1000 > /var/run/die${channel}${q}
 				continue
                         fi
+                        sum_all=$(( sum_all + 1 ))
 			echo 0 > /var/run/die${channel}${q}
                         if [ $cnt -le $THRESHOLD ] ; then
 				continue
                         fi
                         d=$((q*2))
-                        if [ $d = 6 ] ; then
+                        if [ "$d" = "6" ] ; then
 				d=7
                         fi
 			if [ "`i2cget -y $bus 0x1$d 0x8c w | cut -c3-4`" != e0 ]; then
 				continue
 			fi
-			failed=1
+			# Die failed
+			if [ "$q" = "0" ] ; then
+				failed0=1
+			fi
+			if [ "$q" = "1" ] ; then
+				failed_non0=1
+				failed1=1
+			fi
+			if [ "$q" = "2" ] ; then
+				failed_non0=1
+				failed2=1
+			fi
+			if [ "$q" = "3" ] ; then
+				failed_non0=1
+				failed3=1
+			fi
 		done
+		# restart die
+		if [ "$failed0" = "1" ] ; then
+			if [ "$failed_non0" = "1" ] ; then
+				i2cset -y 2 0x2$channel 0xe5 0
+			fi
+		fi
+		if [ "$failed1" = "1" ] ; then
+			i2cset -y 2 0x2$channel 0xe5 1
+		fi
+		if [ "$failed2" = "1" ] ; then
+			i2cset -y 2 0x2$channel 0xe5 2
+		fi
+		if [ "$failed3" = "1" ] ; then
+			i2cset -y 2 0x2$channel 0xe5 3
+		fi
+		sum_failed=$(( sum_failed + failed0 + failed1 + failed2 + failed3 ))
 	done
 
-	sleep 60
-done
+	a=$((sum_failed * 4))
+	b=$((sum_all * 3))
+	if [ $a -gt $b ] ; then
+		if [ $sum_failed -lt $sum_all ] ; then
+			sum_failed_4=$(( sum_failed_4 + 1 ))
+			if [ $sum_failed_4 -gt 4 ] ; then
+				/usr/bin/wa3.3v 0
+			fi
+		fi
+	else
+		sum_failed_4=0
+	fi
 
+	sleep 4
+
+	a="$(ps | grep cgminer | grep -v 'grep cgminer')"
+	if [ -z "$a" ] ; then
+		/etc/init.d/cgminer.sh restart
+	fi
+done
