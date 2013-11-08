@@ -26,17 +26,14 @@
 			poolForm.append('<input type="button" value="delete" class="del-btn"></input>');
 			poolForm.append('<label>Pool url</label>');
 			$('<input type="text" name="url"/>')
-				//.first()
 				.val(pool.url)
 				.appendTo(poolForm);
 			poolForm.append('<br /><label>Account</label>');
 			$('<input type="text" name="user"/>')
-				//.first()
 				.val(pool.user)
 				.appendTo(poolForm);
 			poolForm.append('<br /><label>Password</label>');
 			$('<input type="text" name="pass"/>')
-				//.first()
 				.val(pool.pass)
 				.appendTo(poolForm);
 			$('#pools').append(poolwrapper);
@@ -96,7 +93,6 @@
 				});
 		}
 		
-		
 		function createConfig() {
 			config.pools = [];
 			$('#pools').children().each(function(index, element) {
@@ -130,23 +126,45 @@
 				}
 			}
 		}
+
+		function setRestartMode(restart) {
+			if (!restartMode) {
+				if (restart) {
+					restartMode = true;
+					$("#restartCGMinerBtn").attr('disabled', 'disabled');
+					$("#manualRestartCGMinerBtn").attr('disabled', 'disabled');
+					var int=self.setTimeout(function(){
+						$("#restartCGMinerBtn").removeAttr('disabled');
+						$("#manualRestartCGMinerBtn").removeAttr('disabled');
+						restartMode = false;
+					}, 5000);
+				}
+				else {
+					$("#restartCGMinerBtn").removeAttr('disabled');
+					$("#manualRestartCGMinerBtn").removeAttr('disabled');
+				}
+			}
+		}
 		
 		function manualMode() {
 			$('#configSettings').hide();
 			$('#configManualSettings').show();
 			$('#manualText').change();
+			setRestartMode(false);
 		}
 		
 		function normalMode() {
 			$('#configSettings').show();
 			$('#configManualSettings').hide();
+			setRestartMode(false);
 		}
 		
 		$(document).ready(function() {
 			
 			config = null;
 			editMode = false;
-			
+			restartMode = false;
+			setRestartMode(false);
 			submitAndGetConfig();
 			
 			$('#configManualSettings').hide();
@@ -174,9 +192,15 @@
 			});
 			
 
-			$('.restartCGMinerBtn').click(function(e) {
+			$('#restartCGMinerBtn').click(function(e) {
 				e.preventDefault();
-				normalMode();
+				setRestartMode(true);
+				submitAndGetConfig(true, "RestartCGMiner"); 
+			});
+
+			$('#manualRestartCGMinerBtn').click(function(e) {
+				e.preventDefault();
+				setRestartMode(true);
 				submitAndGetConfig(true, "RestartCGMiner"); 
 			});
 
@@ -213,10 +237,8 @@
 </head>
 
 <body>
-	<form action="#">
-        <input name="configAsJson" type="hidden"/>
-        <div id="wrapper">
-            <header>
+	<div id="wrapper">
+		<header>
                 <div id="logo" class="col span_6_of_12">
                     <img src="/images/logo.png" alt="KnCMiner logo">
                 </div>
@@ -255,7 +277,7 @@
                         <div class="form-actions">
                           <button id="gotoManualModeBtn" type="button">Manual edit mode</button>
                           <button id="saveBtn" type="button" disabled="disabled">Save changes</button>
-                          <button class="restartCGMinerBtn" type="button">Restart CGMiner</button>
+                          <button id="restartCGMinerBtn" type="button" disabled="disabled">Restart CGMiner</button>
                           <button class="factoryDefaultBtn" type="button">Reset to Factory Defaults</button>
                         </div>
                     </div>
@@ -274,7 +296,7 @@
                         <div class="form-actions col span_12_of_12">
                           <button id="gotoNormalModeBtn" type="button" disabled="disabled">Normal edit mode</button>
                           <button id="manualSaveBtn" type="button" disabled="disabled">Save changes</button>
-                          <button class="restartCGMinerBtn" type="button">Restart CGMiner</button>
+                          <button id="manualRestartCGMinerBtn" type="button" disabled="disabled">Restart CGMiner</button>
                           <button class="factoryDefaultBtn" type="button">Reset to Factory Defaults</button>
                         </div>
                         <div class="section"></div>
@@ -282,7 +304,5 @@
                 </div>
             </div>
         </div>
-	</form>
-
 </body>
 </html>
