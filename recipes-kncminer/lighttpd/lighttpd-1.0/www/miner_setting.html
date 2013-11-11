@@ -96,7 +96,7 @@
 		function createConfig() {
 			config.pools = [];
 			$('#pools').children().each(function(index, element) {
-                                var el = $(element);
+				var el = $(element);
 				var newPool = {
 					url: el.find('input[name="url"]').val(),	
 					user: el.find('input[name="user"]').val(),	
@@ -120,9 +120,11 @@
 				if (editing) {
 					editMode = true;
 					$("#saveBtn").removeAttr('disabled');
+					$("#manualSaveBtn").removeAttr('disabled');
 				} else {
 					editMode = false;
 					$("#saveBtn").attr('disabled', 'disabled');
+					$("#manualSaveBtn").attr('disabled', 'disabled');
 				}
 			}
 		}
@@ -149,7 +151,7 @@
 		function manualMode() {
 			$('#configSettings').hide();
 			$('#configManualSettings').show();
-			$('#manualText').change();
+			$('#gotoNormalModeBtn').removeAttr('disabled');
 			setRestartMode(false);
 		}
 		
@@ -185,12 +187,16 @@
 				submitConfig(); 
 			});
 			
+			$('#manualSaveBtn').click(function(e) {
+				e.preventDefault();
+				submitAndGetConfig();
+			});
+			
 			$('.factoryDefaultBtn').click(function(e) {
 				e.preventDefault();
 				normalMode();
 				submitAndGetConfig(true, "FactoryDefault");
 			});
-			
 
 			$('#restartCGMinerBtn').click(function(e) {
 				e.preventDefault();
@@ -212,6 +218,7 @@
 					$('#saveBtn').removeAttr('disabled');
 					$('#manualSaveBtn').removeAttr('disabled');
 					$('#gotoNormalModeBtn').removeAttr('disabled');
+					setEditMode(true);
 				}
 				catch(err)
 				{
