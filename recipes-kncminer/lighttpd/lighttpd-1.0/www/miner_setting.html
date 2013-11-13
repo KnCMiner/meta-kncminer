@@ -15,7 +15,12 @@
 			$.each(pools, function(i, pool) {
 				renderPoolForm(pool);
 			});
-			$('#api_mgmt_on').prop('checked', config['api-listen'] || false);
+
+			if(config['api-network'] == false) {
+				delete config["api-network"];
+				submitAndGetConfig();
+			}
+
 			$('#r_mgmt_on').prop('checked', config['api-network'] || false);
 			refreshDelPoolVisibility();
 		}
@@ -92,7 +97,7 @@
 					manualMode();
 					alert('Invalid CGMiner configuration file. Edit manually or reset to default.');
 				}
-			}, "text");
+			}, "text");				
 			jqxhr
 				.fail(function() {
 					alert('Ajax Error');
@@ -119,10 +124,14 @@
 					}
 				}
 				config.pools.push(newPool);
-		        });
+			});
 			
-			config["api-listen"] = $('#api_mgmt_on').prop('checked');	
-			config["api-network"] = $('#r_mgmt_on').prop('checked');	
+			config["api-listen"] = true;
+			if ($('#r_mgmt_on').prop('checked')) {
+				config["api-network"] = true;
+			} else {
+				delete config["api-network"];
+			}
 		}
 		
 		
@@ -295,7 +304,6 @@
                         <button id="addBtn">Add pool</button>
                         <h1>Pools</h1>
                         <div id="pools" class="box"></div>
-                        <div class="inline"><input type="checkbox" name="api_mgmt_on" id="api_mgmt_on"><label for="api_mgmt_on">CGMiner API Enabled</label></div>
                         <div class="inline"><input type="checkbox" name="r_mgmt_on" id="r_mgmt_on"><label for="r_mgmt_on">CGMiner Remote Management Enabled</label></div>
                         <div class="form-actions">
                           <button id="gotoManualModeBtn" type="button">Manual edit mode</button>
