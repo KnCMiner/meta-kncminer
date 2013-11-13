@@ -33,16 +33,15 @@ if [ "$input" != "null" ] ; then
 	    create_dummy_conf_file
 	fi
     elif [ "$input" = "RestartCGMiner" ] ; then
-	/etc/init.d/cgminer.sh stop > /dev/null
-        /etc/init.d/cgminer.sh start > /dev/null
+	/etc/init.d/cgminer.sh restart > /dev/null
     else
 #	/usr/bin/validJson "$input" >/dev/null
 #	echo a > /dev/null
 #	if [ $? -eq 0 ] ; then 
 #	    echo "$input" > /config/cgminer.conf
 #	fi
-	# Perhaps this nees to be re validated as proper JSON,
-	# even though the web form will nor allow to save
+	# Perhaps this needs to be re-validated as proper JSON,
+	# even though the web form will not allow to save
 	# if JSON is bad
 	echo "$input" > /config/cgminer.conf
     fi
