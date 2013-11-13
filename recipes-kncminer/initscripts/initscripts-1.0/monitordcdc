@@ -163,8 +163,7 @@ while true; do
 	done
 
 	a=$((sum_failed * 4))
-	b=$((sum_all * 3))
-	if [ $a -gt $b ] ; then
+	if [ $a -gt $sum_all ] ; then
 		if [ $sum_failed -lt $sum_all ] ; then
 			sum_failed_4=$(( sum_failed_4 + 1 ))
 			if [ $sum_failed_4 -gt 4 ] ; then
