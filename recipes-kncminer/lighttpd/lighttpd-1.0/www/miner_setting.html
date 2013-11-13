@@ -24,9 +24,15 @@
 			var poolwrapper = $('<div class="span_12_of_12 pool"><div class="pool-form"></div></div>');
 			var poolForm = poolwrapper.find('.pool-form');
 			poolForm.append('<input type="button" value="delete" class="del-btn"></input>');
-			poolForm.append('<label>Pool url</label>');
+			poolForm.append('<label>Pool url/qouta</label>');
+			var url;
+			if (typeof(pool.url) == 'undefined') {
+				url = pool.quota;
+			} else {
+				url = pool.url;
+			}
 			$('<input type="text" name="url"/>')
-				.val(pool.url)
+				.val(url)
 				.appendTo(poolForm);
 			poolForm.append('<br /><label>Account</label>');
 			$('<input type="text" name="user"/>')
@@ -97,11 +103,21 @@
 			config.pools = [];
 			$('#pools').children().each(function(index, element) {
 				var el = $(element);
-				var newPool = {
-					url: el.find('input[name="url"]').val(),	
-					user: el.find('input[name="user"]').val(),	
-					pass: el.find('input[name="pass"]').val()	
-				};
+				var newPool; 
+				var url = el.find('input[name="url"]').val();
+				if (url.match && url.match(/^\d+;/)) { // url start with a quota ?
+					newPool = {
+						quota: el.find('input[name="url"]').val(),
+						user: el.find('input[name="user"]').val(),
+						pass: el.find('input[name="pass"]').val()
+					}
+				} else {
+					newPool = {                                         
+						url: el.find('input[name="url"]').val(),
+						user: el.find('input[name="user"]').val(),
+						pass: el.find('input[name="pass"]').val()
+					}
+				}
 				config.pools.push(newPool);
 		        });
 			
