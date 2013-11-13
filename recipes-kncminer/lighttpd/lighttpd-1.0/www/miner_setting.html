@@ -15,7 +15,12 @@
 			$.each(pools, function(i, pool) {
 				renderPoolForm(pool);
 			});
-			$('#api_mgmt_on').prop('checked', config['api-listen'] || false);
+
+			if(config['api-network'] == false) {
+				delete config["api-network"];
+				submitAndGetConfig();
+			}
+
 			$('#r_mgmt_on').prop('checked', config['api-network'] || false);
 			refreshDelPoolVisibility();
 		}
@@ -24,19 +29,22 @@
 			var poolwrapper = $('<div class="span_12_of_12 pool"><div class="pool-form"></div></div>');
 			var poolForm = poolwrapper.find('.pool-form');
 			poolForm.append('<input type="button" value="delete" class="del-btn"></input>');
-			poolForm.append('<label>Pool url</label>');
+			poolForm.append('<label>Pool url/quota</label>');
+			var url;
+			if (typeof(pool.url) == 'undefined') {
+				url = pool.quota;
+			} else {
+				url = pool.url;
+			}
 			$('<input type="text" name="url"/>')
-				//.first()
-				.val(pool.url)
+				.val(url)
 				.appendTo(poolForm);
 			poolForm.append('<br /><label>Account</label>');
 			$('<input type="text" name="user"/>')
-				//.first()
 				.val(pool.user)
 				.appendTo(poolForm);
 			poolForm.append('<br /><label>Password</label>');
 			$('<input type="text" name="pass"/>')
-				//.first()
 				.val(pool.pass)
 				.appendTo(poolForm);
 			$('#pools').append(poolwrapper);
@@ -89,28 +97,41 @@
 					manualMode();
 					alert('Invalid CGMiner configuration file. Edit manually or reset to default.');
 				}
-			}, "text");
+			}, "text");				
 			jqxhr
 				.fail(function() {
 					alert('Ajax Error');
 				});
 		}
 		
-		
 		function createConfig() {
 			config.pools = [];
 			$('#pools').children().each(function(index, element) {
-                                var el = $(element);
-				var newPool = {
-					url: el.find('input[name="url"]').val(),	
-					user: el.find('input[name="user"]').val(),	
-					pass: el.find('input[name="pass"]').val()	
-				};
+				var el = $(element);
+				var newPool; 
+				var url = el.find('input[name="url"]').val();
+				if (url.match && url.match(/^\d+;/)) { // url start with a quota ?
+					newPool = {
+						quota: el.find('input[name="url"]').val(),
+						user: el.find('input[name="user"]').val(),
+						pass: el.find('input[name="pass"]').val()
+					}
+				} else {
+					newPool = {                                         
+						url: el.find('input[name="url"]').val(),
+						user: el.find('input[name="user"]').val(),
+						pass: el.find('input[name="pass"]').val()
+					}
+				}
 				config.pools.push(newPool);
-		        });
+			});
 			
-			config["api-listen"] = $('#api_mgmt_on').prop('checked');	
-			config["api-network"] = $('#r_mgmt_on').prop('checked');	
+			config["api-listen"] = true;
+			if ($('#r_mgmt_on').prop('checked')) {
+				config["api-network"] = true;
+			} else {
+				delete config["api-network"];
+			}
 		}
 		
 		
@@ -124,9 +145,30 @@
 				if (editing) {
 					editMode = true;
 					$("#saveBtn").removeAttr('disabled');
+					$("#manualSaveBtn").removeAttr('disabled');
 				} else {
 					editMode = false;
 					$("#saveBtn").attr('disabled', 'disabled');
+					$("#manualSaveBtn").attr('disabled', 'disabled');
+				}
+			}
+		}
+
+		function setRestartMode(restart) {
+			if (!restartMode) {
+				if (restart) {
+					restartMode = true;
+					$("#restartCGMinerBtn").attr('disabled', 'disabled');
+					$("#manualRestartCGMinerBtn").attr('disabled', 'disabled');
+					var int=self.setTimeout(function(){
+						$("#restartCGMinerBtn").removeAttr('disabled');
+						$("#manualRestartCGMinerBtn").removeAttr('disabled');
+						restartMode = false;
+					}, 5000);
+				}
+				else {
+					$("#restartCGMinerBtn").removeAttr('disabled');
+					$("#manualRestartCGMinerBtn").removeAttr('disabled');
 				}
 			}
 		}
@@ -134,19 +176,22 @@
 		function manualMode() {
 			$('#configSettings').hide();
 			$('#configManualSettings').show();
-			$('#manualText').change();
+			$('#gotoNormalModeBtn').removeAttr('disabled');
+			setRestartMode(false);
 		}
 		
 		function normalMode() {
 			$('#configSettings').show();
 			$('#configManualSettings').hide();
+			setRestartMode(false);
 		}
 		
 		$(document).ready(function() {
 			
 			config = null;
 			editMode = false;
-			
+			restartMode = false;
+			setRestartMode(false);
 			submitAndGetConfig();
 			
 			$('#configManualSettings').hide();
@@ -167,16 +212,26 @@
 				submitConfig(); 
 			});
 			
+			$('#manualSaveBtn').click(function(e) {
+				e.preventDefault();
+				submitAndGetConfig();
+			});
+			
 			$('.factoryDefaultBtn').click(function(e) {
 				e.preventDefault();
 				normalMode();
 				submitAndGetConfig(true, "FactoryDefault");
 			});
-			
 
-			$('.restartCGMinerBtn').click(function(e) {
+			$('#restartCGMinerBtn').click(function(e) {
 				e.preventDefault();
-				normalMode();
+				setRestartMode(true);
+				submitAndGetConfig(true, "RestartCGMiner"); 
+			});
+
+			$('#manualRestartCGMinerBtn').click(function(e) {
+				e.preventDefault();
+				setRestartMode(true);
 				submitAndGetConfig(true, "RestartCGMiner"); 
 			});
 
@@ -188,6 +243,7 @@
 					$('#saveBtn').removeAttr('disabled');
 					$('#manualSaveBtn').removeAttr('disabled');
 					$('#gotoNormalModeBtn').removeAttr('disabled');
+					setEditMode(true);
 				}
 				catch(err)
 				{
@@ -213,10 +269,8 @@
 </head>
 
 <body>
-	<form action="#">
-        <input name="configAsJson" type="hidden"/>
-        <div id="wrapper">
-            <header>
+	<div id="wrapper">
+		<header>
                 <div id="logo" class="col span_6_of_12">
                     <img src="/images/logo.png" alt="KnCMiner logo">
                 </div>
@@ -250,12 +304,11 @@
                         <button id="addBtn">Add pool</button>
                         <h1>Pools</h1>
                         <div id="pools" class="box"></div>
-                        <div class="inline"><input type="checkbox" name="api_mgmt_on" id="api_mgmt_on"><label for="api_mgmt_on">CGMiner API Enabled</label></div>
                         <div class="inline"><input type="checkbox" name="r_mgmt_on" id="r_mgmt_on"><label for="r_mgmt_on">CGMiner Remote Management Enabled</label></div>
                         <div class="form-actions">
                           <button id="gotoManualModeBtn" type="button">Manual edit mode</button>
                           <button id="saveBtn" type="button" disabled="disabled">Save changes</button>
-                          <button class="restartCGMinerBtn" type="button">Restart CGMiner</button>
+                          <button id="restartCGMinerBtn" type="button" disabled="disabled">Restart CGMiner</button>
                           <button class="factoryDefaultBtn" type="button">Reset to Factory Defaults</button>
                         </div>
                     </div>
@@ -274,7 +327,7 @@
                         <div class="form-actions col span_12_of_12">
                           <button id="gotoNormalModeBtn" type="button" disabled="disabled">Normal edit mode</button>
                           <button id="manualSaveBtn" type="button" disabled="disabled">Save changes</button>
-                          <button class="restartCGMinerBtn" type="button">Restart CGMiner</button>
+                          <button id="manualRestartCGMinerBtn" type="button" disabled="disabled">Restart CGMiner</button>
                           <button class="factoryDefaultBtn" type="button">Reset to Factory Defaults</button>
                         </div>
                         <div class="section"></div>
@@ -282,7 +335,5 @@
                 </div>
             </div>
         </div>
-	</form>
-
 </body>
 </html>
