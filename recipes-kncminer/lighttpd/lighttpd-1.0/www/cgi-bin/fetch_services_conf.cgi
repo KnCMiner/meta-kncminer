@@ -7,7 +7,7 @@ led_blink_prog=led-blink
 
 led_blink_run_file=/var/run/led-blink.run
 
-lock_file=/var/run/lighttpd/services.cgi
+lock_file=/var/run/lighttpd_services.cgi
 
 input=`cat /dev/stdin`
 
