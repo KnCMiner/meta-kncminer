@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+	<title>KnCMiner - Advanced</title>
+	<meta charset="UTF-8" />
+	<link href="/style.css" rel="stylesheet" type="text/css">
+	<link href="/grid.css" rel="stylesheet" type="text/css">
+	<link href="/type/type.css" rel="stylesheet" type="text/css">
+	<script src="/jquery-1.10.2.js"></script>
+	<script src="/json2.min.js"></script>
+
+	<script type="text/javascript">
+		function renderTuningParam() {
+			renderSpiVoltDropdown();
+			renderSpiFreqDropdown();
+			renderDieVoltDropdowns();
+			
+			//renderCurrentConfig(true);
+			renderCurrentConfig(false);
+			$('#settings').show();
+		}
+
+		function renderSpiVoltDropdown() {
+			for(var i = 0; i < config.valid_spi_voltages.length; i++) {
+				$('#spiVoltage').append('<option value="' + config.valid_spi_voltages[i] + '">' + config.valid_spi_voltages[i] + ' Volt</option>');
+			}
+		}
+
+		function renderSpiFreqDropdown() {
+			for(var i = 0; i < config.valid_spi_frequencies.length; i++) {
+				$('#spiFrequency').append('<option value="' + config.valid_spi_frequencies[i] + '">' + config.valid_spi_frequencies[i] + ' Hertz</option>');
+			}
+		}
+
+		function renderDieVoltDropdowns()
+		{
+			var selTemplate = $('<select/>');
+			$.each(config.valid_die_voltages, function(i, voltage) {
+				selTemplate.append('<option value="' + voltage + '">' +	voltage + ' Volt</option>');
+			});
+
+			$.each(config.enabled_asics, function(i, asic) {
+				var box = $('<div class="span_12_of_12 pool"><div class="pool-form"></div></div>');
+				var innerBox = box.find('.pool-form');
+				
+				var asicStr = asic.slice(0, 4) + " " + asic.slice(4);
+				innerBox.append('<div class="col span_12_of_12"><h5> ' + asicStr.toUpperCase() + '</h5></div>');
+
+				for(var j = 1; j <= 4; j++) {
+					if(j != 4) {
+						var voltageBox = $('<div class="col span_3_of_12"></div>');
+					} else {
+						var voltageBox = $('<div class="col span_2_of_12"></div>');
+					}
+					voltageBox.append('<h6> die ' + j + '</h6> ');
+					var sel = selTemplate.clone();
+					sel.attr('id', asic + '_dieVoltage' + j);
+					//var asicStrX = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
+					//sel.val(config.current_settings[asicStrX]['die' + j]);
+					voltageBox.append(sel);
+					voltageBox.appendTo(innerBox);
+				}
+				
+				innerBox.appendTo('#asics');
+				innerBox.append('<div style="clear:both"></div>');
+			});
+			
+		}
+		
+		function renderCurrentConfig(initialize) {
+			$('#spiVoltage').val(config.current_settings.spi_voltage);
+			$('#spiFrequency').val(config.current_settings.spi_frequency);
+			if(!initialize){
+				$.each(config.enabled_asics, function(i, asic) {
+					for(var j = 1; j <= 4; j++) {
+						var asicStrX = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
+						$('#' + asic + '_dieVoltage' + j).val(config.current_settings[asicStrX]['die' + j]);
+					}
+				});
+			}
+		}
+
+		function submitAndGetConfig(fetchType) {
+			var reqParamStr;
+			if (fetchType) {
+				reqParamStr = fetchType;
+			} else {
+				reqParamStr = JSON.stringify(config.current_settings, undefined, 2);
+			}
+			
+			var jqxhr = $.post("/cgi-bin/fetch_advanced_settings.cgi", reqParamStr, function(configStr) {
+				try
+				{
+					if(fetchType == 'fetch-advanced-settings-and-ranges') {
+						config = JSON.parse(configStr);
+						renderTuningParam();
+						setEditMode(false);
+					} else {
+						config.current_settings = JSON.parse(configStr); 
+						renderCurrentConfig(false);
+					}
+				}
+				catch(err)
+				{
+					alert('Fetch tuning configuration failed.');
+				}
+			}, "text");
+			jqxhr
+				.fail(function() {
+					alert('Ajax Error: ' + config);
+				});
+		}
+
+		function createConfig() {
+			config.current_settings.spi_voltage = $('#spiVoltage').val();
+			config.current_settings.spi_frequency = $('#spiFrequency').val();	
+
+			$.each(config.enabled_asics, function(i, asic) {
+				for(var j = 1; j <= 4; j++) {
+					var asicStrX = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
+					config.current_settings[asicStrX]['die' + j] = $('#' + asic + '_dieVoltage' + j).val();
+				}
+			});
+		}
+		
+		function submitConfig() {
+			createConfig();
+			submitAndGetConfig();
+		}
+
+		function setEditMode(editing) {
+			if (editing != editMode) {
+				if (editing) {
+					editMode = true;
+					$("#applyBtn").removeAttr('disabled');
+				} else {
+					editMode = false;
+					$("#applyBtn").attr('disabled', 'disabled');
+				}
+			}
+		}
+
+		$(document).ready(function() {
+			config = null;
+			editMode = false;
+			
+			submitAndGetConfig('fetch-advanced-settings-and-ranges');
+
+			$('#settings').hide();
+
+			$('#applyBtn').click(function(e) {
+				e.preventDefault();
+				submitConfig(); 
+				setEditMode(false); 
+			});
+			
+			$('.factoryDefaultBtn').click(function(e) {
+				e.preventDefault();
+				submitAndGetConfig("FactoryDefault");
+			});
+
+			$('#spiVoltage').on('change', function(e) {
+				e.preventDefault();
+				setEditMode(true); 
+			});
+
+			$('#spiFrequency').on('change', function(e) {
+				e.preventDefault();
+				setEditMode(true); 
+			});
+
+			$('#asics').on('change', function(e) {
+				e.preventDefault();
+				setEditMode(true); 
+			});
+
+		});
+
+	</script>
+</head>
+
+<body>
+	<div id="wrapper">
+		<header>
+			<div id="logo" class="col span_6_of_12">
+				<img src="/images/logo.png" alt="KnCMiner logo">
+			</div>
+			<nav class="section box">
+				<div id="sub_nav" class="span_12_of_12">
+					<a href="/">Status</a>
+					<a href="/miner_setting.html">Mining</a>
+					<a href="/cgi-bin/get_network_conf.cgi">Networking</a>
+					<a href="/services_conf.html">Services</a>
+					<a href="/security_management.html">Security</a>
+					<a href="/advanced_settings.html" class="active">Advanced</a>
+					<a href="/firmware_upgrade.html">Upgrade</a>
+				</div>
+			</nav>
+
+		</header>
+		<div id="header" class="section">
+			<div class="span_12_of_12">
+				<div class="xbox box">
+					<div class="span_7_of_12">
+						<h1>Advanced Tuning</h1>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="section">
+			<div class="xbox">
+				<div id="settings" class="span_12_of_12">
+					<div class="col span_2_of_12">
+						<h5> SPI voltage </h5>
+						<select id="spiVoltage"></select>
+					</div>
+					<div class="col span_2_of_12">
+						<h5> SPI Frequency </h5>
+						<select id="spiFrequency"></select>
+					</div>
+				
+					<div class="col span_12_of_12">
+						<div id="asics" class="box"> </div>
+					</div>
+					<div class="section"> </div>
+					<button id="applyBtn" type="button" disabled="disabled">Apply changes</button>
+					<button class="factoryDefaultBtn" type="button">Reset to Factory Defaults</button>
+					<div class="section"> </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

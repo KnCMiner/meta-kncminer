@@ -10,6 +10,7 @@ rm -f /config/lighttpd-htdigest.user
 rm -f /config/shadow
 rm -f /config/shadow.factory
 rm -f /config/network.conf
+rm -f /config/advanced.conf
 
 # restore factory settings
 /etc/init.d/kncminer_setup.sh
