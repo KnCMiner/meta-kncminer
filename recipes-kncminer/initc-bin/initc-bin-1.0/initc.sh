@@ -53,9 +53,10 @@ if [[ $exit_code = 0 ]] ; then
         # Turn OFF red, Turn ON green
         echo high > /sys/class/gpio/gpio70/direction
         echo low > /sys/class/gpio/gpio71/direction
+
+        ./waas
 else
         # Turn ON red, Turn OFF green
         echo low > /sys/class/gpio/gpio70/direction
         echo high > /sys/class/gpio/gpio71/direction
 fi
-

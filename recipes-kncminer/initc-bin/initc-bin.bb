@@ -9,7 +9,7 @@ SRC_URI = "file://initc.high \
         file://spi-test \
         file://asic_test \
         file://inita \
-        file://wa3.3v\
+        file://waas\
 	file://COPYING"
 
 S = "${WORKDIR}"
@@ -22,7 +22,7 @@ do_install() {
         install -m 0755 ${S}/spi-test ${D}${bindir}
         install -m 0755 ${S}/asic_test ${D}${bindir}
         install -m 0755 ${S}/inita ${D}${bindir}
-	install -m 0755 ${S}/wa3.3v ${D}${bindir}
+	install -m 0755 ${S}/waas ${D}${bindir}
 
         install -d ${D}${sysconfdir}/init.d
 	install -m 0755 ${WORKDIR}/initc.sh ${D}${sysconfdir}/init.d
