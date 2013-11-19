@@ -13,7 +13,7 @@
 		function renderTuningParam() {
 			renderSpiVoltDropdown();
 			renderSpiFreqDropdown();
-			renderDieVoltDropdowns();
+			renderAsics();
 			
 			//renderCurrentConfig(true);
 			renderCurrentConfig(false);
@@ -33,7 +33,7 @@
 			}
 		}
 
-		function renderDieVoltDropdowns()
+		function renderAsics()
 		{
 			var selTemplate = $('<select/>');
 			$.each(config.valid_die_voltages, function(i, voltage) {
@@ -123,6 +123,9 @@
 						config = JSON.parse(configStr);
 						renderTuningParam();
 						setEditMode(false);
+					} else if(fetchType == 'get-current-status') {
+						config.current_status = JSON.parse(configStr); 
+						renderCurrentStatus();						
 					} else {
 						config.current_settings = JSON.parse(configStr); 
 						renderCurrentConfig(false);
@@ -201,6 +204,16 @@
 				e.preventDefault();
 				setEditMode(true); 
 			});
+
+		    var requesting=false;
+
+		    var int=self.setInterval(function(){
+				if (!requesting) {
+	    	    	requesting=true;
+					submitAndGetConfig('get-current-status');
+	    	    	requesting=false;
+				}
+			}, 5000);
 
 		});
 
