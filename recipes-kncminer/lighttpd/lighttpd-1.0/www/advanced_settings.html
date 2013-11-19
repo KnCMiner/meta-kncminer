@@ -46,7 +46,7 @@
 				
 				var asicStr = asic.slice(0, 4) + " " + asic.slice(4);
 				innerBox.append('<div class="col span_2_of_12"><h5> ' + asicStr.toUpperCase());
-
+				var asicStrX = asic.slice(0, 4) + "_" + asic.slice(4);
 
 				var voltageBox = $('<div class="col span_4_of_12"></div>');
 				for(var j = 1; j <= 4; j++) {
@@ -63,6 +63,19 @@
 					voltageBox.appendTo(innerBox);
 				}
 
+				var table = $('<table border="1">' + 
+								'<tr><td>DC/DC</td><td>Voltage (V)</td><td>Current (A)</td><td>Power (W)</td></tr>' +
+								'</table>');
+				for(var k = 0; k <=7; k++) {
+					if (config.current_status[asicStrX] != 'temperature') {
+						if(config.current_status[asicStrX]['dcdc' + k + '_Vout'] != "") {
+							table.append('<tr><td>' + k + '</td><td id="' + asic + '_dcdc' + k + 'Voltage"></td><td id="' + asic + '_dcdc' + k + 'Current"></td><td id="' + asic + '_dcdc' + k + 'Power"></td></tr>');
+						}
+					}
+				}
+				table.appendTo(innerBox);
+
+/*
 				innerBox.append('<table border="1">' + 
 								'<tr><td>DC/DC</td><td>Voltage (V)</td><td>Current (A)</td><td>Power (W)</td></tr>' + 
 								'<tr><td>0</td><td id="' + asic + '_dcdc0Voltage"></td><td id="' + asic + '_dcdc0Current"></td><td id="' + asic + '_dcdc0Power"></td></tr>' +
@@ -74,7 +87,7 @@
 								'<tr><td>6</td><td id="' + asic + '_dcdc6Voltage"></td><td id="' + asic + '_dcdc6Current"></td><td id="' + asic + '_dcdc6Power"></td></tr>' +
 								'<tr><td>7</td><td id="' + asic + '_dcdc7Voltage"></td><td id="' + asic + '_dcdc7Current"></td><td id="' + asic + '_dcdc7Power"></td></tr>' +
 								'</table>');
-
+*/
 				innerBox.appendTo('#asics');
 				innerBox.append('<div style="clear:both"></div>');
 			});
