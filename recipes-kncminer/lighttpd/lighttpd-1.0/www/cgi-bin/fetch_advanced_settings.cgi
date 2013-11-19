@@ -73,6 +73,10 @@ fetch_advanced_settings_and_ranges()
     fi
     echo "],"
 	
+    # current status
+    echo "\"current_status\" : "
+    waas -g all-asic-info 
+    echo ","
 
     # current settings
     echo "\"current_settings\" : "
@@ -87,6 +91,8 @@ if [ "$input" = "fetch-advanced-settings-and-ranges" ] ; then
 elif [ "$input" = "FactoryDefault" ] ; then
     rm -f /config/advanced.conf 2&> /dev/null
     get_current_config
+elif [ "$input" = "get-current-status" ] ; then
+    waas -g all-asic-info 
 elif [ "$input" != "null" ] && [ "$input" != "" ] ; then
     echo "$input" > /config/advanced.conf
     # let waas apply settings
