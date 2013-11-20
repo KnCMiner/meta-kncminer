@@ -75,19 +75,6 @@
 				}
 				table.appendTo(innerBox);
 
-/*
-				innerBox.append('<table border="1">' + 
-								'<tr><td>DC/DC</td><td>Voltage (V)</td><td>Current (A)</td><td>Power (W)</td></tr>' + 
-								'<tr><td>0</td><td id="' + asic + '_dcdc0Voltage"></td><td id="' + asic + '_dcdc0Current"></td><td id="' + asic + '_dcdc0Power"></td></tr>' +
-								'<tr><td>1</td><td id="' + asic + '_dcdc1Voltage"></td><td id="' + asic + '_dcdc1Current"></td><td id="' + asic + '_dcdc1Power"></td></tr>' +
-								'<tr><td>2</td><td id="' + asic + '_dcdc2Voltage"></td><td id="' + asic + '_dcdc2Current"></td><td id="' + asic + '_dcdc2Power"></td></tr>' +
-								'<tr><td>3</td><td id="' + asic + '_dcdc3Voltage"></td><td id="' + asic + '_dcdc3Current"></td><td id="' + asic + '_dcdc3Power"></td></tr>' +
-								'<tr><td>4</td><td id="' + asic + '_dcdc4Voltage"></td><td id="' + asic + '_dcdc4Current"></td><td id="' + asic + '_dcdc4Power"></td></tr>' +
-								'<tr><td>5</td><td id="' + asic + '_dcdc5Voltage"></td><td id="' + asic + '_dcdc5Current"></td><td id="' + asic + '_dcdc5Power"></td></tr>' +
-								'<tr><td>6</td><td id="' + asic + '_dcdc6Voltage"></td><td id="' + asic + '_dcdc6Current"></td><td id="' + asic + '_dcdc6Power"></td></tr>' +
-								'<tr><td>7</td><td id="' + asic + '_dcdc7Voltage"></td><td id="' + asic + '_dcdc7Current"></td><td id="' + asic + '_dcdc7Power"></td></tr>' +
-								'</table>');
-*/
 				innerBox.appendTo('#asics');
 				innerBox.append('<div style="clear:both"></div>');
 			});
@@ -111,6 +98,16 @@
 		function renderCurrentConfig(initialize) {
 			$('#spiVoltage').val(config.current_settings.spi_voltage);
 			$('#spiFrequency').val(config.current_settings.spi_frequency);
+			$('#auto_spi_voltage').prop('checked', config.current_settings.auto_spi_voltage || false);
+			
+			if(config.current_settings.auto_spi_voltage) {
+				$("#spiVoltage").attr('disabled', 'disabled');
+				autoSpiVoltage = true;
+			} else {
+				$("#spiVoltage").removeAttr('disabled');
+				autoSpiVoltage = false;
+			}
+			
 			if(!initialize){
 				$.each(config.enabled_asics, function(i, asic) {
 					for(var j = 1; j <= 4; j++) {
@@ -158,6 +155,7 @@
 		function createConfig() {
 			config.current_settings.spi_voltage = $('#spiVoltage').val();
 			config.current_settings.spi_frequency = $('#spiFrequency').val();	
+			config.current_settings["auto_spi_voltage"] = $('#auto_spi_voltage').prop('checked');	
 
 			$.each(config.enabled_asics, function(i, asic) {
 				for(var j = 1; j <= 4; j++) {
@@ -187,6 +185,7 @@
 		$(document).ready(function() {
 			config = null;
 			editMode = false;
+			autoSpiVoltage = false;
 			
 			submitAndGetConfig('fetch-advanced-settings-and-ranges');
 
@@ -205,6 +204,18 @@
 
 			$('#spiVoltage').on('change', function(e) {
 				e.preventDefault();
+				setEditMode(true); 
+			});
+
+			$('#auto_spi_voltage').on('change', function(e) {
+				e.preventDefault();
+				if(autoSpiVoltage) {
+					$("#spiVoltage").removeAttr('disabled');
+					autoSpiVoltage = false;
+				} else {
+					$("#spiVoltage").attr('disabled', 'disabled');
+					autoSpiVoltage = true;
+				}
 				setEditMode(true); 
 			});
 
@@ -264,11 +275,12 @@
 		<div class="section">
 			<div class="xbox">
 				<div id="settings" class="span_12_of_12">
-					<div class="col span_2_of_12">
+					<div class="col span_3_of_12">
 						<h5> SPI voltage </h5>
-						<select id="spiVoltage"></select>
+						<select id="spiVoltage"></select><br>
+						<div class="inline"><input type="checkbox" name="auto_spi_voltage" id="auto_spi_voltage"><label for="auto_spi_voltage">Fix die1 problem</label></div>
 					</div>
-					<div class="col span_2_of_12">
+					<div class="col span_3_of_12">
 						<h5> SPI Frequency </h5>
 						<select id="spiFrequency"></select>
 					</div>
