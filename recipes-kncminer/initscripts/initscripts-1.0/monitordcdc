@@ -2,9 +2,58 @@
 
 TMP_FILE="/tmp/stat_tmp"
 STAT_FILE="/var/run/stats.knc"
+LOG_FILE="/var/log/monitordcdc.log"
 
 INTERVAL=5
 THRESHOLD=3
+
+echo [$(date +"%F %T")] Start >> $LOG_FILE
+
+reset_die() {
+	channel=$1
+	die=$2
+	bus=$((channel+3))
+	dcdc1=$((die*2))
+	dcdc2=$((dcdc1+1))
+
+	# pmbus off
+	i2cset -y $bus 0x1$dcdc1 0x01 0x00 >/dev/null 2>&1
+	usleep 100000
+	i2cset -y $bus 0x1$dcdc2 0x01 0x00 >/dev/null 2>&1
+	usleep 100000
+
+	# clear errors
+	i2cset -y $bus 0x1$dcdc1 0x03 >/dev/null 2>&1
+	usleep 100000
+	i2cset -y $bus 0x1$dcdc2 0x03 >/dev/null 2>&1
+	usleep 100000
+
+	# pmbus on
+	i2cset -y $bus 0x1$dcdc1 0x01 0x80 >/dev/null 2>&1
+	usleep 100000
+	i2cset -y $bus 0x1$dcdc2 0x01 0x80 >/dev/null 2>&1
+	usleep 100000
+
+	# Restart die
+	i2cset -y 2 0x2$channel 0xe5 $die >/dev/null 2>&1
+	usleep 100000
+
+	echo [$(date +"%F %T")] Die $channel-$die restarted >> $LOG_FILE
+}
+
+iout_dcdc() {
+	bus=$1
+	dcdc=$2
+
+	temp=$(i2cget -y $bus 0x1$d 0x8c w)
+	exp=$(( 2**(32 - ((temp >> 11) & 0x1F)) ))
+	mant=$(( temp & 0x7FF ))
+                        if [ $exp -gt 0 ] ; then
+				iout=$((mant/exp))
+                        else
+	                        iout=0
+                        fi
+}
 
 for channel in 0 1 2 3 4 5 ; do
 	for d in 0 1 2 3 ; do
@@ -38,7 +87,6 @@ for channel in 0 1 2 3 4 5 ; do
 done
 echo 0 > /var/run/tm
 
-sum_failed_4=0
 while true; do
 	echo > $TMP_FILE
 	for channel in 0 1 2 3 4 5; do
@@ -64,15 +112,20 @@ while true; do
 		fi
 
 		for d in 0 1 2 3 4 5 6 7; do
-			if [ "`i2cget -y $bus 0x1$d 0x2 2>/dev/null`" != "0x17" ]; then
-				continue
-			fi
 			q=$((d/2))
                         cnt=$(cat /var/run/die${channel}${q} 2>/dev/null)
                         if [ -z "$cnt" ] ; then
                                 cnt=0
                         fi
-			if [ "`i2cget -y $bus 0x1$d 0x8c w | cut -c3-4`" = e0 ]; then
+                        temp=$(i2cget -y $bus 0x1$d 0x8c w)
+                        exp=$(( 2**(32 - ((temp >> 11) & 0x1F)) ))
+                        mant=$(( temp & 0x7FF ))
+                        if [ $exp -gt 0 ] ; then
+				iout=$((mant/exp))
+                        else
+	                        iout=0
+                        fi
+			if [ $iout -lt 5 ]; then
 				cnt=$((cnt+1))
 			fi
 			echo $cnt > /var/run/die${channel}${q}
@@ -94,8 +147,6 @@ while true; do
 	fi
 	echo 0 > /var/run/tm
 
-	sum_failed=0
-	sum_all=0
 	for channel in 0 1 2 3 4 5; do
 		bus=$((channel+3))
 		failed0=0
@@ -112,7 +163,6 @@ while true; do
 				echo 1000 > /var/run/die${channel}${q}
 				continue
                         fi
-                        sum_all=$(( sum_all + 1 ))
 			echo 0 > /var/run/die${channel}${q}
                         if [ $cnt -le $THRESHOLD ] ; then
 				continue
@@ -143,39 +193,18 @@ while true; do
 		done
 		# restart die
 		if [ "$failed0" = "1" ] ; then
-			if [ "$failed_non0" = "1" ] ; then
-				i2cset -y 2 0x2$channel 0xe5 0
-				usleep 200000
-				failed1=1
-				failed2=1
-				failed3=1
-			fi
+			reset_die $channel 0
 		fi
 		if [ "$failed1" = "1" ] ; then
-			i2cset -y 2 0x2$channel 0xe5 1
-			usleep 200000
+			reset_die $channel 1
 		fi
 		if [ "$failed2" = "1" ] ; then
-			i2cset -y 2 0x2$channel 0xe5 2
-			usleep 200000
+			reset_die $channel 2
 		fi
 		if [ "$failed3" = "1" ] ; then
-			i2cset -y 2 0x2$channel 0xe5 3
+			reset_die $channel 3
 		fi
-		sum_failed=$(( sum_failed + failed0 + failed1 + failed2 + failed3 ))
 	done
-
-	a=$((sum_failed * 4))
-	if [ $a -gt $sum_all ] ; then
-		if [ $sum_failed -lt $sum_all ] ; then
-			sum_failed_4=$(( sum_failed_4 + 1 ))
-			if [ $sum_failed_4 -gt 4 ] ; then
-				/usr/bin/waas -d
-			fi
-		fi
-	else
-		sum_failed_4=0
-	fi
 
 	sleep 4
 

@@ -42,7 +42,7 @@ while [ $exit_code -eq 252 ] ; do
         echo low > /sys/class/gpio/gpio76/direction # reset
         sleep 1
         echo high > /sys/class/gpio/gpio76/direction # !reset
-        ./initc.high
+        ./initc
         exit_code=$?
         i=$((i+1))
         if [[ $i -gt 10 ]] ; then
@@ -54,7 +54,7 @@ if [[ $exit_code = 0 ]] ; then
         echo high > /sys/class/gpio/gpio70/direction
         echo low > /sys/class/gpio/gpio71/direction
 
-        ./waas -zd
+#        ./waas -zd
 else
         # Turn ON red, Turn OFF green
         echo low > /sys/class/gpio/gpio70/direction
