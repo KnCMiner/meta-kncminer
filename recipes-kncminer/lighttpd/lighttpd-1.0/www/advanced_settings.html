@@ -96,7 +96,6 @@
 		}
 
 		function renderCurrentConfig(initialize) {
-			$('#spiVoltage').val(config.current_settings.spi_voltage);
 			$('#spiFrequency').val(config.current_settings.spi_frequency);
 			$('#auto_spi_voltage').prop('checked', config.current_settings.auto_spi_voltage || false);
 			
@@ -106,6 +105,15 @@
 			} else {
 				$("#spiVoltage").removeAttr('disabled');
 				autoSpiVoltage = false;
+			}
+
+			if (config.valid_spi_voltages.length > 1) {
+				$('#spiVoltage').val(config.current_settings.spi_voltage);
+				$("#auto_spi_voltage").removeAttr('disabled');
+			} else {
+				$('#spiVoltage').val(config.valid_spi_voltages[0]);
+				$("#spiVoltage").attr('disabled', 'disabled');
+				$("#auto_spi_voltage").attr('disabled', 'disabled');
 			}
 			
 			if(!initialize){
