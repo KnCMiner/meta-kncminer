@@ -67,6 +67,7 @@ for channel in 0 1 2 3 4 5 ; do
 done
 echo 0 > /var/run/tm
 
+sum_failed_4=0
 while true; do
 	echo > $TMP_FILE
 	for channel in 0 1 2 3 4 5; do
@@ -123,6 +124,8 @@ while true; do
 	fi
 	echo 0 > /var/run/tm
 
+	sum_failed=0
+	sum_all=0
 	for channel in 0 1 2 3 4 5; do
 		bus=$((channel+3))
 		failed0=0
@@ -139,6 +142,7 @@ while true; do
 				echo 1000 > /var/run/die${channel}${q}
 				continue
                         fi
+			sum_all=$(( sum_all + 1 ))
 			echo 0 > /var/run/die${channel}${q}
                         if [ $cnt -le $THRESHOLD ] ; then
 				continue
@@ -174,7 +178,12 @@ while true; do
 		done
 		# restart die
 		if [ "$failed0" = "1" ] ; then
-			reset_die $channel 0
+			if [ "$failed_non0" = "1" ] ; then
+				reset_die $channel 0
+				failed1=1
+				failed2=1
+				failed3=1
+			fi
 		fi
 		if [ "$failed1" = "1" ] ; then
 			reset_die $channel 1
@@ -185,7 +194,20 @@ while true; do
 		if [ "$failed3" = "1" ] ; then
 			reset_die $channel 3
 		fi
+		sum_failed=$(( sum_failed + failed0 + failed1 + failed2 + failed3 ))
 	done
+
+	a=$((sum_failed * 4))
+	if [ $a -gt $sum_all ] ; then
+		if [ $sum_failed -lt $sum_all ] ; then
+			sum_failed_4=$(( sum_failed_4 + 1 ))
+			if [ $sum_failed_4 -gt 4 ] ; then
+				/usr/bin/waas -f
+			fi
+		fi
+	else
+		sum_failed_4=0
+	fi
 
 	sleep 4
 
