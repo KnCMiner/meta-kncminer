@@ -30,34 +30,51 @@
 			<div class="span_12_of_12">
 				<div class="xbox box">
 					<div class="span_7_of_12">
-						<h1>FW Upgrade</h1>
+						<h1>Upgrade</h1>
 							Current firmware revision: 0.99
 						<p>
-							Upgrade the Firmware.
+							Upgrade Firmware, or backup/restore configuration.
 						</p>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="section">
-			<div class="span_12_of_12">
+			<div class="col span_4_of_12">
 				<div class="xbox news">
-				  <form action="/cgi-bin/upgrade.cgi" class="span_12_of_12" 
-					enctype="multipart/form-data" method="post">
-				    <div class="box">
-				      <p>
-					Choose file to upload:<br>
-					<input type="file" name="datafile" size="40">
-				      </p>
-				      <div>
-					<button type="submit" class="btn btn-lg btn-primary">Apply</button>
-				      </div>
-				    </div>
-				  </form>
+					<p>Firmware Upgrade</p>
+					<form action="/cgi-bin/upgrade.cgi" class="span_12_of_12" enctype="multipart/form-data" method="post">
+						<div class="box">
+							<input type="file" name="datafile" size="40">
+							<div>
+								<button type="submit" class="btn btn-lg btn-primary">Upload</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="col span_4_of_12">
+				<div class="xbox news">
+					<p>Create Configuration Backup</p><br>
+					<form action="/cgi-bin/create_conf_backup.cgi" class="span_6_of_12">
+						<button type="submit" class="btn btn-lg btn-primary">Backup</button>
+					</form><br>
+				</div>
+			</div>
+			<div class="col span_4_of_12">
+				<div class="xbox news">
+					<p>Restore Configuration</p>
+					<form action="/cgi-bin/upload_conf.cgi" class="span_12_of_12" enctype="multipart/form-data" method="post">
+						<div class="box">
+							<input type="file" name="datafile" size="40">
+							<div>
+								<button type="submit" class="btn btn-lg btn-primary">Restore</button>
+							</div>
+						</div>
+					</form>
 				</div>
 			</div>
 		</div>
 	</div>
-
 </body>
 </html>
