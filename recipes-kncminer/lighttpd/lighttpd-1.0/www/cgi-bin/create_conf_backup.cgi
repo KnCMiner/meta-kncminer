@@ -1,6 +1,5 @@
 #!/bin/sh -e
 
-#file=backupKNC_$$.tar
 file=backupKNC_`date +%Y-%m-%d_%H%M%S`.tar
 dir=/tmp/backup$$
 bkup_files="advanced.conf \
