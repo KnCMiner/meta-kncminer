@@ -15,8 +15,8 @@ do_install_append() {
 	install -m 0755 ${WORKDIR}/ntpdate.sh ${D}${sysconfdir}/init.d
 	update-rc.d -r ${D} ntpdate.sh start 39 S .
 
-	install -m 0755 ${WORKDIR}/cgminer.sh ${D}${sysconfdir}/init.d
-	update-rc.d -r ${D} cgminer.sh start 70 S .
+#	install -m 0755 ${WORKDIR}/cgminer.sh ${D}${sysconfdir}/init.d
+#	update-rc.d -r ${D} cgminer.sh start 70 S .
 
 	cd ${D}${sysconfdir}/rcS.d
 	ln -s ../init.d/ntpd S40ntpd
