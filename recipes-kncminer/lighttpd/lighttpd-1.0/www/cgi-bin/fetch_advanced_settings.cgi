@@ -90,6 +90,7 @@ if [ "$input" = "fetch-advanced-settings-and-ranges" ] ; then
     fetch_advanced_settings_and_ranges
 elif [ "$input" = "FactoryDefault" ] ; then
     rm -f /config/advanced.conf 2&> /dev/null
+    killall monitordcdc      
     get_current_config
 elif [ "$input" = "get-current-status" ] ; then
     waas -g all-asic-info 
@@ -97,6 +98,7 @@ elif [ "$input" != "null" ] && [ "$input" != "" ] ; then
     echo "$input" > /config/advanced.conf
     # let waas apply settings
     waas -c /config/advanced.conf > /dev/null
+    killall monitordcdc      
     get_current_config
 fi
 
