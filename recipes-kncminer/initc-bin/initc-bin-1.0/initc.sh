@@ -35,10 +35,6 @@ echo low > /sys/class/gpio/gpio71/direction
 echo Starting initc
 cd /usr/bin
 
-if [ ! -f /config/advanced.conf ] ; then
-        ./waas -d -o /config/advanced.conf
-fi
-
 exit_code=252
 i=0
 while [ $exit_code -eq 252 ] ; do
@@ -53,6 +49,11 @@ while [ $exit_code -eq 252 ] ; do
                 break
         fi
 done
+
+if [ ! -f /config/advanced.conf ] ; then
+        ./waas -rd -o /config/advanced.conf
+fi
+
 if [[ $exit_code = 0 ]] ; then
         # Turn OFF red, Turn ON green
         echo high > /sys/class/gpio/gpio70/direction
