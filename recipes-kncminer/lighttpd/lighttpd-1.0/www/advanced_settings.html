@@ -151,7 +151,7 @@
 				}
 				catch(err)
 				{
-					alert('Fetch advanced configuration failed.');
+					alert('Fetch advanced configuration/status failed.');
 				}
 			}, "text");
 			jqxhr
@@ -190,10 +190,20 @@
 			}
 		}
 
+		function myTimer() {
+			if (!requesting) {
+    	    	requesting=true;
+				submitAndGetConfig('get-current-status');
+    	    	requesting=false;
+			}
+		}
+
 		$(document).ready(function() {
 			config = null;
 			editMode = false;
 			autoSpiVoltage = false;
+		    requesting=false;
+		    var interval;
 			
 			submitAndGetConfig('fetch-advanced-settings-and-ranges');
 
@@ -201,13 +211,17 @@
 
 			$('#applyBtn').click(function(e) {
 				e.preventDefault();
+				clearInterval(interval);
 				submitConfig(); 
+			    interval = self.setInterval(function(){myTimer()}, 5000);
 				setEditMode(false); 
 			});
 			
 			$('.factoryDefaultBtn').click(function(e) {
 				e.preventDefault();
+				clearInterval(interval);
 				submitAndGetConfig("FactoryDefault");
+			    interval = self.setInterval(function(){myTimer()}, 5000);
 			});
 
 			$('#spiVoltage').on('change', function(e) {
@@ -237,15 +251,7 @@
 				setEditMode(true); 
 			});
 
-		    var requesting=false;
-
-		    var int=self.setInterval(function(){
-				if (!requesting) {
-	    	    	requesting=true;
-					submitAndGetConfig('get-current-status');
-	    	    	requesting=false;
-				}
-			}, 5000);
+		    interval = self.setInterval(function(){myTimer()}, 5000);
 
 		});
 
