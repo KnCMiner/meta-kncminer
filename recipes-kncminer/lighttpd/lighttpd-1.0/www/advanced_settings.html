@@ -35,9 +35,14 @@
 
 		function renderAsics()
 		{
-			var selTemplate = $('<select/>');
+			var dieVoltTemplate = $('<select/>');
 			$.each(config.valid_die_voltages, function(i, voltage) {
-				selTemplate.append('<option value="' + voltage + '">' +	voltage + ' Volt</option>');
+				dieVoltTemplate.append('<option value="' + voltage + '">' +	voltage + ' Volt</option>');
+			});
+
+			var dieFreqTemplate = $('<select/>');
+			$.each(config.valid_die_frequencies, function(i, frequency) {
+				dieFreqTemplate.append('<option value="' + frequency + '">' +	frequency + ' Hertz</option>');
 			});
 
 			$.each(config.enabled_asics, function(i, asic) {
@@ -51,11 +56,16 @@
 				var voltageBox = $('<div class="col span_4_of_12"></div>');
 				for(var j = 1; j <= 4; j++) {
 					voltageBox.append('die ' + j + ' ');
-					var sel = selTemplate.clone();
-					sel.attr('id', asic + '_dieVoltage' + j);
-					//var asicStrX = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
-					//sel.val(config.current_settings[asicStrX]['die' + j]);
-					voltageBox.append(sel);
+					var dieVolt = dieVoltTemplate.clone();
+					dieVolt.attr('id', asic + '_dieVoltage' + j);
+					//var asic_X_voltage = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
+					//dieVolt.val(config.current_settings[asic_X_voltage]['die' + j]);
+
+					var dieFrequency = dieFreqTemplate.clone();
+					dieFrequency.attr('id', asic + '_dieFrequency' + j);
+
+					voltageBox.append(dieVolt);
+					voltageBox.append(dieFrequency);
 					voltageBox.append('</br> ');
 					if(j == 4) {
 						voltageBox.append('</br><P id="' + asic + '_temp"></P></br>');					
@@ -95,34 +105,62 @@
 			});
 		}
 
-		function renderCurrentConfig(initialize) {
-			$('#spiFrequency').val(config.current_settings.spi_frequency);
-			$('#auto_spi_voltage').prop('checked', config.current_settings.auto_spi_voltage || false);
-			
-			if(config.current_settings.auto_spi_voltage) {
-				$("#spiVoltage").attr('disabled', 'disabled');
-				autoSpiVoltage = true;
-			} else {
-				$("#spiVoltage").removeAttr('disabled');
-				autoSpiVoltage = false;
-			}
+		function validConfig() {
+			if(!config.current_settings.spi_voltage) {return false;}
+			if(!config.current_settings.auto_spi_voltage) {return false;}
+			if(!config.current_settings.spi_frequency) {return false;}
 
-			if (config.valid_spi_voltages.length > 1) {
-				$('#spiVoltage').val(config.current_settings.spi_voltage);
-				$("#auto_spi_voltage").removeAttr('disabled');
-			} else {
-				$('#spiVoltage').val(config.valid_spi_voltages[0]);
-				$("#spiVoltage").attr('disabled', 'disabled');
-				$("#auto_spi_voltage").attr('disabled', 'disabled');
+			for(var i = 0; i < config.enabled_asics.length; i++) {
+				var asic_X_voltage = config.enabled_asics[i].slice(0, 4) + "_" + config.enabled_asics[i].slice(4) + '_voltage';
+				var asic_X_frequency = config.enabled_asics[i].slice(0, 4) + "_" + config.enabled_asics[i].slice(4) + '_frequency';
+				if(!config.current_settings[asic_X_voltage]) {return false;}
+				if(!config.current_settings[asic_X_frequency]) {return false;}
+
+				for(var j = 1; j <= 4; j++) {
+					if(!config.current_settings[asic_X_voltage]['die' + j]) {return false;} 
+					if(!config.current_settings[asic_X_frequency]['die' + j]) {return false;}
+				}
 			}
-			
-			if(!initialize){
-				$.each(config.enabled_asics, function(i, asic) {
-					for(var j = 1; j <= 4; j++) {
-						var asicStrX = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
-						$('#' + asic + '_dieVoltage' + j).val(config.current_settings[asicStrX]['die' + j]);
-					}
-				});
+			return true;
+		}
+
+		function renderCurrentConfig(initialize) {
+			var validFile = validConfig();
+
+			if(validFile == true || recreatedConfig == true) {
+				
+				$('#spiFrequency').val(config.current_settings.spi_frequency);
+				$('#auto_spi_voltage').prop('checked', config.current_settings.auto_spi_voltage || false);
+				
+				if(config.current_settings.auto_spi_voltage) {
+					$("#spiVoltage").attr('disabled', 'disabled');
+					autoSpiVoltage = true;
+				} else {
+					$("#spiVoltage").removeAttr('disabled');
+					autoSpiVoltage = false;
+				}
+
+				if (config.valid_spi_voltages.length > 1) {
+					$('#spiVoltage').val(config.current_settings.spi_voltage);
+					$("#auto_spi_voltage").removeAttr('disabled');
+				} else {
+					$('#spiVoltage').val(config.valid_spi_voltages[0]);
+					$("#spiVoltage").attr('disabled', 'disabled');
+					$("#auto_spi_voltage").attr('disabled', 'disabled');
+				}
+				
+				if(!initialize){
+					$.each(config.enabled_asics, function(i, asic) {
+						for(var j = 1; j <= 4; j++) {
+							var asic_X_voltage = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
+							var asic_X_frequency = asic.slice(0, 4) + "_" + asic.slice(4) + '_frequency';
+							$('#' + asic + '_dieVoltage' + j).val(config.current_settings[asic_X_voltage]['die' + j]);
+							$('#' + asic + '_dieFrequency' + j).val(config.current_settings[asic_X_frequency]['die' + j]);
+						}
+					});
+				}
+			} else {
+				submitAndGetConfig('recreate-config-file');
 			}
 		}
 
@@ -148,6 +186,8 @@
 						config.current_settings = JSON.parse(configStr); 
 						renderCurrentConfig(false);
 					}
+					if(fetchType == 'recreate-config-file') {
+						recreatedConfig = true;
 				}
 				catch(err)
 				{
@@ -167,8 +207,10 @@
 
 			$.each(config.enabled_asics, function(i, asic) {
 				for(var j = 1; j <= 4; j++) {
-					var asicStrX = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
-					config.current_settings[asicStrX]['die' + j] = $('#' + asic + '_dieVoltage' + j).val();
+					var asic_X_voltage = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
+					var asic_X_frequency = asic.slice(0, 4) + "_" + asic.slice(4) + '_frequency';
+					config.current_settings[asic_X_voltage]['die' + j] = $('#' + asic + '_dieVoltage' + j).val();
+					config.current_settings[asic_X_frequency]['die' + j] = $('#' + asic + '_dieFrequency' + j).val();
 				}
 			});
 		}
@@ -203,6 +245,7 @@
 			editMode = false;
 			autoSpiVoltage = false;
 		    requesting=false;
+		    recreatedConfig=false;
 		    var interval;
 			
 			submitAndGetConfig('fetch-advanced-settings-and-ranges');

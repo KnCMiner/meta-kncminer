@@ -94,6 +94,9 @@ elif [ "$input" = "FactoryDefault" ] ; then
     get_current_config
 elif [ "$input" = "get-current-status" ] ; then
     waas -g all-asic-info 
+elif [ "$input" = "recreate-config-file" ] ; then
+    waas -r -o /config/advanced.conf
+    get_current_config
 elif [ "$input" != "null" ] && [ "$input" != "" ] ; then
     echo "$input" > /config/advanced.conf
     # let waas apply settings
