@@ -71,20 +71,16 @@ for f in $bkup_files ; do
 done
 
 > ./restoreConfig.sh
-echo 'DATE=`date +%Y-%m-%d_%H%M%S`'                      >> ./restoreConfig.sh
 echo 'mkdir -p /config/.old_config'                      >> ./restoreConfig.sh
-echo 'mkdir /config/.old_config/config_$DATE'            >> ./restoreConfig.sh
-echo 'mv /config/* /config/.old_config/config_$DATE/'    >> ./restoreConfig.sh
-echo 'cp * /config'                                      >> ./restoreConfig.sh
-echo 'NOOF_DIR=0 '                                       >> ./restoreConfig.sh
-echo 'for dir in `ls -t /config/.old_config` ; do'       >> ./restoreConfig.sh
-echo '    if [ -d /config/.old_config/$dir ] ; then'     >> ./restoreConfig.sh
-echo '        NOOF_DIR=`expr $NOOF_DIR + 1`'             >> ./restoreConfig.sh
-echo '        if [ $NOOF_DIR -gt 3 ] ; then'             >> ./restoreConfig.sh
-echo '            rm -rf /config/.old_config/$dir'       >> ./restoreConfig.sh
-echo '        fi'                                        >> ./restoreConfig.sh
+echo 'rm -rf /config/.old_config/*'                      >> ./restoreConfig.sh
+echo 'cd /config/'                                       >> ./restoreConfig.sh
+echo "for f in $bkup_files ; do"                         >> ./restoreConfig.sh
+echo '    if [ -f $f ] ; then'                           >> ./restoreConfig.sh
+echo '	    cp $f /config/.old_config/'                  >> ./restoreConfig.sh
 echo '    fi'                                            >> ./restoreConfig.sh
 echo 'done'                                              >> ./restoreConfig.sh
+echo 'cd - >> /dev/null'                                 >> ./restoreConfig.sh
+echo 'cp * /config/'                                     >> ./restoreConfig.sh
 echo 'sync'                                              >> ./restoreConfig.sh
 
 tar cf /www/pages/$file *
