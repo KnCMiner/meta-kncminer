@@ -83,10 +83,7 @@ if [ "$input" != "null" ] && [ "$input" != "" ] ; then
 	    if [ "$2" = "true" ] ; then
 		echo "NO_START=0" > $dropbear_conf_file
 		cp $dropbear_conf_file /etc/default/dropbear
-		pidof dropbear > /dev/null
-		if [ $? -ne 0 ] ; then
-		    /etc/init.d/dropbear start > /dev/null
-		fi
+		/etc/init.d/dropbear start > /dev/null
 	    else
 		echo "NO_START=1" > $dropbear_conf_file
 		/etc/init.d/dropbear stop > /dev/null

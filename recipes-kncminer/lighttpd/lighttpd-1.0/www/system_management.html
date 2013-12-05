@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 <head>
-	<title>KnCMiner - Security</title>
+	<title>KnCMiner - System</title>
 	<meta charset="UTF-8" />
 	<link href="/style.css" rel="stylesheet" type="text/css">
 	<link href="/grid.css" rel="stylesheet" type="text/css">
@@ -20,7 +20,7 @@
 					<a href="/miner_setting.html">Mining</a>
 					<a href="/cgi-bin/get_network_conf.cgi">Networking</a>
 					<a href="/services_conf.html">Services</a>
-					<a href="/security_management.html" class="active">Security</a>
+					<a href="/system_management.html" class="active">System</a>
 					<a href="/advanced_settings.html">Advanced</a>
 					<a href="/firmware_upgrade.html">Upgrade</a>
 				</div>
@@ -31,7 +31,7 @@
 			<div class="span_12_of_12">
 				<div class="xbox box">
 					<div class="span_7_of_12">
-						<h1>Security Settings</h1>
+						<h1>System Settings</h1>
 						<p>
 							Change password used to login to the web management system.
 						</p>
@@ -54,6 +54,10 @@
 			</div>
 			<div class="col span_5_of_12">
 				<div class="xbox news">
+					<p>Reset System Configuration</p>
+					<form action="/cgi-bin/reset_conf.cgi" class="span_5_of_12">
+						<button type="submit" class="btn btn-lg btn-primary">Reset</button>
+					</form><br>
 					<p>Restart Miner</p>
 					<form action="/cgi-bin/reboot.cgi" class="span_5_of_12">
 						<button type="submit" class="btn btn-lg btn-primary">Restart</button>
