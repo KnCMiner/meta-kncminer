@@ -42,7 +42,7 @@ while [ $exit_code -eq 252 ] ; do
         echo low > /sys/class/gpio/gpio76/direction # reset
         sleep 1
         echo high > /sys/class/gpio/gpio76/direction # !reset
-        ./initc.high
+        ./initc
         exit_code=$?
         i=$((i+1))
         if [[ $i -gt 10 ]] ; then

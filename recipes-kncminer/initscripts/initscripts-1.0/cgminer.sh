@@ -53,17 +53,6 @@ do_start() {
 
 	if [ -n "$good_ports" ] ; then
 		for p in $good_ports ; do
-			# Re-enable PLL
-			i2cset -y 2 0x71 1 $((p+1))
-			for c in 0 1 2 3 ; do
-				cmd=$(printf "0x84,0x%02X,0,0" $c)
-				spi-test -s 50000 -OHC -D /dev/spidev1.0 $cmd >/dev/null
-				cmd=$(printf "0x86,0x%02X,0x01,0xD1" $c)
-				spi-test -s 50000 -OHC -D /dev/spidev1.0 $cmd >/dev/null
-				cmd=$(printf "0x85,0x%02X,0,0" $c)
-				spi-test -s 50000 -OHC -D /dev/spidev1.0 $cmd >/dev/null
-			done
-			
 			# re-enable all cores
 			i=0
 			while [[ $i -lt 192 ]] ; do
@@ -75,13 +64,6 @@ do_start() {
 	fi
 	if [ -n "$bad_ports" ] ; then
 		for p in $bad_ports ; do
-			# Disable PLL
-			i2cset -y 2 0x71 1 $((p+1))
-			for c in 0 1 2 3 ; do
-				cmd=$(printf "0x84,0x%02X,0,0" $c)
-				spi-test -s 50000 -OHC -D /dev/spidev1.0 $cmd >/dev/null
-			done
-			
 			# disable all cores
 			i=0
 			while [[ $i -lt 192 ]] ; do
