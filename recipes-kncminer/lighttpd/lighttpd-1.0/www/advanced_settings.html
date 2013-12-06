@@ -206,7 +206,9 @@
                                         }
 				},
 				error: function(xhr, status, error) {
-					alert('Fetch advanced configuration/status failed.');
+				    if(error == 'timeout') {
+					    alert('Fetch advanced configuration/status failed.');
+					}
 				}
 
 			});
