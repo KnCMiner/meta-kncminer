@@ -172,33 +172,33 @@
 				reqParamStr = JSON.stringify(config.current_settings, undefined, 2);
 			}
 			
-			var jqxhr = $.post("/cgi-bin/fetch_advanced_settings.cgi", reqParamStr, function(configStr) {
-				try
-				{
+			$.ajax({
+				url: "/cgi-bin/fetch_advanced_settings.cgi",
+				data: reqParamStr,
+				type: 'POST',
+				timeout: 30000,
+				success: function(configStr) {
 					if(fetchType == 'fetch-advanced-settings-and-ranges') {
-						config = JSON.parse(configStr);
-						renderTuningParam();
-						setEditMode(false);
-					} else if(fetchType == 'get-current-status') {
-						config.current_status = JSON.parse(configStr); 
-						renderCurrentStatus();						
-					} else {
-						config.current_settings = JSON.parse(configStr); 
-						renderCurrentConfig(false);
-					}
-					if(fetchType == 'recreate-config-file') {
-						recreatedConfig = true;
-					}
-				}
-				catch(err)
-				{
+                                                config = JSON.parse(configStr);
+                                                renderTuningParam();
+                                                setEditMode(false);
+                                        } else if(fetchType == 'get-current-status') {
+                                                config.current_status = JSON.parse(configStr); 
+                                                renderCurrentStatus();                                          
+                                        } else {
+                                                config.current_settings = JSON.parse(configStr); 
+                                                renderCurrentConfig(false);
+                                        }
+                                        if(fetchType == 'recreate-config-file') {
+                                                recreatedConfig = true;
+                                        }
+				},
+				error: function(xhr, status, error) {
 					alert('Fetch advanced configuration/status failed.');
 				}
-			}, "text");
-			jqxhr
-				.fail(function() {
-					alert('Ajax Error: ' + config);
-				});
+
+			});
+
 		}
 
 		function createConfig() {
@@ -241,6 +241,86 @@
 			}
 		}
 
+		function loadDefaultConfig() {
+			config = {
+                "asic_1_voltage": {
+                	"die1": "0.0000",
+                	"die2": "0.0000",
+                	"die3": "0.0000",
+                	"die4": "0.0000"
+                },
+                "asic_1_frequency": {
+                	"die1": "0",
+                	"die2": "0",
+                	"die3": "0",
+                	"die4": "0"
+                },
+                "asic_2_voltage": {
+                	"die1": "0.0",
+                	"die2": "0.0",
+                	"die3": "0.0",
+                	"die4": "0.0"
+                },
+                "asic_2_frequency": {
+                	"die1": "0",
+                	"die2": "0",
+                	"die3": "0",
+                	"die4": "0"
+                },
+                "asic_3_voltage": {
+                	"die1": "0.0000",
+                	"die2": "0.0000",
+                	"die3": "0.0000",
+                	"die4": "0.0000"
+                },
+                "asic_3_frequency": {
+                	"die1": "0",
+                	"die2": "0",
+                	"die3": "0",
+                	"die4": "0"
+                },
+                "asic_4_voltage": {
+                	"die1": "0.0000",
+                	"die2": "0.0000",
+                	"die3": "0.0000",
+                	"die4": "0.0000"
+                },
+                "asic_4_frequency": {
+                	"die1": "0",
+                	"die2": "0",
+                	"die3": "0",
+                	"die4": "0"
+                },
+                "asic_5_voltage": {
+                        "die1": "0.0000",
+                        "die2": "0.0000",
+                        "die3": "0.0000",
+                        "die4": "0.0000"
+                },
+                "asic_5_frequency": {
+                        "die1": "0",
+                        "die2": "0",
+                        "die3": "0",
+                        "die4": "0"
+                },
+                "asic_6_voltage": {
+                        "die1": "0.0",
+                        "die2": "0.0",
+                        "die3": "0.0",
+                        "die4": "0.0"
+                },
+                "asic_6_frequency": {
+                        "die1": "0",
+                        "die2": "0",
+                        "die3": "0",
+                        "die4": "0"
+                },
+                "spi_frequency": "0",
+                "spi_voltage": "0.0",
+                "auto_spi_voltage": true
+            }
+        }
+
 		$(document).ready(function() {
 			config = null;
 			editMode = false;
@@ -248,6 +328,8 @@
 		    requesting=false;
 		    recreatedConfig=false;
 		    var interval;
+
+			loadDefaultConfig();
 			
 			submitAndGetConfig('fetch-advanced-settings-and-ranges');
 
