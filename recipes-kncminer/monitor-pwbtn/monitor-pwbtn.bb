@@ -16,10 +16,10 @@ do_compile() {
 
 do_install() {
         install -d ${D}${bindir}
-	install -m 0755 ${WORKDIR}/monitor-pwbtn ${D}${bindir}
+#	install -m 0755 ${WORKDIR}/monitor-pwbtn ${D}${bindir}
 	install -m 0755 ${WORKDIR}/factory_config_reset.sh ${D}${bindir}
 
         install -d ${D}${sysconfdir}/init.d
-	install -m 0755 ${WORKDIR}/init ${D}${sysconfdir}/init.d/monitor-pwbtn
-	update-rc.d -r ${D} monitor-pwbtn start 70 S .
+#	install -m 0755 ${WORKDIR}/init ${D}${sysconfdir}/init.d/monitor-pwbtn
+#	update-rc.d -r ${D} monitor-pwbtn start 70 S .
 }

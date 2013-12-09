@@ -20,5 +20,5 @@ do_install() {
 
         install -d ${D}${sysconfdir}/init.d
 	install -m 0755 ${WORKDIR}/initc.sh ${D}${sysconfdir}/init.d
-	update-rc.d -r ${D} initc.sh start 36 S .
+	update-rc.d -r ${D} initc.sh start 70 S .
 }
