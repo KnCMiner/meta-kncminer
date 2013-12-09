@@ -50,16 +50,12 @@ while [ $exit_code -eq 252 ] ; do
         fi
 done
 
-if [ ! -f /config/advanced.conf ] ; then
-        ./waas -rd -o /config/advanced.conf
-fi
-
 if [[ $exit_code = 0 ]] ; then
         # Turn OFF red, Turn ON green
         echo high > /sys/class/gpio/gpio70/direction
         echo low > /sys/class/gpio/gpio71/direction
 
-	/usr/bin/screen -d -m ./asic_test
+	/usr/bin/screen -d -m ./asic_test -r B -m G 0
 else
         # Turn ON red, Turn OFF green
         echo low > /sys/class/gpio/gpio70/direction
