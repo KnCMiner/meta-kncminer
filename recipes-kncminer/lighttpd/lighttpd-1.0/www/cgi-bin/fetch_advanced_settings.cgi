@@ -24,18 +24,6 @@ get_current_config()
 
 if [ ! -f $lock_file ] ; then
     touch $lock_file 2&> /dev/null
-else
-    #wait until lock is gone
-    i=0
-    while [ -f $lock_file ] ; do
-	i=`expr $i + 1`
-	sleep 1
-	if [ $i -ge 3 ] ; then
-	    get_current_config
-	    exit 0
-	fi
-    done
-    touch $lock_file 2&> /dev/null
 fi
 
 fetch_advanced_settings_and_ranges()

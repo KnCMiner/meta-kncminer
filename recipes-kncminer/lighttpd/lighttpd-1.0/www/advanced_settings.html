@@ -188,7 +188,7 @@
 				url: "/cgi-bin/fetch_advanced_settings.cgi",
 				data: reqParamStr,
 				type: 'POST',
-				timeout: 30000,
+				timeout: 50000,
 				success: function(configStr) {
 					if(fetchType == 'fetch-advanced-settings-and-ranges') {
                                                 config = JSON.parse(configStr);
