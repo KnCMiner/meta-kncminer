@@ -118,9 +118,9 @@
 		}
 
 		function validConfig() {
-			if(!config.current_settings.spi_voltage) {return false;}
-			if(!config.current_settings.auto_spi_voltage) {return false;}
-			if(!config.current_settings.spi_frequency) {return false;}
+			if(!("spi_voltage" in config.current_settings)) {return false;}
+			if(!("auto_spi_voltage" in config.current_settings)) {return false;}
+			if(!("spi_frequency" in config.current_settings)) {return false;}
 
 			for(var i = 0; i < config.enabled_asics.length; i++) {
 				var asic_X_voltage = config.enabled_asics[i].slice(0, 4) + "_" + config.enabled_asics[i].slice(4) + '_voltage';
