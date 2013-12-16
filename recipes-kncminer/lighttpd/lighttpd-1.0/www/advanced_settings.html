@@ -118,9 +118,9 @@
 		}
 
 		function validConfig() {
-			if(!config.current_settings.spi_voltage) {return false;}
-			if(!config.current_settings.auto_spi_voltage) {return false;}
-			if(!config.current_settings.spi_frequency) {return false;}
+			if(!("spi_voltage" in config.current_settings)) {return false;}
+			if(!("auto_spi_voltage" in config.current_settings)) {return false;}
+			if(!("spi_frequency" in config.current_settings)) {return false;}
 
 			for(var i = 0; i < config.enabled_asics.length; i++) {
 				var asic_X_voltage = config.enabled_asics[i].slice(0, 4) + "_" + config.enabled_asics[i].slice(4) + '_voltage';
@@ -188,7 +188,7 @@
 				url: "/cgi-bin/fetch_advanced_settings.cgi",
 				data: reqParamStr,
 				type: 'POST',
-				timeout: 30000,
+				timeout: 50000,
 				success: function(configStr) {
 					if(fetchType == 'fetch-advanced-settings-and-ranges') {
                                                 config = JSON.parse(configStr);
