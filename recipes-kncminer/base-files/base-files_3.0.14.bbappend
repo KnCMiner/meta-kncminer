@@ -7,4 +7,5 @@ do_install_append() {
 	install -d ${D}/config
 }
 
-SRC_URI_append = " file://fstab "
+SRC_URI_append = " file://fstab \
+		   file://knc-release"
