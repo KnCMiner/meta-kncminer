@@ -1,6 +1,16 @@
 #!/bin/sh
 
 ###########################
+# Release revision
+rev=$(cat /etc/knc-release)
+
+if [ -n "$rev" ] ; then
+    sed -i "s/irmware.*evision.*/irmware revision: $rev/" /www/pages/firmware_upgrade.html
+fi
+
+###########################
+
+###########################
 # dropbear
 NO_START=0
 

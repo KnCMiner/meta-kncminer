@@ -4,6 +4,7 @@ PRINC := "${@int(PRINC) + 1}"
 
 do_install_append() {
 	install -m 0644 ${WORKDIR}/fstab ${D}${sysconfdir}
+	install -m 0644 ${WORKDIR}/knc-release ${D}${sysconfdir}
 	install -d ${D}/config
 }
 
