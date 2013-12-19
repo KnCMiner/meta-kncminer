@@ -95,7 +95,7 @@
 					$('#manualText').val(configStr);
 					setEditMode(true);
 					manualMode();
-					alert('Invalid CGMiner configuration file. Edit manually or reset to default.');
+					alert('Invalid Miner configuration file. Edit manually or reset to default.');
 				}
 			}, "text");
 			jqxhr
@@ -293,7 +293,7 @@
                         <div class="span_12_of_12">
                             <h1>Miner Settings</h1>
                             <p>
-                                Edit mining parameters, press "Save changes" to save settings on miner,</br> and press "Restart CGMiner" to apply changes.
+                                Edit mining parameters, press "Save changes" to save settings on miner,</br> and press "Restart Miner" to apply changes.
                             </p>
                         </div>
                     </div>
@@ -305,11 +305,11 @@
                         <button id="addBtn">Add pool</button>
                         <h1>Pools</h1>
                         <div id="pools" class="box"></div>
-                        <div class="inline"><input type="checkbox" name="r_mgmt_on" id="r_mgmt_on"><label for="r_mgmt_on">CGMiner Remote Management Enabled</label></div>
+                        <div class="inline"><input type="checkbox" name="r_mgmt_on" id="r_mgmt_on"><label for="r_mgmt_on">Miner Remote Management Enabled</label></div>
                         <div class="form-actions">
                           <button id="gotoManualModeBtn" type="button">Manual edit mode</button>
                           <button id="saveBtn" type="button" disabled="disabled">Save changes</button>
-                          <button id="restartCGMinerBtn" type="button" disabled="disabled">Restart CGMiner</button>
+                          <button id="restartCGMinerBtn" type="button" disabled="disabled">Restart Miner</button>
                           <button class="factoryDefaultBtn" type="button">Reset to Factory Defaults</button>
                         </div>
                     </div>
@@ -328,7 +328,7 @@
                         <div class="form-actions col span_12_of_12">
                           <button id="gotoNormalModeBtn" type="button" disabled="disabled">Normal edit mode</button>
                           <button id="manualSaveBtn" type="button" disabled="disabled">Save changes</button>
-                          <button id="manualRestartCGMinerBtn" type="button" disabled="disabled">Restart CGMiner</button>
+                          <button id="manualRestartCGMinerBtn" type="button" disabled="disabled">Restart Miner</button>
                           <button class="factoryDefaultBtn" type="button">Reset to Factory Defaults</button>
                         </div>
                         <div class="section"></div>
