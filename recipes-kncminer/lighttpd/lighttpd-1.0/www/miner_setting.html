@@ -16,12 +16,19 @@
 				renderPoolForm(pool);
 			});
 
-			if(config['api-network'] == false) {
-				delete config["api-network"];
+			/* Legacy config files might contain api-network. Get rid of it */
+			if ('api-network' in config) {
+				if (config['api-network']) {
+					if (!('api-allow' in config))
+						config['api-allow'] = 'W:0/0';
+				} else {
+					delete config['api-allow'];
+				}
+				delete config['api-network'];
 				submitAndGetConfig();
 			}
 
-			$('#r_mgmt_on').prop('checked', config['api-network'] || false);
+			$('#r_mgmt_on').prop('checked', 'api-allow' in config);
 			refreshDelPoolVisibility();
 		}
 		
@@ -128,9 +135,10 @@
 			
 			config["api-listen"] = true;
 			if ($('#r_mgmt_on').prop('checked')) {
-				config["api-network"] = true;
+				if (!('api-allow' in config))
+					config['api-allow'] = 'W:0/0';
 			} else {
-				delete config["api-network"];
+				delete config['api-allow'];
 			}
 		}
 		
