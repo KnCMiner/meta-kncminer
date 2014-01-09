@@ -1,27 +1,27 @@
 #!/bin/sh -e
 
-# POST upload format:
-# -----------------------------29995809218093749221856446032^M
-# Content-Disposition: form-data; name="file1"; filename="..."^M
-# Content-Type: application/octet-stream^M
-# ^M    <--------- headers end with empty line
-# file contents
-# file contents
-# file contents
-# ^M    <--------- extra empty line
-# -----------------------------29995809218093749221856446032--^M
+file=backupKNC_`date +%Y-%m-%d_%H%M%S`.tar
+dir=/tmp/backup$$
+bkup_files="advanced.conf \
+    dropbear \
+    dropbear_rsa_host_key \
+    led-blink.conf \
+    lighttpd-htdigest.user \
+    network.conf \
+    shadow \
+    shadow.factory \
+    cgminer.conf \
+    cgminer.conf.factory"
 
-file=/tmp/$$
 
 trap atexit 0
 
 atexit() {
-	rm -rf $file
-	umount $file.boot 2>/dev/null || true
-	rmdir $file.boot 2>/dev/null || true
+	rm -rf $dir
+
 	sync
 	if [ ! $ok ]; then
-	    print "<h1>System upgrade failed</h1>"
+	    print "<h1>Create backup failed</h1>"
 	fi
 	printf "</div>"
 	printf "</div>"
@@ -31,8 +31,6 @@ atexit() {
 	printf "</body>"
 	printf "</html>"
 }
-
-CR=`printf '\r'`
 
 # CGI output must start with at least empty line (or headers)
 printf "Content-type: text/html\r\n\r\n"
@@ -59,40 +57,44 @@ cat <<-EOH
         <div class="span_12_of_12">
         <div class="xbox box">
         <div class="span_12_of_12">
-	<h1>System upgrade in progress</h1>
 EOH
 
 exec 2>&1
 
-IFS="$CR"
-read -r delim_line
-IFS=""
+mkdir $dir
+cd $dir
 
-while read -r line; do
-    test x"$line" = x"" && break
-    test x"$line" = x"$CR" && break
+for f in $bkup_files ; do
+    if [ -f /config/$f ] ; then  
+	cp /config/$f .
+    fi
 done
 
-mkdir $file
-cd $file
-tar zxf -
-if [ -f runme.sh ]; then
-	sh runme.sh
-else
-    mkdir $file.boot
-    mount /dev/mmcblk0p1 $file.boot
-    cp * $file.boot/
-    umount $file.boot
-    sync
+> ./restoreConfig.sh
+echo 'mkdir -p /config/.old_config'                      >> ./restoreConfig.sh
+echo 'rm -rf /config/.old_config/*'                      >> ./restoreConfig.sh
+echo 'cd /config/'                                       >> ./restoreConfig.sh
+echo "for f in $bkup_files ; do"                         >> ./restoreConfig.sh
+echo '    if [ -f $f ] ; then'                           >> ./restoreConfig.sh
+echo '	    cp $f /config/.old_config/'                  >> ./restoreConfig.sh
+echo '    fi'                                            >> ./restoreConfig.sh
+echo 'done'                                              >> ./restoreConfig.sh
+echo 'cd - >> /dev/null'                                 >> ./restoreConfig.sh
+echo 'cp * /config/'                                     >> ./restoreConfig.sh
+echo 'sync'                                              >> ./restoreConfig.sh
+
+tar cf /www/pages/$file *
+if [ $? -ne 0 ] ; then
+    exit
 fi
 
 cat <<EOT
-<h1>System upgraded</h1>
-<p>The upgrade installed successfully. Please reboot Miner to activate.</p>
+<h1>Backup created</h1>
+<p>Save backup to PC.</p>
 <div class="section">                                                         
 <div class="col span_6_of_12">
-<form action="/cgi-bin/reboot.cgi">
-<button type="submit" class="btn btn-lg btn-primary">Reboot</button>
+<form action="/$file">
+<button type="submit" class="btn btn-lg btn-primary">Save</button>
 </form>
 </div>
 <div class="col span_6_of_12">                                        

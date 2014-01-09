@@ -24,18 +24,6 @@ get_current_config()
 
 if [ ! -f $lock_file ] ; then
     touch $lock_file 2&> /dev/null
-else
-    #wait until lock is gone
-    i=0
-    while [ -f $lock_file ] ; do
-	i=`expr $i + 1`
-	sleep 1
-	if [ $i -ge 3 ] ; then
-	    get_current_config
-	    exit 0
-	fi
-    done
-    touch $lock_file 2&> /dev/null
 fi
 
 fetch_advanced_settings_and_ranges()
@@ -90,15 +78,22 @@ if [ "$input" = "fetch-advanced-settings-and-ranges" ] ; then
     fetch_advanced_settings_and_ranges
 elif [ "$input" = "FactoryDefault" ] ; then
     rm -f /config/advanced.conf 2&> /dev/null
-    killall monitordcdc      
+    killall monitordcdc 2&> /dev/null
+    killall monitordcdc.ge 2&> /dev/null
+    killall monitordcdc.ericsson 2&> /dev/null
     get_current_config
 elif [ "$input" = "get-current-status" ] ; then
     waas -g all-asic-info 
+elif [ "$input" = "recreate-config-file" ] ; then
+    waas -r -o /config/advanced.conf
+    get_current_config
 elif [ "$input" != "null" ] && [ "$input" != "" ] ; then
     echo "$input" > /config/advanced.conf
     # let waas apply settings
     waas -c /config/advanced.conf > /dev/null
-    killall monitordcdc      
+    killall monitordcdc 2&> /dev/null
+    killall monitordcdc.ge 2&> /dev/null
+    killall monitordcdc.ericsson 2&> /dev/null
     get_current_config
 fi
 

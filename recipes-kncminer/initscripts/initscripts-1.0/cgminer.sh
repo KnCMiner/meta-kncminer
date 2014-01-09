@@ -1,9 +1,18 @@
 #!/bin/sh
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON=/usr/bin/cgminer
-NAME=cgminer
-DESC="Cgminer daemon"
+
+if [ -f /config/.run_bfgminer ] ; then
+	DAEMON=/usr/bin/bfgminer
+	NAME=bfgminer
+	DESC="BFGMiner daemon"
+	EXTRA_OPT="-S knc:auto"
+else
+	DAEMON=/usr/bin/cgminer
+	NAME=cgminer
+	DESC="Cgminer daemon"
+	EXTRA_OPT=
+fi
 
 set -e
 
@@ -53,17 +62,6 @@ do_start() {
 
 	if [ -n "$good_ports" ] ; then
 		for p in $good_ports ; do
-			# Re-enable PLL
-			i2cset -y 2 0x71 1 $((p+1))
-			for c in 0 1 2 3 ; do
-				cmd=$(printf "0x84,0x%02X,0,0" $c)
-				spi-test -s 50000 -OHC -D /dev/spidev1.0 $cmd >/dev/null
-				cmd=$(printf "0x86,0x%02X,0x01,0xD1" $c)
-				spi-test -s 50000 -OHC -D /dev/spidev1.0 $cmd >/dev/null
-				cmd=$(printf "0x85,0x%02X,0,0" $c)
-				spi-test -s 50000 -OHC -D /dev/spidev1.0 $cmd >/dev/null
-			done
-			
 			# re-enable all cores
 			i=0
 			while [[ $i -lt 192 ]] ; do
@@ -75,13 +73,6 @@ do_start() {
 	fi
 	if [ -n "$bad_ports" ] ; then
 		for p in $bad_ports ; do
-			# Disable PLL
-			i2cset -y 2 0x71 1 $((p+1))
-			for c in 0 1 2 3 ; do
-				cmd=$(printf "0x84,0x%02X,0,0" $c)
-				spi-test -s 50000 -OHC -D /dev/spidev1.0 $cmd >/dev/null
-			done
-			
 			# disable all cores
 			i=0
 			while [[ $i -lt 192 ]] ; do
@@ -98,11 +89,11 @@ do_start() {
 	# Enable SPI poller
 	i2cset -y 2 0x71 2 $spi_ena
 
-        start-stop-daemon -b -S -x screen -- -S cgminer -t cgminer -m -d "$DAEMON" --api-listen --default-config /config/cgminer.conf
+	start-stop-daemon -b -S -x screen -- -S cgminer -t cgminer -m -d "$DAEMON" --api-listen -c /config/cgminer.conf $EXTRA_OPT
 }
 
 do_stop() {
-        killall -9 cgminer || true
+	killall -9 bfgminer cgminer 2>/dev/null || true
 }
 case "$1" in
   start)

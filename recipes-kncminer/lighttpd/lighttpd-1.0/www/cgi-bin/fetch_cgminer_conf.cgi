@@ -14,9 +14,7 @@ cat <<'EOF'
 }
 ]
 ,
-"api-listen" : true,
-"api-network" : true,
-"api-allow" : "W:0/0"
+"api-listen" : true
 }
 
 EOF

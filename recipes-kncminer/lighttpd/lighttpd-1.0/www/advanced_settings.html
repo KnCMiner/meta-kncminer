@@ -18,26 +18,32 @@
 			//renderCurrentConfig(true);
 			renderCurrentConfig(false);
 			renderCurrentStatus();
+			$('#loading').hide();
 			$('#settings').show();
 		}
 
 		function renderSpiVoltDropdown() {
 			for(var i = 0; i < config.valid_spi_voltages.length; i++) {
-				$('#spiVoltage').append('<option value="' + config.valid_spi_voltages[i] + '">' + config.valid_spi_voltages[i] + ' Volt</option>');
+				$('#spiVoltage').append('<option value="' + config.valid_spi_voltages[i] + '">' + config.valid_spi_voltages[i] + ' V</option>');
 			}
 		}
 
 		function renderSpiFreqDropdown() {
 			for(var i = 0; i < config.valid_spi_frequencies.length; i++) {
-				$('#spiFrequency').append('<option value="' + config.valid_spi_frequencies[i] + '">' + config.valid_spi_frequencies[i] + ' Hertz</option>');
+				$('#spiFrequency').append('<option value="' + config.valid_spi_frequencies[i] + '">' + config.valid_spi_frequencies[i] + ' Hz</option>');
 			}
 		}
 
 		function renderAsics()
 		{
-			var selTemplate = $('<select/>');
+			var dieVoltTemplate = $('<select/>');
 			$.each(config.valid_die_voltages, function(i, voltage) {
-				selTemplate.append('<option value="' + voltage + '">' +	voltage + ' Volt</option>');
+				dieVoltTemplate.append('<option value="' + voltage + '">' +	voltage + ' V</option>');
+			});
+
+			var dieFreqTemplate = $('<select/>');
+			$.each(config.valid_die_frequencies, function(i, frequency) {
+				dieFreqTemplate.append('<option value="' + frequency + '">' +	frequency + ' MHz</option>');
 			});
 
 			$.each(config.enabled_asics, function(i, asic) {
@@ -51,14 +57,23 @@
 				var voltageBox = $('<div class="col span_4_of_12"></div>');
 				for(var j = 1; j <= 4; j++) {
 					voltageBox.append('die ' + j + ' ');
-					var sel = selTemplate.clone();
-					sel.attr('id', asic + '_dieVoltage' + j);
-					//var asicStrX = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
-					//sel.val(config.current_settings[asicStrX]['die' + j]);
-					voltageBox.append(sel);
+					var dieVolt = dieVoltTemplate.clone();
+					dieVolt.attr('id', asic + '_dieVoltage' + j);
+					//var asic_X_voltage = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
+					//dieVolt.val(config.current_settings[asic_X_voltage]['die' + j]);
+
+					var dieFrequency = dieFreqTemplate.clone();
+					dieFrequency.attr('id', asic + '_dieFrequency' + j);
+
+					voltageBox.append(dieVolt);
+					voltageBox.append(dieFrequency);
 					voltageBox.append('</br> ');
 					if(j == 4) {
-						voltageBox.append('</br><P id="' + asic + '_temp"></P></br>');					
+						voltageBox.append('</br><p id="' + asic + '_temp"></p></br>');
+						var powerElem = $('<br/><p id="' + asic + '_power"></p><br/>');
+						powerElem.append('<span>Power&nbsp;:&nbsp;</span>');
+				        powerElem.append('<span id="powerVal"></span>');
+						voltageBox.append(powerElem);
 					}
 					voltageBox.appendTo(innerBox);
 				}
@@ -83,46 +98,81 @@
 		function renderCurrentStatus() {
 			$.each(config.enabled_asics, function(i, asic) {
 				var asicStrX = asic.slice(0, 4) + "_" + asic.slice(4);
+				var power = 0.0;
 				for(var j = 0; j <= 7; j++) {
 					var U = config.current_status[asicStrX]['dcdc' + j + '_Vout'];
 					var I = config.current_status[asicStrX]['dcdc' + j + '_Iout'];
 					var P = U * I;
+					power = power + P;
 					$('#' + asic + '_dcdc' + j + 'Voltage').html(config.current_status[asicStrX]['dcdc' + j + '_Vout'] || 0);
 					$('#' + asic + '_dcdc' + j + 'Current').html(config.current_status[asicStrX]['dcdc' + j + '_Iout'] || 0);
 					$('#' + asic + '_dcdc' + j + 'Power').html(P.toFixed(3));
 				}
-				$('#' + asic + '_temp').html('Temp : ' + config.current_status[asicStrX].temperature);
+				$('#' + asic + '_temp').html('Temp : ' + config.current_status[asicStrX].temperature + ' °C');
+				$('#' + asic + '_power #powerVal').html(power.toFixed(3) + '&nbsp;W');
+
 			});
+			var p = 0.0;
+			$('p #powerVal').each(function(i,v) {p+=parseFloat($(v).text());});
+			$('#consumption').html(p.toFixed(3));
+		}
+
+		function validConfig() {
+			if(!("spi_voltage" in config.current_settings)) {return false;}
+			if(!("auto_spi_voltage" in config.current_settings)) {return false;}
+			if(!("spi_frequency" in config.current_settings)) {return false;}
+
+			for(var i = 0; i < config.enabled_asics.length; i++) {
+				var asic_X_voltage = config.enabled_asics[i].slice(0, 4) + "_" + config.enabled_asics[i].slice(4) + '_voltage';
+				var asic_X_frequency = config.enabled_asics[i].slice(0, 4) + "_" + config.enabled_asics[i].slice(4) + '_frequency';
+				if(!config.current_settings[asic_X_voltage]) {return false;}
+				if(!config.current_settings[asic_X_frequency]) {return false;}
+
+				for(var j = 1; j <= 4; j++) {
+					if(!config.current_settings[asic_X_voltage]['die' + j]) {return false;} 
+					if(!config.current_settings[asic_X_frequency]['die' + j]) {return false;}
+				}
+			}
+			return true;
 		}
 
 		function renderCurrentConfig(initialize) {
-			$('#spiFrequency').val(config.current_settings.spi_frequency);
-			$('#auto_spi_voltage').prop('checked', config.current_settings.auto_spi_voltage || false);
-			
-			if(config.current_settings.auto_spi_voltage) {
-				$("#spiVoltage").attr('disabled', 'disabled');
-				autoSpiVoltage = true;
-			} else {
-				$("#spiVoltage").removeAttr('disabled');
-				autoSpiVoltage = false;
-			}
+			var validFile = validConfig();
 
-			if (config.valid_spi_voltages.length > 1) {
-				$('#spiVoltage').val(config.current_settings.spi_voltage);
-				$("#auto_spi_voltage").removeAttr('disabled');
+			if(validFile == true || recreatedConfig == true) {
+				
+				$('#spiFrequency').val(config.current_settings.spi_frequency);
+				$('#auto_spi_voltage').prop('checked', config.current_settings.auto_spi_voltage || false);
+				
+				if(config.current_settings.auto_spi_voltage) {
+					$("#spiVoltage").attr('disabled', 'disabled');
+					autoSpiVoltage = true;
+				} else {
+					$("#spiVoltage").removeAttr('disabled');
+					autoSpiVoltage = false;
+				}
+
+				if (config.valid_spi_voltages.length > 1) {
+					$('#spiVoltage').val(config.current_settings.spi_voltage);
+					$("#auto_spi_voltage").removeAttr('disabled');
+				} else {
+					$('#spiVoltage').val(config.valid_spi_voltages[0]);
+					$("#spiVoltage").attr('disabled', 'disabled');
+					$("#auto_spi_voltage").attr('disabled', 'disabled');
+				}
+				
+				if(!initialize){
+					$.each(config.enabled_asics, function(i, asic) {
+						for(var j = 1; j <= 4; j++) {
+							var asic_X_voltage = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
+							var asic_X_frequency = asic.slice(0, 4) + "_" + asic.slice(4) + '_frequency';
+							$('#' + asic + '_dieVoltage' + j).val(config.current_settings[asic_X_voltage]['die' + j]);
+							$('#' + asic + '_dieFrequency' + j).val(config.current_settings[asic_X_frequency]['die' + j]);
+						}
+					});
+				}
 			} else {
-				$('#spiVoltage').val(config.valid_spi_voltages[0]);
-				$("#spiVoltage").attr('disabled', 'disabled');
-				$("#auto_spi_voltage").attr('disabled', 'disabled');
-			}
-			
-			if(!initialize){
-				$.each(config.enabled_asics, function(i, asic) {
-					for(var j = 1; j <= 4; j++) {
-						var asicStrX = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
-						$('#' + asic + '_dieVoltage' + j).val(config.current_settings[asicStrX]['die' + j]);
-					}
-				});
+				submitAndGetConfig('recreate-config-file');
 			}
 		}
 
@@ -134,30 +184,35 @@
 				reqParamStr = JSON.stringify(config.current_settings, undefined, 2);
 			}
 			
-			var jqxhr = $.post("/cgi-bin/fetch_advanced_settings.cgi", reqParamStr, function(configStr) {
-				try
-				{
+			$.ajax({
+				url: "/cgi-bin/fetch_advanced_settings.cgi",
+				data: reqParamStr,
+				type: 'POST',
+				timeout: 50000,
+				success: function(configStr) {
 					if(fetchType == 'fetch-advanced-settings-and-ranges') {
-						config = JSON.parse(configStr);
-						renderTuningParam();
-						setEditMode(false);
-					} else if(fetchType == 'get-current-status') {
-						config.current_status = JSON.parse(configStr); 
-						renderCurrentStatus();						
-					} else {
-						config.current_settings = JSON.parse(configStr); 
-						renderCurrentConfig(false);
+                                                config = JSON.parse(configStr);
+                                                renderTuningParam();
+                                                setEditMode(false);
+                                        } else if(fetchType == 'get-current-status') {
+                                                config.current_status = JSON.parse(configStr); 
+                                                renderCurrentStatus();                                          
+                                        } else {
+                                                config.current_settings = JSON.parse(configStr); 
+                                                renderCurrentConfig(false);
+                                        }
+                                        if(fetchType == 'recreate-config-file') {
+                                                recreatedConfig = true;
+                                        }
+				},
+				error: function(xhr, status, error) {
+				    if(error == 'timeout') {
+					    alert('Fetch advanced configuration/status failed.');
 					}
 				}
-				catch(err)
-				{
-					alert('Fetch advanced configuration/status failed.');
-				}
-			}, "text");
-			jqxhr
-				.fail(function() {
-					alert('Ajax Error: ' + config);
-				});
+
+			});
+
 		}
 
 		function createConfig() {
@@ -167,8 +222,10 @@
 
 			$.each(config.enabled_asics, function(i, asic) {
 				for(var j = 1; j <= 4; j++) {
-					var asicStrX = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
-					config.current_settings[asicStrX]['die' + j] = $('#' + asic + '_dieVoltage' + j).val();
+					var asic_X_voltage = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
+					var asic_X_frequency = asic.slice(0, 4) + "_" + asic.slice(4) + '_frequency';
+					config.current_settings[asic_X_voltage]['die' + j] = $('#' + asic + '_dieVoltage' + j).val();
+					config.current_settings[asic_X_frequency]['die' + j] = $('#' + asic + '_dieFrequency' + j).val();
 				}
 			});
 		}
@@ -198,12 +255,95 @@
 			}
 		}
 
+		function loadDefaultConfig() {
+			config = {
+                "asic_1_voltage": {
+                	"die1": "0.0000",
+                	"die2": "0.0000",
+                	"die3": "0.0000",
+                	"die4": "0.0000"
+                },
+                "asic_1_frequency": {
+                	"die1": "0",
+                	"die2": "0",
+                	"die3": "0",
+                	"die4": "0"
+                },
+                "asic_2_voltage": {
+                	"die1": "0.0",
+                	"die2": "0.0",
+                	"die3": "0.0",
+                	"die4": "0.0"
+                },
+                "asic_2_frequency": {
+                	"die1": "0",
+                	"die2": "0",
+                	"die3": "0",
+                	"die4": "0"
+                },
+                "asic_3_voltage": {
+                	"die1": "0.0000",
+                	"die2": "0.0000",
+                	"die3": "0.0000",
+                	"die4": "0.0000"
+                },
+                "asic_3_frequency": {
+                	"die1": "0",
+                	"die2": "0",
+                	"die3": "0",
+                	"die4": "0"
+                },
+                "asic_4_voltage": {
+                	"die1": "0.0000",
+                	"die2": "0.0000",
+                	"die3": "0.0000",
+                	"die4": "0.0000"
+                },
+                "asic_4_frequency": {
+                	"die1": "0",
+                	"die2": "0",
+                	"die3": "0",
+                	"die4": "0"
+                },
+                "asic_5_voltage": {
+                        "die1": "0.0000",
+                        "die2": "0.0000",
+                        "die3": "0.0000",
+                        "die4": "0.0000"
+                },
+                "asic_5_frequency": {
+                        "die1": "0",
+                        "die2": "0",
+                        "die3": "0",
+                        "die4": "0"
+                },
+                "asic_6_voltage": {
+                        "die1": "0.0",
+                        "die2": "0.0",
+                        "die3": "0.0",
+                        "die4": "0.0"
+                },
+                "asic_6_frequency": {
+                        "die1": "0",
+                        "die2": "0",
+                        "die3": "0",
+                        "die4": "0"
+                },
+                "spi_frequency": "0",
+                "spi_voltage": "0.0",
+                "auto_spi_voltage": true
+            }
+        }
+
 		$(document).ready(function() {
 			config = null;
 			editMode = false;
 			autoSpiVoltage = false;
 		    requesting=false;
+		    recreatedConfig=false;
 		    var interval;
+
+			loadDefaultConfig();
 			
 			submitAndGetConfig('fetch-advanced-settings-and-ranges');
 
@@ -270,7 +410,7 @@
 					<a href="/miner_setting.html">Mining</a>
 					<a href="/cgi-bin/get_network_conf.cgi">Networking</a>
 					<a href="/services_conf.html">Services</a>
-					<a href="/security_management.html">Security</a>
+					<a href="/system_management.html">System</a>
 					<a href="/advanced_settings.html" class="active">Advanced</a>
 					<a href="/firmware_upgrade.html">Upgrade</a>
 				</div>
@@ -288,6 +428,7 @@
 		</div>
 		<div class="section">
 			<div class="xbox">
+                <div id='loading'>Loading configuration, please wait...</div>
 				<div id="settings" class="span_12_of_12">
 					<div class="col span_3_of_12">
 						<h5> SPI voltage </h5>
@@ -297,6 +438,15 @@
 					<div class="col span_3_of_12">
 						<h5> SPI Frequency </h5>
 						<select id="spiFrequency"></select>
+					</div>
+                    <div class="col span_3_of_12">
+						<h5> Power Consumption </h5>
+						<div>
+                            <p>
+                                <span id="consumption"></span>
+                                <span>&nbsp;W</span>
+                            </p>
+						</div>
 					</div>
 				
 					<div class="col span_12_of_12">
