@@ -20,6 +20,9 @@ for i in $@; do
     if [ "$1" = "admin" ] ; then
 	admin=`urldecode $2`
     fi
+    if [ "$1" = "remote_mgmt" ] ; then
+	remote_mgmt=`urldecode $2`
+    fi
 done
 
 if [ "$admin" = "" ]; then
@@ -35,6 +38,9 @@ if [ "$new_pw_ctrl" != "$new_pw" ] ; then
 	exit 0
 fi
 
+if [ "$remote_mgmt" = "" ]; then
+	show_msg "Invalid management network"
+	exit 0
 fi
 
 hash=`echo -n "${REMOTE_USER}:KnC Miner configuration:$curr_pw" | md5sum | cut -b -32` 
@@ -62,3 +68,5 @@ if [ $? -eq 0 ] ; then
     mv /etc/shadow /config/shadow
     ln -s /config/shadow /etc/shadow
 fi
+
+echo "remote_mgmt=\"${remote_mgmt}\"" >>/config/network.conf
