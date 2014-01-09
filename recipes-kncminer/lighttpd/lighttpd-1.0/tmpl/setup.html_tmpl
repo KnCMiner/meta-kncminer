@@ -36,6 +36,9 @@
 				<label>Current Password</label><input type="password" name="current_pw" placeholder="Current Password"><br>
 				<label>New Password</label><input type="password" name="new_pw" placeholder="New Password"><br>
 				<label>Re-enter New Password</label><input type="password" name="new_pw_ctrl" placeholder="Re-enter New Password"><br>
+				<label>Management network</label><input type="text" name="remote_mgmt" value="LAN RFC1968" placeholder="Space separated"><br>
+Management is list of addresses/networks with access to web console and SSH (if enabled). Use LAN for local LAN addresses only (same network) or RFC1918 for private networks.<br>
+WARNING: If you are doing the setup remotely then make sure to add your address here.<br>Your address is #%#REMOTE_ADDR#%#
 				</div>
 				<input type=submit value=Save>
 				</div>

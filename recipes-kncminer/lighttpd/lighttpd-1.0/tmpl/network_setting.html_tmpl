@@ -61,6 +61,22 @@ function ValidateForm()
 	}
     }
 
+    var mgmt=document.forms["param"]["remote_mgmt"].value.split(" ");
+    for (var i = 0; i < mgmt.length; i++) {
+	var x = mgmt[i];
+	if (!x.match(ipformat) && !x.match(netformat) && x != "LAN" && x != "RFC1918" ) {
+	    alert("Invalid management address '"+x+"'");
+	    document.param.remote_mgmt.focus();
+	    return false;
+	}
+    }
+    var mgmt=document.forms["param"]["remote_mgmt"].value;
+    var old_mgmt=document.forms["param"]["old-remote_mgmt"].value;
+    if (mgmt != old_mgmt) {
+	if (!confirm("Warning: Only '"+mgmt+" will be able to access web interface"))
+	    return false;
+    }
+
     // Ok to submit
     document.param.submit();
 }
@@ -111,6 +127,8 @@ function ValidateForm()
 							<label>Gateway</label><input type="text" name="gateway" value="#%#Gateway#%#"><br>
 							<label>DNS Servers</label><input type="text" name="dnsservers" value="#%#DNSServers#%#" placeholder="Space separated"><br>
 							
+						<label>Management</label><input type="hidden" name="old-remote_mgmt" value="#%#remote_mgmt#%#"><input type="text" name="remote_mgmt" value="#%#remote_mgmt#%#" placeholder="Space separated"><br>Management is list of addresses/networks with access to web console and SSH (if enabled). Use LAN for local LAN addresses only (same network) or RFC1918 for private networks.<br>
+WARNING: If you are doing the setup remotely then make sure to add your address here.<br>Your address is #%#REMOTE_ADDR#%#</div><br>
 						</div>
 						<button type="submit" class="btn btn-lg btn-primary" onclick=" return ValidateForm()">Apply</button>						
 					</form>

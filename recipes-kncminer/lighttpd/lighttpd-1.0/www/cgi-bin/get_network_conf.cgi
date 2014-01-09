@@ -18,6 +18,7 @@ fi
 
 sed  "
 s!#%#dhcp#%#!$dhcp!g
+s!#%#remote_mgmt#%#!$remote_mgmt!g
 s!#%#Hostname#%#!$hostname!g
 s!#%#IP_Address#%#!$ipaddress!g
 s!#%#Netmask#%#!$netmask!g

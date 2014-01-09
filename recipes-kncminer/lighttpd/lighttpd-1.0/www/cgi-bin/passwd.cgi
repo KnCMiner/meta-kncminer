@@ -35,6 +35,9 @@ if [ "$new_pw_ctrl" != "$new_pw" ] ; then
 	exit 0
 fi
 
+if [ "$remote_mgmt" = "" ]; then
+	show_msg "Invalid management network"
+	exit 0
 fi
 
 hash=`echo -n "${REMOTE_USER}:KnC Miner configuration:$curr_pw" | md5sum | cut -b -32` 
