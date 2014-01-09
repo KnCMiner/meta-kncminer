@@ -49,12 +49,17 @@ while [ $exit_code -eq 252 ] ; do
                 break
         fi
 done
+
+#if [ ! -f /config/advanced.conf ] ; then
+#        ./waas -rd -o /config/advanced.conf
+#fi
+
 if [[ $exit_code = 0 ]] ; then
         # Turn OFF red, Turn ON green
         echo high > /sys/class/gpio/gpio70/direction
         echo low > /sys/class/gpio/gpio71/direction
 
-#        ./waas -zd
+#        ./waas -c /config/advanced.conf
 else
         # Turn ON red, Turn OFF green
         echo low > /sys/class/gpio/gpio70/direction

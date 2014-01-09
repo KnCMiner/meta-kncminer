@@ -21,7 +21,7 @@ atexit() {
 	rmdir $file.boot 2>/dev/null || true
 	sync
 	if [ ! $ok ]; then
-	    print "<h1>System upgrade failed</h1>"
+	    print "<h1>Restore configuration failed</h1>"
 	fi
 	printf "</div>"
 	printf "</div>"
@@ -59,7 +59,6 @@ cat <<-EOH
         <div class="span_12_of_12">
         <div class="xbox box">
         <div class="span_12_of_12">
-	<h1>System upgrade in progress</h1>
 EOH
 
 exec 2>&1
@@ -75,20 +74,17 @@ done
 
 mkdir $file
 cd $file
-tar zxf -
-if [ -f runme.sh ]; then
-	sh runme.sh
+tar xf -
+if [ -f restoreConfig.sh ]; then
+	sh restoreConfig.sh
 else
-    mkdir $file.boot
-    mount /dev/mmcblk0p1 $file.boot
-    cp * $file.boot/
-    umount $file.boot
-    sync
+    exit
 fi
+rm /config/restoreConfig.sh
 
 cat <<EOT
-<h1>System upgraded</h1>
-<p>The upgrade installed successfully. Please reboot Miner to activate.</p>
+<h1>System configuration restored</h1>
+<p>The backup configuration restored successfully. Please reboot Miner to activate.</p>
 <div class="section">                                                         
 <div class="col span_6_of_12">
 <form action="/cgi-bin/reboot.cgi">

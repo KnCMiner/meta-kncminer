@@ -16,12 +16,20 @@
 				renderPoolForm(pool);
 			});
 
-			if(config['api-network'] == false) {
-				delete config["api-network"];
+			/* Legacy config files might contain api-network. Get rid of it */
+			if ('api-network' in config) {
+				if (config['api-network']) {
+					if (!('api-allow' in config))
+						config['api-allow'] = 'W:0/0';
+				} else {
+					delete config['api-allow'];
+				}
+				delete config['api-network'];
 				submitAndGetConfig();
 			}
 
-			$('#r_mgmt_on').prop('checked', config['api-network'] || false);
+			$('#r_mgmt_on').prop('checked', 'api-allow' in config);
+			$('#bfg').prop('checked', extra_config && ('use_bfgminer' in extra_config) && extra_config['use_bfgminer']);
 			refreshDelPoolVisibility();
 		}
 		
@@ -81,9 +89,21 @@
 			if (doReset) {
 				reqParamStr = resetType;
 			} else {
-				reqParamStr = JSON.stringify(config, undefined, 2);
+				reqParamStr1 = JSON.stringify(config, undefined, 2);
+				if (config)
+					c = (('use_bfgminer' in extra_config) && extra_config['use_bfgminer']) ? 'B' : 'C';
+				else
+					c = '';
+				reqParamStr = c + reqParamStr1;
 			}
 			var jqxhr = $.post("/cgi-bin/fetch_cgminer_conf.cgi", reqParamStr, function(configStr) {
+				config = new Object();
+				if (configStr.substring(1, 2) == '{') {
+					extra_config['use_bfgminer'] = (configStr.substring(0, 1) == 'B');
+					configStr = configStr.substring(1);
+				} else {
+					extra_config['use_bfgminer'] = false;
+				}
 				try
 				{
 					config = JSON.parse(configStr);
@@ -95,9 +115,9 @@
 					$('#manualText').val(configStr);
 					setEditMode(true);
 					manualMode();
-					alert('Invalid CGMiner configuration file. Edit manually or reset to default.');
+					alert('Invalid Miner configuration file. Edit manually or reset to default.');
 				}
-			}, "text");				
+			}, "text");
 			jqxhr
 				.fail(function() {
 					alert('Ajax Error');
@@ -128,9 +148,10 @@
 			
 			config["api-listen"] = true;
 			if ($('#r_mgmt_on').prop('checked')) {
-				config["api-network"] = true;
+				if (!('api-allow' in config))
+					config['api-allow'] = 'W:0/0';
 			} else {
-				delete config["api-network"];
+				delete config['api-allow'];
 			}
 		}
 		
@@ -189,6 +210,7 @@
 		$(document).ready(function() {
 			
 			config = null;
+			extra_config = new Object();
 			editMode = false;
 			restartMode = false;
 			setRestartMode(false);
@@ -260,10 +282,21 @@
 			
 			$('#gotoManualModeBtn').click(function() {
 				createConfig();
+				$('#manual_bfg').prop('checked', ('use_bfgminer' in extra_config) && extra_config['use_bfgminer']);
 				$('#manualText').val(JSON.stringify(config, undefined, 2));
 				manualMode();
 			});
-			
+
+			$('#bfg').click(function() {
+				extra_config['use_bfgminer'] = $('#bfg').prop('checked');
+				$('#manual_bfg').prop('checked', extra_config['use_bfgminer']);
+			});
+
+			$('#manual_bfg').click(function() {
+				extra_config['use_bfgminer'] = $('#manual_bfg').prop('checked');
+				$('#bfg').prop('checked', extra_config['use_bfgminer']);
+			});
+
 		});
 	</script>
 </head>
@@ -280,7 +313,8 @@
                         <a href="/miner_setting.html" class="active">Mining</a>
                         <a href="/cgi-bin/get_network_conf.cgi">Networking</a>
                         <a href="/services_conf.html">Services</a>
-                        <a href="/security_management.html">Security</a>
+                        <a href="/system_management.html">System</a>
+                        <a href="/advanced_settings.html">Advanced</a>
                         <a href="/firmware_upgrade.html">Upgrade</a>
                     </div>
                 </nav>
@@ -292,7 +326,7 @@
                         <div class="span_12_of_12">
                             <h1>Miner Settings</h1>
                             <p>
-                                Edit mining parameters, press "Save changes" to save settings on miner,</br> and press "Restart CGMiner" to apply changes.
+                                Edit mining parameters, press "Save changes" to save settings on miner,</br> and press "Restart Miner" to apply changes.
                             </p>
                         </div>
                     </div>
@@ -304,11 +338,12 @@
                         <button id="addBtn">Add pool</button>
                         <h1>Pools</h1>
                         <div id="pools" class="box"></div>
-                        <div class="inline"><input type="checkbox" name="r_mgmt_on" id="r_mgmt_on"><label for="r_mgmt_on">CGMiner Remote Management Enabled</label></div>
+                        <div class="inline"><input type="checkbox" name="r_mgmt_on" id="r_mgmt_on"><label for="r_mgmt_on">Miner Remote Management Enabled</label></div>
                         <div class="form-actions">
+                          <div class="inline"><input type="checkbox" name="bfg" id="bfg"><label for="bfg">Use BFGMiner (if unchecked - use default CGMiner)</label></div><BR>
                           <button id="gotoManualModeBtn" type="button">Manual edit mode</button>
                           <button id="saveBtn" type="button" disabled="disabled">Save changes</button>
-                          <button id="restartCGMinerBtn" type="button" disabled="disabled">Restart CGMiner</button>
+                          <button id="restartCGMinerBtn" type="button" disabled="disabled">Restart Miner</button>
                           <button class="factoryDefaultBtn" type="button">Reset to Factory Defaults</button>
                         </div>
                     </div>
@@ -325,9 +360,10 @@
                           </div>
                         </div>
                         <div class="form-actions col span_12_of_12">
+                          <div class="inline"><input type="checkbox" name="manual_bfg" id="manual_bfg"><label for="manual_bfg">Use BFGMiner (if unchecked - use default CGMiner)</label></div><BR>
                           <button id="gotoNormalModeBtn" type="button" disabled="disabled">Normal edit mode</button>
                           <button id="manualSaveBtn" type="button" disabled="disabled">Save changes</button>
-                          <button id="manualRestartCGMinerBtn" type="button" disabled="disabled">Restart CGMiner</button>
+                          <button id="manualRestartCGMinerBtn" type="button" disabled="disabled">Restart Miner</button>
                           <button class="factoryDefaultBtn" type="button">Reset to Factory Defaults</button>
                         </div>
                         <div class="section"></div>
