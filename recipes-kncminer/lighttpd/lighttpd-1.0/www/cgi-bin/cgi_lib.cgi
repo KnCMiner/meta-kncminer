@@ -64,5 +64,6 @@ show_msg ()
 }
 
 urldecode () {
-    printf  '%b' "${1//%/\\x}"
+    tmp="`echo "${1}" | sed -e 's/+/ /g'`"
+    printf  '%b' "${tmp//%/\\x}" 
 }
