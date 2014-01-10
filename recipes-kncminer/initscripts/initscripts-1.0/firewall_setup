@@ -19,6 +19,7 @@ echo "*filter" > $TMPFILE
 echo ":OUTPUT ACCEPT" >> $TMPFILE
 echo ":INPUT DROP" >> $TMPFILE
 echo "-A INPUT -i lo -j ACCEPT" >> $TMPFILE
+echo "-A INPUT -p icmp -j ACCEPT" >> $TMPFILE
 echo "-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT" >> $TMPFILE
 echo "COMMIT" >> $TMPFILE
 iptables-restore < $TMPFILE >/dev/null 2>&1
