@@ -1,5 +1,5 @@
 #!/bin/sh
-#set -x
+. ./cgi_lib.cgi
 
 MINER_CONF="/config/miner.conf"
 
@@ -39,7 +39,8 @@ case "$line" in
 	set -- $line
 	name=$1
 	shift
-	echo "$name=\"$@\"" >> /config/miner.conf
+	value="`urldecode "$@"`"
+	echo "$name=\"$value\"" >> /config/miner.conf
 	IFS="$OIFS"
 	;;
 *)	# Special config modes

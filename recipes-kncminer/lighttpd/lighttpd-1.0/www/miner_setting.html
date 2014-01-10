@@ -28,7 +28,7 @@
 				submitAndGetConfig();
 			}
 
-			$('#r_mgmt_on').prop('checked', 'api-allow' in config);
+			$('#r_mgmt').val(extra_config["remote_mgmt"]);
 			$('#bfg').prop('checked', extra_config && ('use_bfgminer' in extra_config) && extra_config['use_bfgminer']);
 			refreshDelPoolVisibility();
 		}
@@ -98,7 +98,7 @@
 				reqParamStr = "null";
 			}
 			var jqxhr = $.post("/cgi-bin/fetch_cgminer_conf.cgi", reqParamStr, function(configStr) {
-				configLines = configStr.split(/(\r\n|[\n\v\f\r\x85\u2028\u2029])/);
+				var configLines = configStr.split(/\r\n|[\n\v\f\r\x85\u2028\u2029]/);
 				
 				var res;
 				while (res = configLines[0].match(/([^{].*)="?([^"]*)"?/)) {
@@ -149,8 +149,8 @@
 				config.pools.push(newPool);
 			});
 			
-			config["api-listen"] = true;
-			if ($('#r_mgmt_on').prop('checked')) {
+			if (extra_config['remote_mgmt'] != "") {
+				config["api-listen"] = true;
 				if (!('api-allow' in config))
 					config['api-allow'] = 'W:0/0';
 			} else {
@@ -285,21 +285,26 @@
 			
 			$('#gotoManualModeBtn').click(function() {
 				createConfig();
-				$('#manual_bfg').prop('checked', ('use_bfgminer' in extra_config) && extra_config['use_bfgminer']);
+				$('#manual_bfg').prop('checked', $('#bfg').prop('checked'));
+				$('#manual_r_mgmt').val($('#r_mgmt').val());
 				$('#manualText').val(JSON.stringify(config, undefined, 2));
 				manualMode();
 			});
 
-			$('#bfg').click(function() {
+			$('#bfg').change(function() {
 				extra_config['use_bfgminer'] = $('#bfg').prop('checked');
-				$('#manual_bfg').prop('checked', extra_config['use_bfgminer']);
 			});
 
-			$('#manual_bfg').click(function() {
+			$('#manual_bfg').change(function() {
 				extra_config['use_bfgminer'] = $('#manual_bfg').prop('checked');
-				$('#bfg').prop('checked', extra_config['use_bfgminer']);
 			});
 
+			$('#r_mgmt').change(function() {
+				extra_config['remote_mgmt'] = $('#r_mgmt').val();
+			});
+			$('#manual_r_mgmt').change(function() {
+				extra_config['remote_mgmt'] = $('#manual_r_mgmt').val();
+			});
 		});
 	</script>
 </head>
@@ -341,9 +346,12 @@
                         <button id="addBtn">Add pool</button>
                         <h1>Pools</h1>
                         <div id="pools" class="box"></div>
-                        <div class="inline"><input type="checkbox" name="r_mgmt_on" id="r_mgmt_on"><label for="r_mgmt_on">Miner Remote Management Enabled</label></div>
+                        <div><input type="checkbox" name="bfg" id="bfg"><label for="bfg">Use BFGMiner (if unchecked - use default CGMiner)</label></div>
+                        <div>
+<label for="r_mgmt">Miner Remote Management Server(s)</label>
+<input type="text" name="r_mgmt" id="r_mgmt">
+</div>
                         <div class="form-actions">
-                          <div class="inline"><input type="checkbox" name="bfg" id="bfg"><label for="bfg">Use BFGMiner (if unchecked - use default CGMiner)</label></div><BR>
                           <button id="gotoManualModeBtn" type="button">Manual edit mode</button>
                           <button id="saveBtn" type="button" disabled="disabled">Save changes</button>
                           <button id="restartCGMinerBtn" type="button" disabled="disabled">Restart Miner</button>
@@ -363,7 +371,11 @@
                           </div>
                         </div>
                         <div class="form-actions col span_12_of_12">
-                          <div class="inline"><input type="checkbox" name="manual_bfg" id="manual_bfg"><label for="manual_bfg">Use BFGMiner (if unchecked - use default CGMiner)</label></div><BR>
+                        <div><input type="checkbox" name="manual_bfg" id="manual_bfg"><label for="manual_bfg">Use BFGMiner (if unchecked - use default CGMiner)</label></div>
+                        <div>
+<label for="r_mgmt">Miner Remote Management Server(s)</label>
+<input type="text" name="manual_r_mgmt" id="manual_r_mgmt">
+</div>
                           <button id="gotoNormalModeBtn" type="button" disabled="disabled">Normal edit mode</button>
                           <button id="manualSaveBtn" type="button" disabled="disabled">Save changes</button>
                           <button id="manualRestartCGMinerBtn" type="button" disabled="disabled">Restart Miner</button>
