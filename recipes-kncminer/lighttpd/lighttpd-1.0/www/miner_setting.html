@@ -23,7 +23,7 @@
 			}
 
 			$('#r_mgmt').val(extra_config["remote_mgmt"]);
-			$('#bfg').prop('checked', extra_config && ('use_bfgminer' in extra_config) && extra_config['use_bfgminer']);
+			$('#bfg').prop('checked', extra_config && ('use_bfgminer' in extra_config) && extra_config['use_bfgminer'] == "true");
 			refreshDelPoolVisibility();
 		}
 		
