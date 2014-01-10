@@ -1,0 +1,35 @@
+#!/bin/sh
+
+TMPFILE=/tmp/$$
+
+if [ -f /config/network.conf ] ; then
+        . /config/network.conf
+fi
+
+local_net="$(ip addr show eth0 | sed -n 's/^.*inet[[:space:]]*\([^[:space:]]*\)[[:space:]].*$/\1/p')"
+
+echo "*filter" > $TMPFILE
+echo ":OUTPUT ACCEPT" >> $TMPFILE
+echo ":INPUT DROP" >> $TMPFILE
+echo "-A INPUT -i lo -j ACCEPT" >> $TMPFILE
+echo "-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT" >> $TMPFILE
+OIFS=$IFS
+IFS=" ,	"
+for addr in ${remote_mgmt:-0.0.0.0/0}; do
+	if [[ "$addr" = "LAN" ]]; then
+		addr="${local_net}"
+	elif [[ "$addr" = "RFC1918" ]]; then
+		addr="10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+	fi
+	echo "-A INPUT -s $addr -p tcp --dport 80 -j ACCEPT" >> $TMPFILE
+	echo "-A INPUT -s $addr -p tcp --dport 22 -j ACCEPT" >> $TMPFILE
+done
+IFS=$OIFS
+echo "COMMIT" >> $TMPFILE
+
+iptables-restore < $TMPFILE >/dev/null 2>&1
+res=$?
+rm $TMPFILE
+
+[ "$res" = "0" ]
+
