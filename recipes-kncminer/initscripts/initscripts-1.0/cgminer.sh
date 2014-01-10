@@ -2,7 +2,11 @@
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
-if [ -f /config/.run_bfgminer ] ; then
+use_bfgminer=
+if [ -f /config/miner.conf ]; then
+	. /config/miner.conf
+fi
+if [ "$use_bfgminer" = true ] ; then
 	DAEMON=/usr/bin/bfgminer
 	NAME=bfgminer
 	DESC="BFGMiner daemon"

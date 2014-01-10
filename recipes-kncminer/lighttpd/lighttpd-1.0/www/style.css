@@ -49,7 +49,7 @@ p a, h2 a { -webkit-transition: color 0.2s ease-out; -moz-transition: color 0.2s
 
 .xbox ul li { display: list-item; list-style: disc; margin-left: 20px; }
 .xbox ol li { display: list-item; list-style-type: decimal; margin-left: 20px; }
-input[type="text"] { height: 30px; width: 300px; font-size: 18px; font-family: 'titillium_webthin'; padding-left: 10px; margin: 10px 20px; }
+input[type="text"], input[type="password"] { height: 30px; width: 300px; font-size: 18px; font-family: 'titillium_webthin'; padding-left: 10px; margin: 10px 20px; }
 label { height: 30px; line-height: 30px; margin-right: 20px; }
 input[type="radio"], input[type="checkbox"] { margin: 10px 10px 10px 0; line-height: 30px; }
 .inline { display: inline; }

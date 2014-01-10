@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
+<head>
+	<title>KnCMiner - Status</title>
+	<meta charset="UTF-8" />
+	<link href="style.css" rel="stylesheet" type="text/css">
+	<link href="grid.css" rel="stylesheet" type="text/css">
+	<link href="type/type.css" rel="stylesheet" type="text/css">
+	<script type="text/javascript" language="JavaScript">
+function ValidateForm()
+{
+    var ipformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    var netformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/(3[0-2]|[12][0-9]|[0-9])$/;
+
+    document.forms["param"]["remote_mgmt"].value = document.forms["param"]["remote_mgmt"].value.trim();
+    
+    var mgmt=document.forms["param"]["remote_mgmt"].value.split(" ");
+    for (var i = 0; i < mgmt.length; i++) {
+	var x = mgmt[i];
+	if (!x.match(ipformat) && !x.match(netformat) && x != "LAN" && x != "RFC1918" ) {
+	    alert("Invalid management address '"+x+"'");
+	    document.param.remote_mgmt.focus();
+	    return false;
+	}
+    }
+
+    // Ok to submit
+    document.param.submit();
+}
+	</script>
+</head>
+
+<body>
+	<div id="wrapper">
+		<header>
+			<div id="logo" class="col span_6_of_12">
+				<img src="images/logo.png" alt="KnCMiner logo">
+			</div>
+
+		</header>
+		<div id="header" class="section">
+			<div class="span_12_of_12">
+				<div class="xbox box">
+					<div class="span_7_of_12">
+						<h1>Initial Setup</h1>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="section">
+			<div class="span_12_of_12">
+				<div class="xbox">
+				<p>Please configure basic security settings on your miner before proceeding. This is to ensure that only you have access to the miner configuration.</p>
+<p>For best security and ease to remember please use a personal sentence of 5 to 7 english words
+				<form class="span_12_of_12" method="GET" action="/cgi-bin/setup.cgi" name="param">
+				<div class="box block">
+				<label>Admin account</label><input type=text name=admin><br>
+				<label>Current Password</label><input type="password" name="current_pw" placeholder="Current Password"><br>
+				<label>New Password</label><input type="password" name="new_pw" placeholder="New Password"><br>
+				<label>Re-enter New Password</label><input type="password" name="new_pw_ctrl" placeholder="Re-enter New Password"><br>
+				<label>Management network</label><input type="text" name="remote_mgmt" value="LAN RFC1918 #%#REMOTE_ADMIN#%#" placeholder="Space separated"><br>
+Management is list of addresses/networks with access to web console and SSH (if enabled). Use LAN for local LAN addresses only (same network) or RFC1918 for private networks.<br>
+WARNING: If you are doing the setup remotely then make sure to add your address here.<br>Your address is #%#REMOTE_ADDR#%#
+				</div>
+				<button type="submit" class="btn btn-lg btn-primary" onclick=" return ValidateForm()">Save</button>						
+				</div>
+				</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

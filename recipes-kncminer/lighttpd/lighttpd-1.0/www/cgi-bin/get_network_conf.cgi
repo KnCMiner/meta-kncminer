@@ -7,20 +7,22 @@ fi
 
 # "create" webpage from template
 if [ "$dhcp" = "true" ] ; then
-    sed '
-s/#%#checked#%#/checked/g
-s/#%#Hostname#%#/'$hostname'/g
-s/#%#IP_Address#%#//g
-s/#%#Netmask#%#//g
-s/#%#Gateway#%#//g
-s/#%#DNSServers#%#//g' < /www/tmpl/network_setting.html_tmpl
+    dhcp=checked
+    ipaddress=""
+    netmask=""
+    gateway=""
+    dnsservers=""
 else
-    sed  '
-s/#%#checked#%#//g
-s/#%#Hostname#%#/'$hostname'/g
-s/#%#IP_Address#%#/'$ipaddress'/g
-s/#%#Netmask#%#/'$netmask'/g
-s/#%#Gateway#%#/'$gateway'/g
-s/#%#DNSServers#%#/'"$dnsservers"'/g' < /www/tmpl/network_setting.html_tmpl
-
+    dhcp=""
 fi
+
+sed  "
+s!#%#dhcp#%#!$dhcp!g
+s!#%#remote_mgmt#%#!$remote_mgmt!g
+s!#%#Hostname#%#!$hostname!g
+s!#%#IP_Address#%#!$ipaddress!g
+s!#%#Netmask#%#!$netmask!g
+s!#%#Gateway#%#!$gateway!g
+s!#%#DNSServers#%#!$dnsservers!g
+s!#%#REMOTE_ADDR#%#!$REMOTE_ADDR!g
+" < /www/tmpl/network_setting.html_tmpl

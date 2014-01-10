@@ -39,4 +39,6 @@ else
     for ip in $dnsservers ; do
 	echo nameserver $ip >> /etc/resolv.conf
     done
+
+    /etc/firewall_setup
 fi

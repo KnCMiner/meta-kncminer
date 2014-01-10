@@ -1,0 +1,59 @@
+#!/bin/sh
+
+TMPFILE=/tmp/$$
+
+if [ -f /config/network.conf ] ; then
+        . /config/network.conf
+fi
+remote_mgmt_network=$remote_mgmt
+if [ -f /config/miner.conf ] ; then
+        . /config/miner.conf
+fi
+remote_mgmt_miner=$remote_mgmt
+
+local_net="$(ip addr show eth0 | sed -n 's/^.*inet[[:space:]]*\([^[:space:]]*\)[[:space:]].*$/\1/p')"
+
+miner_port=4028
+
+echo "*filter" > $TMPFILE
+echo ":OUTPUT ACCEPT" >> $TMPFILE
+echo ":INPUT DROP" >> $TMPFILE
+echo "-A INPUT -i lo -j ACCEPT" >> $TMPFILE
+echo "-A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT" >> $TMPFILE
+echo "COMMIT" >> $TMPFILE
+iptables-restore < $TMPFILE >/dev/null 2>&1
+res=$?
+rm $TMPFILE
+
+OIFS="$IFS"
+IFS=" ,	"
+for addr in ${remote_mgmt_network:-0.0.0.0/0}; do
+	if [[ "$addr" = "LAN" ]]; then
+		addr="${local_net}"
+	elif [[ "$addr" = "RFC1918" ]]; then
+		addr="10.0.0.0/8,172.16.0.0/12,192.168.0.0/16"
+	fi
+	iptables -t filter -A INPUT -s "$addr" -p tcp --dport 80 -j ACCEPT
+	res1=$?
+	iptables -t filter -A INPUT -s "$addr" -p tcp --dport 22 -j ACCEPT
+	res2=$?
+	if [[ "$res" = "0" ]]; then
+		if [[ "$res1" != "0" ]]; then
+			res=$res1
+		elif [[ "$res2" != "0" ]]; then
+			res=$res2
+		fi
+	fi
+done
+for addr in ${remote_mgmt_miner}; do
+        iptables -t filter -A INPUT -s "$addr" -p tcp --dport $miner_port -j ACCEPT
+        res3=$?
+        if [[ "$res" = "0" ]]; then
+                if [[ "$res3" != "0" ]]; then
+                        res=$res3
+                fi
+        fi
+done
+IFS="$OIFS"
+
+[ "$res" = "0" ]

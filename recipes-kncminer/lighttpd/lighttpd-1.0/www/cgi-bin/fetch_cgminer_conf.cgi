@@ -1,7 +1,7 @@
 #!/bin/sh
-#set -x
+. ./cgi_lib.cgi
 
-BFGMINER_FLAG_FILE="/config/.run_bfgminer"
+MINER_CONF="/config/miner.conf"
 
 create_dummy_conf_file()
 {
@@ -15,51 +15,63 @@ cat <<'EOF'
 "pass" : "x"
 }
 ]
-,
-"api-listen" : true
 }
 
 EOF
 ) > /config/cgminer.conf
 }
 
-input=`cat /dev/stdin`
+minerconfstart=
+while read line; do
+case "$line" in
+'{'*)	# Start JSON
+	break
+	;;
+*=*)	# Parameter setting before config
+	if [ ! $minerconfstart ]; then
+		> /config/miner.conf
+		minerconfstart=1
+	fi
+	OIFS=$IFS
+	IFS="="
+	set -- $line
+	name=$1
+	shift
+	value="`urldecode "$@"`"
+	echo "$name=\"$value\"" >> /config/miner.conf
+	IFS="$OIFS"
+	;;
+*)	# Special config modes
+	break
+	;;
+esac
+done
 
-if [ "$input" != "null" ] ; then
+input=`echo "$line" ; cat`
+
+if [ "${input:-null}" != "null" ] ; then
     if [ "$input" = "FactoryDefault" ] ; then
 	if [ -f /config/cgminer.conf.factory ] ; then
 	    cp /config/cgminer.conf.factory /config/cgminer.conf
 	else
 	    create_dummy_conf_file
 	fi
-	rm -f "$BFGMINER_FLAG_FILE"
+	rm -f "$MINER_CONF"
+	minerconfstart=1
     elif [ "$input" = "RestartCGMiner" ] ; then
 	/etc/init.d/cgminer.sh restart > /dev/null
     else
-#	/usr/bin/validJson "$input" >/dev/null
-#	echo a > /dev/null
-#	if [ $? -eq 0 ] ; then 
-#	    echo "$input" > /config/cgminer.conf
-#	fi
-	len=${#input}
-	if [ $len -gt 0 ] ; then
-	    fc=${input:0:1}
-	    if [ "$fc" != "{" ] ; then
-		if [ "$fc" = "B" ] ; then
-		    touch "$BFGMINER_FLAG_FILE"
-		else
-		    rm -f "$BFGMINER_FLAG_FILE"
-		fi
-		conf="${input:1}"
-	    else
-		conf="$input"
-	    fi
-	    # Perhaps this needs to be re-validated as proper JSON,
-	    # even though the web form will not allow to save
-	    # if JSON is bad
-	    echo "$conf" > /config/cgminer.conf
-	fi
+	# Perhaps this needs to be re-validated as proper JSON,
+	# even though the web form will not allow to save
+	# if JSON is bad
+	#if /usr/bin/validJson "$input" >/dev/null; then
+	    echo "$input" > /config/cgminer.conf
+	#fi
     fi
+fi
+
+if [[ "$minerconfstart" = "1" ]]; then
+    /etc/firewall_setup
 fi
 
 if [ ! -f /config/cgminer.conf ] ; then
@@ -70,9 +82,7 @@ if [ ! -f /config/cgminer.conf ] ; then
     fi
 fi
 
-if [ -f "$BFGMINER_FLAG_FILE" ] ; then
-    echo -n B
-else
-    echo -n C
+if [ -f /config/miner.conf ]; then
+    cat /config/miner.conf
 fi
 cat /config/cgminer.conf

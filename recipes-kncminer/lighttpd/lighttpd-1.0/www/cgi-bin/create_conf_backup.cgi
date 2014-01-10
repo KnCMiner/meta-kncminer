@@ -2,16 +2,18 @@
 
 file=backupKNC_`date +%Y-%m-%d_%H%M%S`.tar
 dir=/tmp/backup$$
-bkup_files="advanced.conf \
+bkup_files=" \
+    advanced.conf \
+    cgminer.conf \
+    cgminer.conf.factory \
     dropbear \
     dropbear_rsa_host_key \
     led-blink.conf \
     lighttpd-htdigest.user \
+    miner.conf \
     network.conf \
     shadow \
-    shadow.factory \
-    cgminer.conf \
-    cgminer.conf.factory"
+"
 
 
 trap atexit 0
