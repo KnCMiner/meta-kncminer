@@ -80,7 +80,6 @@ IFS="&"
 set -- $QUERY_STRING
 
 if [ "$dhcp" != true ] ; then
-    > /tmp/network.conf.$$
     for i in $@; do 
 	IFS="="
 	set -- $i
@@ -92,6 +91,8 @@ if [ "$dhcp" != true ] ; then
 	    : # handled above
 	elif [ "$1" = "remote_mgmt" ]; then
 	    : # handled above
+	elif [ "$1" = "old-remote_mgmt" ]; then
+	    : # GUI artefact, not saved
 	elif [ "$2" = "" ] ; then
 	    # error, all fields are mandatory
 	    error=true
@@ -123,15 +124,16 @@ if [ "$dhcp" != true ] ; then
 fi
 
 if [ "$error" = "false" ] ; then
+    show_msg "Saving settings"
     mv /tmp/network.conf.$$ /config/network.conf
     QUIET=true /etc/init.d/network.sh
     if [ "$current_hostname" != "$input_hostname" ] ; then
 	/etc/init.d/avahi restart > /dev/null
     fi
 else
+    show_msg "Error $invalid_parameter=$invalid_value"
     rm /tmp/network.conf.$$
+    sleep 5
 fi
-
-./get_network_conf.cgi
 
 exit 0
