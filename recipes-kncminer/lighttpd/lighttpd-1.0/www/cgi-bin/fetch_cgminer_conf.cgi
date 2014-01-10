@@ -15,8 +15,6 @@ cat <<'EOF'
 "pass" : "x"
 }
 ]
-,
-"api-listen" : true
 }
 
 EOF

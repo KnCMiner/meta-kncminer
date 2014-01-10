@@ -150,7 +150,6 @@
 			});
 			
 			if (extra_config['remote_mgmt'] != "") {
-				config["api-listen"] = true;
 				if (!('api-allow' in config))
 					config['api-allow'] = 'W:0/0';
 			} else {
