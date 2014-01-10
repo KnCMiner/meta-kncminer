@@ -57,6 +57,7 @@ if [ "${input:-null}" != "null" ] ; then
 	    create_dummy_conf_file
 	fi
 	rm -f "$MINER_CONF"
+	minerconfstart=1
     elif [ "$input" = "RestartCGMiner" ] ; then
 	/etc/init.d/cgminer.sh restart > /dev/null
     else
@@ -67,6 +68,10 @@ if [ "${input:-null}" != "null" ] ; then
 	    echo "$input" > /config/cgminer.conf
 	#fi
     fi
+fi
+
+if [[ "$minerconfstart" = "1" ]]; then
+    /etc/firewall_setup
 fi
 
 if [ ! -f /config/cgminer.conf ] ; then

@@ -5,8 +5,15 @@ TMPFILE=/tmp/$$
 if [ -f /config/network.conf ] ; then
         . /config/network.conf
 fi
+remote_mgmt_network=$remote_mgmt
+if [ -f /config/miner.conf ] ; then
+        . /config/miner.conf
+fi
+remote_mgmt_miner=$remote_mgmt
 
 local_net="$(ip addr show eth0 | sed -n 's/^.*inet[[:space:]]*\([^[:space:]]*\)[[:space:]].*$/\1/p')"
+
+miner_port=4028
 
 echo "*filter" > $TMPFILE
 echo ":OUTPUT ACCEPT" >> $TMPFILE
@@ -20,7 +27,7 @@ rm $TMPFILE
 
 OIFS="$IFS"
 IFS=" ,	"
-for addr in ${remote_mgmt:-0.0.0.0/0}; do
+for addr in ${remote_mgmt_network:-0.0.0.0/0}; do
 	if [[ "$addr" = "LAN" ]]; then
 		addr="${local_net}"
 	elif [[ "$addr" = "RFC1918" ]]; then
@@ -37,6 +44,15 @@ for addr in ${remote_mgmt:-0.0.0.0/0}; do
 			res=$res2
 		fi
 	fi
+done
+for addr in ${remote_mgmt_miner}; do
+        iptables -t filter -A INPUT -s "$addr" -p tcp --dport $miner_port -j ACCEPT
+        res3=$?
+        if [[ "$res" = "0" ]]; then
+                if [[ "$res3" != "0" ]]; then
+                        res=$res3
+                fi
+        fi
 done
 IFS="$OIFS"
 
