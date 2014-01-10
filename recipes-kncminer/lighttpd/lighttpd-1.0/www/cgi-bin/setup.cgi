@@ -70,3 +70,5 @@ if [ $? -eq 0 ] ; then
 fi
 
 echo "remote_mgmt=\"${remote_mgmt}\"" >>/config/network.conf
+
+QUIET=true /etc/init.d/network.sh
