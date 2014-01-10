@@ -88,25 +88,28 @@
 			var reqParamStr;
 			if (doReset) {
 				reqParamStr = resetType;
+			} else if (config) {
+				reqParamStr=""
+				for (var param in extra_config) {
+					reqParamStr += param + "=" + encodeURIComponent(extra_config[param]) + "\n";
+				}
+				reqParamStr += JSON.stringify(config, undefined, 2);
 			} else {
-				reqParamStr1 = JSON.stringify(config, undefined, 2);
-				if (config)
-					c = (('use_bfgminer' in extra_config) && extra_config['use_bfgminer']) ? 'B' : 'C';
-				else
-					c = '';
-				reqParamStr = c + reqParamStr1;
+				reqParamStr = "null";
 			}
 			var jqxhr = $.post("/cgi-bin/fetch_cgminer_conf.cgi", reqParamStr, function(configStr) {
-				config = new Object();
-				if (configStr.substring(1, 2) == '{') {
-					extra_config['use_bfgminer'] = (configStr.substring(0, 1) == 'B');
-					configStr = configStr.substring(1);
-				} else {
-					extra_config['use_bfgminer'] = false;
+				configLines = configStr.split(/(\r\n|[\n\v\f\r\x85\u2028\u2029])/);
+				
+				var res;
+				while (res = configLines[0].match(/([^{].*)="?([^"]*)"?/)) {
+					extra_config[res[1]] = res[2]
+					configLines.shift();
 				}
+
+				config = new Object();
 				try
 				{
-					config = JSON.parse(configStr);
+					config = JSON.parse(configLines.join("\n"));
 					renderNormalSettnings();
 					setEditMode(false);
 				}
