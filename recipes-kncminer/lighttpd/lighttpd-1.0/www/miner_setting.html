@@ -111,15 +111,14 @@
 				{
 					config = JSON.parse(configLines.join("\n"));
 					renderNormalSettnings();
-					setEditMode(false);
 				}
 				catch(err)
 				{
 					$('#manualText').val(configStr);
-					setEditMode(true);
 					manualMode();
 					alert('Invalid Miner configuration file. Edit manually or reset to default.');
 				}
+				setEditMode(false);
 			}, "text");
 			jqxhr
 				.fail(function() {
@@ -227,8 +226,23 @@
 				addPool();
 			});
 			
-			$('#configSettings').on('change keydown', function() {
+			$('#configSettings').on('change keyup', function() {
 				setEditMode(true);
+			});
+			
+			$('#configManualSettings').on('change keyup', function() {
+				// try if it's well-formed json
+				try
+				{
+					config = JSON.parse($('#manualText').val());
+					$('#gotoNormalModeBtn').removeAttr('disabled');
+					setEditMode(true);
+				}
+				catch(err)
+				{
+					$('#gotoNormalModeBtn').attr('disabled', 'disabled');
+					setEditMode(false);
+				}
 			});
 			
 			$('#saveBtn').click(function(e) {
@@ -259,24 +273,6 @@
 				submitAndGetConfig(true, "RestartCGMiner"); 
 			});
 
-			$('#manualText').on('change keyup', function() {
-				// try if it's well-formed json
-				try
-				{
-					config = JSON.parse($('#manualText').val());
-					$('#saveBtn').removeAttr('disabled');
-					$('#manualSaveBtn').removeAttr('disabled');
-					$('#gotoNormalModeBtn').removeAttr('disabled');
-					setEditMode(true);
-				}
-				catch(err)
-				{
-					$('#saveBtn').attr('disabled', 'disabled');
-					$('#manualSaveBtn').attr('disabled', 'disabled');
-					$('#gotoNormalModeBtn').attr('disabled', 'disabled');
-				}
-			});
-			
 			$('#gotoNormalModeBtn').click(function() {
 				normalMode();
 				renderNormalSettnings();
@@ -372,7 +368,7 @@
                         <div class="form-actions col span_12_of_12">
                         <div><input type="checkbox" name="manual_bfg" id="manual_bfg"><label for="manual_bfg">Use BFGMiner (if unchecked - use default CGMiner)</label></div>
                         <div>
-<label for="r_mgmt">Miner Remote Management Server(s)</label>
+<label for="manual_r_mgmt">Miner Remote Management Server(s)</label>
 <input type="text" name="manual_r_mgmt" id="manual_r_mgmt">
 </div>
                           <button id="gotoNormalModeBtn" type="button" disabled="disabled">Normal edit mode</button>
