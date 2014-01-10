@@ -16,14 +16,8 @@
 				renderPoolForm(pool);
 			});
 
-			/* Legacy config files might contain api-network. Get rid of it */
-			if ('api-network' in config) {
-				if (config['api-network']) {
-					if (!('api-allow' in config))
-						config['api-allow'] = 'W:0/0';
-				} else {
-					delete config['api-allow'];
-				}
+			/* Legacy config files might contain both api-allow and api-network. Get rid of it */
+			if ('api-network' in config && 'api-allow' in config) {
 				delete config['api-network'];
 				submitAndGetConfig();
 			}
