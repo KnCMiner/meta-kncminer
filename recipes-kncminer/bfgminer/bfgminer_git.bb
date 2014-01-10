@@ -12,6 +12,7 @@ PV = "${SRCREV}+git${SRCPV}"
 SRC_URI = "git://github.com/luke-jr/bfgminer.git;protocol=https;branch=bfgminer"
 
 SRC_URI_append = " file://knc-spidevc-fix.patch \
+		file://0002-Workaround-for-KnCMiner-November-batch.patch \
 				 "
 
 S = "${WORKDIR}/git"
