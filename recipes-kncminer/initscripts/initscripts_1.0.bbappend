@@ -25,6 +25,8 @@ do_install_append() {
 
 	install -d ${D}${base_sbindir}
 	install -m 0755 ${WORKDIR}/monitordcdc ${D}${base_sbindir}/
+	install -m 0755 ${WORKDIR}/monitordcdc.ge ${D}${base_sbindir}/
+	install -m 0755 ${WORKDIR}/monitordcdc.ericsson ${D}${base_sbindir}/
 
 	install -m 0755 ${WORKDIR}/firewall_setup ${D}${sysconfdir}
 	install -d ${D}${sysconfdir}/udhcpc.d
@@ -38,5 +40,7 @@ SRC_URI_append = " file://ntpdate.sh"
 SRC_URI_append = " file://shadow.factory"
 SRC_URI_append = " file://kncminer_setup.sh"
 SRC_URI_append = " file://monitordcdc"
+SRC_URI_append = " file://monitordcdc.ge"
+SRC_URI_append = " file://monitordcdc.ericsson"
 SRC_URI_append = " file://firewall_setup"
 SRC_URI_append = " file://90firewall"
