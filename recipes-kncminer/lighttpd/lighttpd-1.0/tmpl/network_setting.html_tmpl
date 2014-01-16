@@ -9,13 +9,11 @@
 	<script type="text/javascript" language="JavaScript">
 function ValidateForm()
 {
+    var ipformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+    var netformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\/(3[0-2]|[12][0-9]|[0-9])$/;
     var dhcp=document.forms["param"]["dhcp"].checked;
-    if (dhcp == true) {
-	document.param.submit();
-    }
-    else {
-	var ipformat = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-	
+    if (!dhcp) {
+
 	var ipaddr=document.forms["param"]["ipaddress"].value;
 	if (ipaddr==null || ipaddr=="") {
 	    alert("Ip Address must be filled out");
@@ -52,11 +50,35 @@ function ValidateForm()
 	    return false;
 	}
 
-	// add checking of dnsservers later
-
-	// Ok to submit
-	document.param.submit();
+	var dnsservers=document.forms["param"]["dnsservers"].value.split(" ");
+	for (var i = 0; i < dnsservers.length; i++) {
+	    var x = dnsservers[i];
+	    if (x != "" && !x.match(ipformat)) {
+		alert("Invalid dnsserver address '"+x+"'");
+		document.param.dnsservers.focus();
+		return false;
+	    }
+	}
     }
+
+    var mgmt=document.forms["param"]["remote_mgmt"].value.split(" ");
+    for (var i = 0; i < mgmt.length; i++) {
+	var x = mgmt[i];
+	if (!x.match(ipformat) && !x.match(netformat) && x != "LAN" && x != "RFC1918" ) {
+	    alert("Invalid management address '"+x+"'");
+	    document.param.remote_mgmt.focus();
+	    return false;
+	}
+    }
+    var mgmt=document.forms["param"]["remote_mgmt"].value;
+    var old_mgmt=document.forms["param"]["old-remote_mgmt"].value;
+    if (mgmt != old_mgmt) {
+	if (!confirm("Warning: Only '"+mgmt+" will be able to access web interface"))
+	    return false;
+    }
+
+    // Ok to submit
+    document.param.submit();
 }
 	</script>
 </head>
@@ -73,7 +95,7 @@ function ValidateForm()
 					<a href="/miner_setting.html">Mining</a>
 					<a href="/cgi-bin/get_network_conf.cgi" class="active">Networking</a>
 					<a href="/services_conf.html">Services</a>
-					<a href="/system_management.html">System</a>
+					<a href="/system_management.cgi">System</a>
 					<a href="/advanced_settings.html">Advanced</a>
 					<a href="/firmware_upgrade.html">Upgrade</a>
 				</div>
@@ -97,7 +119,7 @@ function ValidateForm()
 				<div class="xbox news">
 					<form name="param" action="/cgi-bin/network.cgi" class="span_12_of_12" method="GET">
 						<div class="box">
-							<div class="block"><input type="checkbox" name="dhcp" value="true" #%#checked#%# ><label>DHCP</label></div>
+							<div class="block"><input type="checkbox" name="dhcp" id="dhcp" value="true" #%#dhcp#%# ><label for="dhcp">DHCP</label></div>
 
 							<label>Hostname</label><input type="text" name="hostname" value="#%#Hostname#%#"><br>
 							<label>IP Address</label><input type="text" name="ipaddress" value="#%#IP_Address#%#"><br>
@@ -105,6 +127,8 @@ function ValidateForm()
 							<label>Gateway</label><input type="text" name="gateway" value="#%#Gateway#%#"><br>
 							<label>DNS Servers</label><input type="text" name="dnsservers" value="#%#DNSServers#%#" placeholder="Space separated"><br>
 							
+						<label>Management</label><input type="hidden" name="old-remote_mgmt" value="#%#remote_mgmt#%#"><input type="text" name="remote_mgmt" value="#%#remote_mgmt#%#" placeholder="Space separated"><br>Management is list of addresses/networks with access to web console and SSH (if enabled). Use LAN for local LAN addresses only (same network) or RFC1918 for private networks.<br>
+WARNING: If you are doing the setup remotely then make sure to add your address here.<br>Your address is #%#REMOTE_ADDR#%#</div><br>
 						</div>
 						<button type="submit" class="btn btn-lg btn-primary" onclick=" return ValidateForm()">Apply</button>						
 					</form>

@@ -41,11 +41,6 @@
 				dieVoltTemplate.append('<option value="' + voltage + '">' +	voltage + ' V</option>');
 			});
 
-			var dieFreqTemplate = $('<select/>');
-			$.each(config.valid_die_frequencies, function(i, frequency) {
-				dieFreqTemplate.append('<option value="' + frequency + '">' +	frequency + ' MHz</option>');
-			});
-
 			$.each(config.enabled_asics, function(i, asic) {
 				var box = $('<div class="span_12_of_12 pool"><div class="pool-form"></div></div>');
 				var innerBox = box.find('.pool-form');
@@ -62,11 +57,7 @@
 					//var asic_X_voltage = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
 					//dieVolt.val(config.current_settings[asic_X_voltage]['die' + j]);
 
-					var dieFrequency = dieFreqTemplate.clone();
-					dieFrequency.attr('id', asic + '_dieFrequency' + j);
-
 					voltageBox.append(dieVolt);
-					voltageBox.append(dieFrequency);
 					voltageBox.append('</br> ');
 					if(j == 4) {
 						voltageBox.append('</br><p id="' + asic + '_temp"></p></br>');
@@ -124,13 +115,10 @@
 
 			for(var i = 0; i < config.enabled_asics.length; i++) {
 				var asic_X_voltage = config.enabled_asics[i].slice(0, 4) + "_" + config.enabled_asics[i].slice(4) + '_voltage';
-				var asic_X_frequency = config.enabled_asics[i].slice(0, 4) + "_" + config.enabled_asics[i].slice(4) + '_frequency';
 				if(!config.current_settings[asic_X_voltage]) {return false;}
-				if(!config.current_settings[asic_X_frequency]) {return false;}
 
 				for(var j = 1; j <= 4; j++) {
 					if(!config.current_settings[asic_X_voltage]['die' + j]) {return false;} 
-					if(!config.current_settings[asic_X_frequency]['die' + j]) {return false;}
 				}
 			}
 			return true;
@@ -165,9 +153,7 @@
 					$.each(config.enabled_asics, function(i, asic) {
 						for(var j = 1; j <= 4; j++) {
 							var asic_X_voltage = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
-							var asic_X_frequency = asic.slice(0, 4) + "_" + asic.slice(4) + '_frequency';
 							$('#' + asic + '_dieVoltage' + j).val(config.current_settings[asic_X_voltage]['die' + j]);
-							$('#' + asic + '_dieFrequency' + j).val(config.current_settings[asic_X_frequency]['die' + j]);
 						}
 					});
 				}
@@ -223,9 +209,7 @@
 			$.each(config.enabled_asics, function(i, asic) {
 				for(var j = 1; j <= 4; j++) {
 					var asic_X_voltage = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
-					var asic_X_frequency = asic.slice(0, 4) + "_" + asic.slice(4) + '_frequency';
 					config.current_settings[asic_X_voltage]['die' + j] = $('#' + asic + '_dieVoltage' + j).val();
-					config.current_settings[asic_X_frequency]['die' + j] = $('#' + asic + '_dieFrequency' + j).val();
 				}
 			});
 		}
@@ -263,23 +247,11 @@
                 	"die3": "0.0000",
                 	"die4": "0.0000"
                 },
-                "asic_1_frequency": {
-                	"die1": "0",
-                	"die2": "0",
-                	"die3": "0",
-                	"die4": "0"
-                },
                 "asic_2_voltage": {
                 	"die1": "0.0",
                 	"die2": "0.0",
                 	"die3": "0.0",
                 	"die4": "0.0"
-                },
-                "asic_2_frequency": {
-                	"die1": "0",
-                	"die2": "0",
-                	"die3": "0",
-                	"die4": "0"
                 },
                 "asic_3_voltage": {
                 	"die1": "0.0000",
@@ -287,23 +259,11 @@
                 	"die3": "0.0000",
                 	"die4": "0.0000"
                 },
-                "asic_3_frequency": {
-                	"die1": "0",
-                	"die2": "0",
-                	"die3": "0",
-                	"die4": "0"
-                },
                 "asic_4_voltage": {
                 	"die1": "0.0000",
                 	"die2": "0.0000",
                 	"die3": "0.0000",
                 	"die4": "0.0000"
-                },
-                "asic_4_frequency": {
-                	"die1": "0",
-                	"die2": "0",
-                	"die3": "0",
-                	"die4": "0"
                 },
                 "asic_5_voltage": {
                         "die1": "0.0000",
@@ -311,23 +271,11 @@
                         "die3": "0.0000",
                         "die4": "0.0000"
                 },
-                "asic_5_frequency": {
-                        "die1": "0",
-                        "die2": "0",
-                        "die3": "0",
-                        "die4": "0"
-                },
                 "asic_6_voltage": {
                         "die1": "0.0",
                         "die2": "0.0",
                         "die3": "0.0",
                         "die4": "0.0"
-                },
-                "asic_6_frequency": {
-                        "die1": "0",
-                        "die2": "0",
-                        "die3": "0",
-                        "die4": "0"
                 },
                 "spi_frequency": "0",
                 "spi_voltage": "0.0",
@@ -410,7 +358,7 @@
 					<a href="/miner_setting.html">Mining</a>
 					<a href="/cgi-bin/get_network_conf.cgi">Networking</a>
 					<a href="/services_conf.html">Services</a>
-					<a href="/system_management.html">System</a>
+					<a href="/system_management.cgi">System</a>
 					<a href="/advanced_settings.html" class="active">Advanced</a>
 					<a href="/firmware_upgrade.html">Upgrade</a>
 				</div>

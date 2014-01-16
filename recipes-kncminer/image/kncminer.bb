@@ -26,6 +26,7 @@ IMAGE_INSTALL = " \
 	netbase \
 	avahi \
 	led-blink \
+	iptables \
 "
 
 inherit image

@@ -71,72 +71,46 @@ for i in $@; do
 	else
 	    echo "hostname=$current_hostname" >> /tmp/network.conf.$$
 	fi
+    elif [ "$1" = "remote_mgmt" ]; then
+	echo "remote_mgmt=\"`urldecode "$2"`\"" >> /tmp/network.conf.$$
     fi
 done
 
 IFS="&"
 set -- $QUERY_STRING
 
-if [ "$dhcp" = true ] ; then
-    rm /config/network.conf
-    mv /tmp/network.conf.$$ /config/network.conf
-
-else
-    > /tmp/network.conf.$$
+if [ "$dhcp" != true ] ; then
     for i in $@; do 
 	IFS="="
 	set -- $i
 	if [ "$1" = "dnsservers" ] ; then
-	    IFS="+"
-	    set -- $2
-	    for j in $@; do
-		if [ "$j" != "" ] ; then
-		    valid_ip $j
-		    if [ $? -eq 0 ] ; then
-			if [ "$dnsservers" = "" ] ; then
-			    dnsservers=${j}
-			else
-			    dnsservers="${j} ${dnsservers}"
-			fi
-		    fi
-		fi
-	    done
-	    IFS="="
-	elif [ "$1" = "hostname" ] ; then
-	    if [ "$2" != "" ] ; then
-		input_hostname=`urldecode $2`
-		if [ "`echo "$input_hostname" | grep '\\\'`" != "" ] ; then
-		    input_hostname=`echo "$input_hostname" | sed 's!\\\!\\\\\\\!g'`
-		fi
-		if [ "`echo "$input_hostname" | grep \&`" != "" ] ;then
-		    input_hostname=`echo "$input_hostname" | sed 's!\&!\\\&!g'`
-		fi
-		valid_hostname "$input_hostname"
-		if [ $? -eq 0 ] ; then
-		    echo $1="$input_hostname" >> /tmp/network.conf.$$
-		else
-		    echo "hostname=$current_hostname" >> /tmp/network.conf.$$
-		fi
-	    else
-		echo "hostname=$current_hostname" >> /tmp/network.conf.$$
-	    fi
+	    dnsservers="`urldecode "$2"`"
+	elif [ "$1" = "dhcp" ]; then
+	    : # handled above
+	elif [ "$1" = "hostname" ]; then
+	    : # handled above
+	elif [ "$1" = "remote_mgmt" ]; then
+	    : # handled above
+	elif [ "$1" = "old-remote_mgmt" ]; then
+	    : # GUI artefact, not saved
 	elif [ "$2" = "" ] ; then
 	    # error, all fields are mandatory
 	    error=true
 	    invalid_parameter=$1
 	    break
 	else
-	    valid_ip $2
+	    v="`urldecode $2`"
+	    valid_ip $v
 	    if [ $? -eq 0 ] ; then
-		echo $1=$2 >> /tmp/network.conf.$$
+		echo $1=$v >> /tmp/network.conf.$$
 
 		if [ "$1" = "gateway" ] ; then
-		    gateway=$2
+		    gateway=$v
 		fi
 	    else
 		error=true
 		invalid_parameter=$1
-		invalid_value=$2
+		invalid_value=$v
 		break
 	    fi
 	fi
@@ -147,21 +121,19 @@ else
     else
 	echo "dnsservers=\""$dnsservers\" >> /tmp/network.conf.$$
     fi
-
-    if [ "$error" = "false" ] ; then
-	mv /tmp/network.conf.$$ /config/network.conf
-    else
-	rm /tmp/network.conf.$$
-    fi
 fi
 
 if [ "$error" = "false" ] ; then
+    show_msg "Saving settings"
+    mv /tmp/network.conf.$$ /config/network.conf
     QUIET=true /etc/init.d/network.sh
     if [ "$current_hostname" != "$input_hostname" ] ; then
 	/etc/init.d/avahi restart > /dev/null
     fi
+else
+    show_msg "Error $invalid_parameter=$invalid_value"
+    rm /tmp/network.conf.$$
+    sleep 5
 fi
-
-./get_network_conf.cgi
 
 exit 0
