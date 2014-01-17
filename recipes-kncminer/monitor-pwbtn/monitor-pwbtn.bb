@@ -5,6 +5,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d41d8cd98f00b204e9800998ecf8427e"
 SRC_URI = "file://monitor-pwbtn.c \
 	file://init \
 	file://factory_config_reset.sh \
+	file://find_my_miner.sh \
 	file://COPYING \
 "
 
@@ -18,6 +19,7 @@ do_install() {
         install -d ${D}${bindir}
 	install -m 0755 ${WORKDIR}/monitor-pwbtn ${D}${bindir}
 	install -m 0755 ${WORKDIR}/factory_config_reset.sh ${D}${bindir}
+	install -m 0755 ${WORKDIR}/find_my_miner.sh ${D}${bindir}
 
         install -d ${D}${sysconfdir}/init.d
 	install -m 0755 ${WORKDIR}/init ${D}${sysconfdir}/init.d/monitor-pwbtn
