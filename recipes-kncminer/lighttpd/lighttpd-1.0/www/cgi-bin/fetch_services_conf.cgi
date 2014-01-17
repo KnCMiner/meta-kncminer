@@ -92,14 +92,9 @@ if [ "$input" != "null" ] && [ "$input" != "" ] ; then
 	fi
 	if [ "$1" = "light_on" ] ; then
 	    if [ "$2" = "true" ] ; then
-		if [ ! -f /config/led-blink.conf ] ; then
-		    echo "# default_time in seconds" > /config/led-blink.conf
-		    echo "default_time=600" >> /config/led-blink.conf
-		fi
-		. /config/led-blink.conf
-		$led_blink_prog $default_time > /dev/null
+		/usr/bin/find_my_miner.sh on
 	    else
-		killall $led_blink_prog > /dev/null
+		/usr/bin/find_my_miner.sh off
 	    fi
 	fi
     done
