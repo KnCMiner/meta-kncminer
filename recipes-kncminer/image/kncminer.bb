@@ -27,6 +27,7 @@ IMAGE_INSTALL = " \
 	avahi \
 	led-blink \
 	iptables \
+	net-snmp-client net-snmp-mibs \
 "
 
 inherit image
