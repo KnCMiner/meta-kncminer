@@ -33,6 +33,6 @@ fi
 OIFS="$IFS"
 IFS=" ,	"
 for addr in ${SNMP_MANAGERS}; do
-	/usr/bin/snmptrap -v2c -c"$SNMP_COMMUNITY" $addr "" warmStart
+	/usr/bin/snmptrap -v2c -c"$SNMP_COMMUNITY" $addr "" kncMiner.traps.find-my-miner
 done
 IFS="$OIFS"
