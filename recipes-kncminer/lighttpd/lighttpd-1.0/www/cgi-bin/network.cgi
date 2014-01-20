@@ -73,6 +73,10 @@ for i in $@; do
 	fi
     elif [ "$1" = "remote_mgmt" ]; then
 	echo "remote_mgmt=\"`urldecode "$2"`\"" >> /tmp/network.conf.$$
+    elif [ "$1" = "snmp_managers" ]; then
+	echo "SNMP_MANAGERS=\"`urldecode "$2"`\"" >> /tmp/network.conf.$$
+    elif [ "$1" = "snmp_community" ]; then
+	echo "SNMP_COMMUNITY=\"`urldecode "$2"`\"" >> /tmp/network.conf.$$
     fi
 done
 
@@ -93,6 +97,10 @@ if [ "$dhcp" != true ] ; then
 	    : # handled above
 	elif [ "$1" = "old-remote_mgmt" ]; then
 	    : # GUI artefact, not saved
+	elif [ "$1" = "snmp_managers" ]; then
+	    : # handled above
+	elif [ "$1" = "snmp_community" ]; then
+	    : # handled above
 	elif [ "$2" = "" ] ; then
 	    # error, all fields are mandatory
 	    error=true
