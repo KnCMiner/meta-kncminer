@@ -47,10 +47,15 @@ pools-changed NOTIFICATION-TYPE
     DESCRIPTION "Pools changed notification"
     ::= { traps 1 }
 
-accepted-changed NOTIFICATION-TYPE
+accepted-changed-yellow NOTIFICATION-TYPE
     STATUS current
-    DESCRIPTION "2d derivative of accepted changed"
+    DESCRIPTION "derivative of accepted changed: 1lvl alarm"
     ::= { traps 2 }
+
+accepted-changed-red NOTIFICATION-TYPE
+    STATUS current
+    DESCRIPTION "derivative of accepted changed: 2lvl alarm"
+    ::= { traps 3 }
 
 --
 -- statistics
@@ -82,13 +87,45 @@ poolStatus OBJECT-TYPE
     "Pool status"
     ::= { poolTable 3 }
 
-acceptedDelta OBJECT-TYPE
+workUtility OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "workUtility value"
+    ::= { stats 2 }
+
+acceptedPrev OBJECT-TYPE
     SYNTAX      Gauge32
     MAX-ACCESS  read-only
     STATUS      current
     DESCRIPTION
-    "2nd derivative from Accepted"
-    ::= { stats 2 }
+    "previous accepted value"
+    ::= { stats 3 }
+
+acceptedCurrent OBJECT-TYPE
+    SYNTAX      Gauge32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "current accepted value"
+    ::= { stats 4 }
+
+derivativeBase OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "1st derivative from Accepted, baseline"
+    ::= { stats 5 }
+
+derivativeCurrent OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "1st derivative from Accepted, current"
+    ::= { stats 6 }
 
 --
 -- Jupiter variables
