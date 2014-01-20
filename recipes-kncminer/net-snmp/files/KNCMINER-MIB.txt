@@ -57,6 +57,12 @@ accepted-changed-red NOTIFICATION-TYPE
     DESCRIPTION "derivative of accepted changed: 2lvl alarm"
     ::= { traps 3 }
 
+find-my-miner NOTIFICATION-TYPE
+    STATUS current
+    DESCRIPTION "Sent when 'Find my miner' function invoked with hardware button
+        or from web interface or in any other way"
+    ::= { traps 4 }
+
 --
 -- statistics
 --

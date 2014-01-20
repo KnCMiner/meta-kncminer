@@ -4,7 +4,7 @@
 . $localprefix/etc/snmp.conf
 
 # 1. send coldStart on startup
-snmptrap -v 2c -c $SNMP_COMMUNITY $SNMP_AGENT "" .1.3.6.1.6.3.1.1.5.1 \
+snmptrap -v 2c -c $SNMP_COMMUNITY $SNMP_AGENT "" coldStart \
     .1.3.6.1.2.1.1.1.0 s "`cat /etc/knc-release`"
 
 S_PREV=0
@@ -42,7 +42,7 @@ while :; do {
     C_POOLS="`get_pools`"
     [ "$C_POOLS" != "$S_POOLS" ] && {
         snmptrap -v 2c -c $SNMP_COMMUNITY $SNMP_AGENT "" \
-            .1.3.6.1.4.1.42398.3.1 $C_POOLS
+            kncMiner.traps.pools-changed $C_POOLS
     }
     S_POOLS="$C_POOLS"
 
@@ -60,18 +60,18 @@ while :; do {
     C2_DIFF=`abs $(( $C_DIFF - $S_DIFF ))`
 
     if [ $C2_DIFF -gt $RL ]; then {
-        TRAP=.1.3.6.1.4.1.42398.3.3
+        TRAP=kncMiner.traps.accepted-changed-red
     } elif [ $C2_DIFF -gt $YL ]; then {
-        TRAP=.1.3.6.1.4.1.42398.3.2
+        TRAP=kncMiner.traps.accepted-changed-yellow
     } fi
 
     [ -z "$TRAP" ] || {
         snmptrap -v 2c -c $SNMP_COMMUNITY $SNMP_AGENT "" $TRAP \
-            .1.3.6.1.4.1.42398.2.2.0 s `get_field summary Work` \
-            .1.3.6.1.4.1.42398.2.3.0 u $S_ACCEPTED \
-            .1.3.6.1.4.1.42398.2.4.0 u $C_ACCEPTED \
-            .1.3.6.1.4.1.42398.2.5.0 u $S_DIFF \
-            .1.3.6.1.4.1.42398.2.6.0 u $C_DIFF
+            kncMiner.stats.workUtility s `get_field summary Work` \
+            kncMiner.stats.acceptedPrev u $S_ACCEPTED \
+            kncMiner.stats.acceptedCurrent u $C_ACCEPTED \
+            kncMiner.stats.derivativeBase u $S_DIFF \
+            kncMiner.stats.derivativeCurrent u $C_DIFF
 
         S_DIFF=$C_DIFF
         TRAP=""
