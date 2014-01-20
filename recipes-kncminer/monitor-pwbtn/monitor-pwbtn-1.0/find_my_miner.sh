@@ -24,7 +24,15 @@ fi
 if [ -f /config/network.conf ] ; then
 	. /config/network.conf
 fi
-if [ "x$SNMP_MANAGER" = "x" ] ; then
-	SNMP_MANAGER=192.168.1.1
+if [ "x$SNMP_MANAGERS" = "x" ] ; then
+	SNMP_MANAGERS=snmp.knc.local
 fi
-/usr/bin/snmptrap -v2c -cpublic $SNMP_MANAGER "" warmStart
+if [ "x$SNMP_COMMUNITY" = "x" ] ; then
+	SNMP_COMMUNITY=public
+fi
+OIFS="$IFS"
+IFS=" ,	"
+for addr in ${SNMP_MANAGERS}; do
+	/usr/bin/snmptrap -v2c -c"$SNMP_COMMUNITY" $addr "" warmStart
+done
+IFS="$OIFS"
