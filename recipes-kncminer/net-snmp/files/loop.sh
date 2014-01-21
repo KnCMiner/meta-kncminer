@@ -1,11 +1,29 @@
 #!/bin/sh
 
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
 # 0. source config
-. $localprefix/etc/snmp.conf
+if [ -f $localprefix/config/network.conf ] ; then
+    . $localprefix/config/network.conf
+fi
+if [ "x$SNMP_MANAGERS" = "x" ] ; then
+    SNMP_MANAGERS=snmp.knc.local
+fi
+if [ "x$SNMP_COMMUNITY" = "x" ] ; then
+    SNMP_COMMUNITY=public
+fi
+
+snmpwrap() {
+    OIFS="$IFS"
+    IFS=" ,"
+    for i in $SNMP_MANAGERS; do {
+        snmptrap -v 2c -c $SNMP_COMMUNITY $i "" $@
+    } done
+    IFS="$OIFS"
+}
 
 # 1. send coldStart on startup
-snmptrap -v 2c -c $SNMP_COMMUNITY $SNMP_AGENT "" coldStart \
-    .1.3.6.1.2.1.1.1.0 s "`cat /etc/knc-release`"
+snmpwrap coldStart sysDescr.0 s "`cat /etc/knc-release`"
 
 S_PREV=0
 S_DIFF=0
@@ -41,8 +59,7 @@ while :; do {
     # get pools
     C_POOLS="`get_pools`"
     [ "$C_POOLS" != "$S_POOLS" ] && {
-        snmptrap -v 2c -c $SNMP_COMMUNITY $SNMP_AGENT "" \
-            kncMiner.traps.pools-changed $C_POOLS
+        snmpwrap kncMiner.traps.pools-changed $C_POOLS
     }
     S_POOLS="$C_POOLS"
 
@@ -66,12 +83,12 @@ while :; do {
     } fi
 
     [ -z "$TRAP" ] || {
-        snmptrap -v 2c -c $SNMP_COMMUNITY $SNMP_AGENT "" $TRAP \
-            kncMiner.stats.workUtility s `get_field summary Work` \
-            kncMiner.stats.acceptedPrev u $S_ACCEPTED \
-            kncMiner.stats.acceptedCurrent u $C_ACCEPTED \
-            kncMiner.stats.derivativeBase u $S_DIFF \
-            kncMiner.stats.derivativeCurrent u $C_DIFF
+        snmpwrap $TRAP \
+            kncMiner.stats.workUtility.0 s `get_field summary Work` \
+            kncMiner.stats.acceptedPrev.0 u $S_ACCEPTED \
+            kncMiner.stats.acceptedCurrent.0 u $C_ACCEPTED \
+            kncMiner.stats.derivativeBase.0 u $S_DIFF \
+            kncMiner.stats.derivativeCurrent.0 u $C_DIFF
 
         S_DIFF=$C_DIFF
         TRAP=""

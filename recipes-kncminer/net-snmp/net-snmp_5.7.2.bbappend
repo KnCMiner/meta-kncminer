@@ -7,12 +7,11 @@ do_install_append() {
 	install -d ${D}${sysconfdir}/snmp/
 	install ${WORKDIR}/snmp.conf ${D}${sysconfdir}/snmp
 
-	install -d ${D}${sysconfdir}/init.d/
-	install -m 0755 ${WORKDIR}/loop.sh ${D}${sysconfdir}/init.d
-	update-rc.d -r ${D} loop.sh start 80 S .
+	install -d ${D}${bindir}
+	install -m 0755 ${WORKDIR}/loop.sh ${D}${bindir}
 }
 
-FILES_${PN}-client += "${sysconfdir}/init.d ${sysconfdir}/rcS.d ${sysconfdir}/snmp"
+FILES_${PN}-client += "${sysconfdir}/snmp"
 
 SRC_URI_append = " file://KNCMINER-MIB.txt"
 SRC_URI_append = " file://snmp.conf"
