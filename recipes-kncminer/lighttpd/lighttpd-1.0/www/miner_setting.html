@@ -12,7 +12,7 @@
 		function renderNormalSettnings() {
 			pools = config.pools;
 			$('#pools').empty();
-			$.each(pools, function(i, pool) {
+			$.each(config.pools, function(i, pool) {
 				renderPoolForm(pool);
 			});
 
@@ -31,15 +31,24 @@
 			var poolwrapper = $('<div class="span_12_of_12 pool"><div class="pool-form"></div></div>');
 			var poolForm = poolwrapper.find('.pool-form');
 			poolForm.append('<input type="button" value="delete" class="del-btn"></input>');
-			poolForm.append('<label>Pool url/quota</label>');
+			poolForm.append('<label>Pool url</label>');
 			var url;
+			var quota;
 			if (typeof(pool.url) == 'undefined') {
-				url = pool.quota;
+				var re = /^([0-9]+):(.+)$/;
+				var match = re.exec(pool.quota);
+				quota = match[1];
+				url = match[2];
 			} else {
+				quota = '';
 				url = pool.url;
 			}
 			$('<input type="text" name="url"/>')
 				.val(url)
+				.appendTo(poolForm);
+			poolForm.append('<br /><label>Quota</label>');
+			$('<input type="text" name="quota"/>')
+				.val(quota)
 				.appendTo(poolForm);
 			poolForm.append('<br /><label>Account</label>');
 			$('<input type="text" name="user"/>')
@@ -50,6 +59,7 @@
 				.val(pool.pass)
 				.appendTo(poolForm);
 			$('#pools').append(poolwrapper);
+
 			var delBtn = poolwrapper.find('.del-btn');
 			delBtn.click(function(e) {
 				$(this).closest('.pool').remove();
@@ -105,6 +115,9 @@
 				{
 					config = JSON.parse(configLines.join("\n"));
 					renderNormalSettnings();
+
+					// Set failover strategy according to config
+					$('select[name="strategy"]').val((config && config['load-balance']) ? 1 : 0);
 				}
 				catch(err)
 				{
@@ -126,9 +139,10 @@
 				var el = $(element);
 				var newPool; 
 				var url = el.find('input[name="url"]').val();
-				if (url.match && url.match(/^\d+;/)) { // url start with a quota ?
+				var quota = el.find('input[name="quota"]').val();
+				if (quota !== '' /*url.match && url.match(/^\d+;/)*/) { // url start with a quota ?
 					newPool = {
-						quota: el.find('input[name="url"]').val(),
+						quota: quota + ':' + el.find('input[name="url"]').val(),
 						user: el.find('input[name="user"]').val(),
 						pass: el.find('input[name="pass"]').val()
 					}
@@ -141,6 +155,10 @@
 				}
 				config.pools.push(newPool);
 			});
+
+			if($('select[name="strategy"]').val() === '1') {
+				config['load-balance'] = true;
+			}
 			
 			if (extra_config['remote_mgmt'] != "") {
 				if (!('api-allow' in config))
@@ -335,6 +353,13 @@
                         <button id="addBtn">Add pool</button>
                         <h1>Pools</h1>
                         <div id="pools" class="box"></div>
+                        <div>
+                        	<label for="strategy">Strategy</label>
+                        	<select name="strategy">
+                        		<option value="0">Failover</option>
+														<option value="1">Load balance</option>
+                        	</select>
+                        </div>
                         <div><input type="checkbox" name="bfg" id="bfg"><label for="bfg">Use BFGMiner (if unchecked - use default CGMiner)</label></div>
                         <div>
 <label for="r_mgmt">Miner Remote Management Server(s)</label>
