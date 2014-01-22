@@ -1,0 +1,157 @@
+KNCMINER-MIB DEFINITIONS ::= BEGIN
+
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, enterprises,
+    Gauge32, Unsigned32,
+    NOTIFICATION-TYPE                       FROM SNMPv2-SMI
+    TEXTUAL-CONVENTION, DisplayString       FROM SNMPv2-TC
+;
+
+kncMiner MODULE-IDENTITY
+    LAST-UPDATED "201309060000Z"
+    ORGANIZATION "KnCMiner"
+    CONTACT-INFO "support@kncminer.com"
+    DESCRIPTION
+	"MIB objects for KnCMiner devices"
+    REVISION     "201309060000Z"
+    DESCRIPTION
+	"First draft"
+    ::= { enterprises 42398 }
+
+--
+-- Textual conventions (datatype definitions)
+--
+
+Temperature ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "d-1"
+    STATUS       current
+    DESCRIPTION  "Fixed point, one decimal, degrees Celsius"
+    SYNTAX       Gauge32 (0..1000)
+
+--
+-- devices
+--
+solar			OBJECT IDENTIFIER ::= { kncMiner 1 }
+stats           OBJECT IDENTIFIER ::= { kncMiner 2 }
+traps           OBJECT IDENTIFIER ::= { kncMiner 3 }
+jupiter			OBJECT IDENTIFIER ::= { solar 1 }
+neptune			OBJECT IDENTIFIER ::= { solar 2 }
+common			OBJECT IDENTIFIER ::= { solar 100 }
+
+--
+-- traps
+--
+
+pools-changed NOTIFICATION-TYPE
+    STATUS current
+    DESCRIPTION "Pools changed notification"
+    ::= { traps 1 }
+
+accepted-changed-yellow NOTIFICATION-TYPE
+    STATUS current
+    DESCRIPTION "derivative of accepted changed: 1lvl alarm"
+    ::= { traps 2 }
+
+accepted-changed-red NOTIFICATION-TYPE
+    STATUS current
+    DESCRIPTION "derivative of accepted changed: 2lvl alarm"
+    ::= { traps 3 }
+
+find-my-miner NOTIFICATION-TYPE
+    STATUS current
+    DESCRIPTION "Sent when 'Find my miner' function invoked with hardware button
+        or from web interface or in any other way"
+    ::= { traps 4 }
+
+--
+-- statistics
+--
+
+poolTable       OBJECT IDENTIFIER ::= { stats 1 }
+
+poolIndex OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "Pool index"
+    ::= { poolTable 1 }
+
+poolUrl OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "Pool URL"
+    ::= { poolTable 2 }
+
+poolStatus OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "Pool status"
+    ::= { poolTable 3 }
+
+workUtility OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "workUtility value"
+    ::= { stats 2 }
+
+acceptedPrev OBJECT-TYPE
+    SYNTAX      Gauge32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "previous accepted value"
+    ::= { stats 3 }
+
+acceptedCurrent OBJECT-TYPE
+    SYNTAX      Gauge32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "current accepted value"
+    ::= { stats 4 }
+
+derivativeBase OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "1st derivative from Accepted, baseline"
+    ::= { stats 5 }
+
+derivativeCurrent OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+    "1st derivative from Accepted, current"
+    ::= { stats 6 }
+
+--
+-- Jupiter variables
+--
+
+serialNumber OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+	"Control board serial number"
+    ::= { common 1 }
+
+cntrlBoardTemp OBJECT-TYPE
+    SYNTAX      Temperature
+    UNITS	"degC"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+	"Control board temperature"
+    ::= { common 2 }
+
+END
