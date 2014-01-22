@@ -158,6 +158,9 @@
 
 			if($('select[name="strategy"]').val() === '1') {
 				config['load-balance'] = true;
+			} 
+			else if(config['load-balance']) {
+				delete config['load-balance'];
 			}
 			
 			if (extra_config['remote_mgmt'] != "") {
