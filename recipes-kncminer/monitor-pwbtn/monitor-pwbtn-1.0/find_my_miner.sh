@@ -24,9 +24,6 @@ fi
 if [ -f /config/network.conf ] ; then
 	. /config/network.conf
 fi
-if [ "x$SNMP_MANAGERS" = "x" ] ; then
-	SNMP_MANAGERS=snmp.knc.local
-fi
 if [ "x$SNMP_COMMUNITY" = "x" ] ; then
 	SNMP_COMMUNITY=public
 fi

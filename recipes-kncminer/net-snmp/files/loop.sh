@@ -6,9 +6,6 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 if [ -f $localprefix/config/network.conf ] ; then
     . $localprefix/config/network.conf
 fi
-if [ "x$SNMP_MANAGERS" = "x" ] ; then
-    SNMP_MANAGERS=snmp.knc.local
-fi
 if [ "x$SNMP_COMMUNITY" = "x" ] ; then
     SNMP_COMMUNITY=public
 fi
