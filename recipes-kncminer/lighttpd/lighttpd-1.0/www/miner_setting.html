@@ -110,10 +110,9 @@
 					configLines.shift();
 				}
 
-				config = new Object();
+				config = JSON.parse(configLines.join("\n"));
 				try
 				{
-					config = JSON.parse(configLines.join("\n"));
 					renderNormalSettnings();
 
 					// Set failover strategy according to config
@@ -121,7 +120,7 @@
 				}
 				catch(err)
 				{
-					$('#manualText').val(configStr);
+					$('#manualText').val(JSON.stringify(config, undefined, 2));
 					manualMode();
 					alert('Invalid Miner configuration file. Edit manually or reset to default.');
 				}
