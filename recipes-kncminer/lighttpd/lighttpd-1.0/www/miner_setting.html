@@ -35,7 +35,7 @@
 			var url;
 			var quota;
 			if (typeof(pool.url) == 'undefined') {
-				var re = /^([0-9]+):(.+)$/;
+				var re = /^([0-9]+);(.+)$/;
 				var match = re.exec(pool.quota);
 				quota = match[1];
 				url = match[2];
@@ -142,7 +142,7 @@
 				var quota = el.find('input[name="quota"]').val();
 				if (quota !== '' /*url.match && url.match(/^\d+;/)*/) { // url start with a quota ?
 					newPool = {
-						quota: quota + ':' + el.find('input[name="url"]').val(),
+						quota: quota + ';' + el.find('input[name="url"]').val(),
 						user: el.find('input[name="user"]').val(),
 						pass: el.find('input[name="pass"]').val()
 					}
