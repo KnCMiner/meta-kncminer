@@ -20,7 +20,7 @@
 					<a href="/miner_setting.html">Mining</a>
 					<a href="/cgi-bin/get_network_conf.cgi">Networking</a>
 					<a href="/services_conf.html">Services</a>
-					<a href="/system_management.html" class="active">System</a>
+					<a href="/system_management.cgi" class="active">System</a>
 					<a href="/advanced_settings.html">Advanced</a>
 					<a href="/firmware_upgrade.html">Upgrade</a>
 				</div>
@@ -45,6 +45,7 @@
 					<form action="/cgi-bin/passwd.cgi" class="span_7_of_12">
 						<div class="box">
 							<label>Current Password</label><input type="password" name="current_pw" placeholder="Current Password"><br>
+							<label>Login</label><input type="text" name="admin" value="#%#REMOTE_USER#%#" placeholder="New login name"><br>
 							<label>New Password</label><input type="password" name="new_pw" placeholder="New Password"><br>
 							<label>Re-enter New Password</label><input type="password" name="new_pw_ctrl" placeholder="Re-enter New Password"><br>
 						</div>
@@ -58,9 +59,9 @@
 					<form action="/cgi-bin/reset_conf.cgi" class="span_5_of_12">
 						<button type="submit" class="btn btn-lg btn-primary">Reset</button>
 					</form><br>
-					<p>Restart Miner</p>
+					<p>Reboot Miner</p>
 					<form action="/cgi-bin/reboot.cgi" class="span_5_of_12">
-						<button type="submit" class="btn btn-lg btn-primary">Restart</button>
+						<button type="submit" class="btn btn-lg btn-primary">Reboot</button>
 					</form>
 				</div>
 			</div>

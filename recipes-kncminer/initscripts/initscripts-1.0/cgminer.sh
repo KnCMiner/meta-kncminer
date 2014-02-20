@@ -1,9 +1,22 @@
 #!/bin/sh
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON=/usr/bin/cgminer
-NAME=cgminer
-DESC="Cgminer daemon"
+
+use_bfgminer=
+if [ -f /config/miner.conf ]; then
+	. /config/miner.conf
+fi
+if [ "$use_bfgminer" = true ] ; then
+	DAEMON=/usr/bin/bfgminer
+	NAME=bfgminer
+	DESC="BFGMiner daemon"
+	EXTRA_OPT="-S knc:auto"
+else
+	DAEMON=/usr/bin/cgminer
+	NAME=cgminer
+	DESC="Cgminer daemon"
+	EXTRA_OPT=
+fi
 
 set -e
 
@@ -80,11 +93,11 @@ do_start() {
 	# Enable SPI poller
 	i2cset -y 2 0x71 2 $spi_ena
 
-        start-stop-daemon -b -S -x screen -- -S cgminer -t cgminer -m -d "$DAEMON" --api-listen --default-config /config/cgminer.conf
+	start-stop-daemon -b -S -x screen -- -S cgminer -t cgminer -m -d "$DAEMON" --api-listen -c /config/cgminer.conf $EXTRA_OPT
 }
 
 do_stop() {
-        killall -9 cgminer || true
+	killall -9 bfgminer cgminer 2>/dev/null || true
 }
 case "$1" in
   start)

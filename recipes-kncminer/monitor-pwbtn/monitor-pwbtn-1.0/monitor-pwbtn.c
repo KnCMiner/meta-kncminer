@@ -19,7 +19,8 @@ void green_off(void)
 
 void do_poweroff(int sig)
 {
-	system("poweroff");
+	green_on();
+	system("/usr/bin/find_my_miner.sh");
 }
 
 int main(int argc, char **argv)

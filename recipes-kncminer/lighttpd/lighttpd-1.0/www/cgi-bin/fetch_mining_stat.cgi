@@ -31,12 +31,24 @@ fi
 
 asic_status="${asic_status}</table>"
 
+appname=
+showname=
 killall -0 cgminer 2&> /dev/null
 if [ $? = 0 ] ; then
-    pid=`pidof cgminer`
+	appname=cgminer
+	showname=CGMiner
+else
+	killall -0 bfgminer 2&> /dev/null
+	if [ $? = 0 ] ; then
+		appname=bfgminer
+		showname=BFGMiner
+	fi
+fi
+if [ "x$appname" != "x" ] ; then
+    pid=`pidof $appname`
     tasks=`ls /proc/$pid/task/|wc -l`
     if [ $tasks -gt 1 ] ; then
-	proc_running="Running (pid="$pid")"
+	proc_running="Running $showname (pid="$pid")"
     else
 	proc_running="Halted (Check Miner Settings)"
     fi
@@ -48,9 +60,9 @@ fi
 if [ "`echo $proc_running | grep Running`" != "" ] ; then
     data=`/usr/bin/api-cgminer -o`
     
-    # check that connect to cgminer was ok
+    # check that connect to miner was ok
     if [ "$data" = "Socket connect failed: Connection refused" ] ; then
-	proc_running="Running (Connect to CGMiner API failed)"
+	proc_running="Running (Connect to Miner API failed)"
 	break
     fi
 

@@ -88,11 +88,11 @@ fi
 
 cat <<EOT
 <h1>System upgraded</h1>
-<p>The upgrade installed successfully. Please restart Miner to activate.</p>
+<p>The upgrade installed successfully. Please reboot Miner to activate.</p>
 <div class="section">                                                         
 <div class="col span_6_of_12">
 <form action="/cgi-bin/reboot.cgi">
-<button type="submit" class="btn btn-lg btn-primary">Restart</button>
+<button type="submit" class="btn btn-lg btn-primary">Reboot</button>
 </form>
 </div>
 <div class="col span_6_of_12">                                        

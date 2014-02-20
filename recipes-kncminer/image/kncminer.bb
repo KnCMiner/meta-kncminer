@@ -14,6 +14,7 @@ IMAGE_INSTALL = " \
 	libcurl \
 	lighttpd \
 	cgminer \
+	bfgminer \
 	dtc \
 	stunnel \
 	initc-bin \
@@ -25,6 +26,8 @@ IMAGE_INSTALL = " \
 	netbase \
 	avahi \
 	led-blink \
+	iptables \
+	net-snmp-client net-snmp-mibs \
 "
 
 inherit image

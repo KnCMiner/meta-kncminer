@@ -12,16 +12,18 @@
 		function renderNormalSettnings() {
 			pools = config.pools;
 			$('#pools').empty();
-			$.each(pools, function(i, pool) {
+			$.each(config.pools, function(i, pool) {
 				renderPoolForm(pool);
 			});
 
-			if(config['api-network'] == false) {
-				delete config["api-network"];
+			/* Legacy config files might contain both api-allow and api-network. Get rid of it */
+			if ('api-network' in config && 'api-allow' in config) {
+				delete config['api-network'];
 				submitAndGetConfig();
 			}
 
-			$('#r_mgmt_on').prop('checked', config['api-network'] || false);
+			$('#r_mgmt').val(extra_config["remote_mgmt"]);
+			$('#bfg').prop('checked', extra_config && ('use_bfgminer' in extra_config) && extra_config['use_bfgminer'] == "true");
 			refreshDelPoolVisibility();
 		}
 		
@@ -29,15 +31,24 @@
 			var poolwrapper = $('<div class="span_12_of_12 pool"><div class="pool-form"></div></div>');
 			var poolForm = poolwrapper.find('.pool-form');
 			poolForm.append('<input type="button" value="delete" class="del-btn"></input>');
-			poolForm.append('<label>Pool url/quota</label>');
+			poolForm.append('<label>Pool url</label>');
 			var url;
+			var quota;
 			if (typeof(pool.url) == 'undefined') {
-				url = pool.quota;
+				var re = /^([0-9]+);(.+)$/;
+				var match = re.exec(pool.quota);
+				quota = match[1];
+				url = match[2];
 			} else {
+				quota = '';
 				url = pool.url;
 			}
 			$('<input type="text" name="url"/>')
 				.val(url)
+				.appendTo(poolForm);
+			poolForm.append('<br /><label>Quota</label>');
+			$('<input type="text" name="quota"/>')
+				.val(quota)
 				.appendTo(poolForm);
 			poolForm.append('<br /><label>Account</label>');
 			$('<input type="text" name="user"/>')
@@ -48,6 +59,7 @@
 				.val(pool.pass)
 				.appendTo(poolForm);
 			$('#pools').append(poolwrapper);
+
 			var delBtn = poolwrapper.find('.del-btn');
 			delBtn.click(function(e) {
 				$(this).closest('.pool').remove();
@@ -80,23 +92,39 @@
 			var reqParamStr;
 			if (doReset) {
 				reqParamStr = resetType;
+			} else if (config) {
+				reqParamStr=""
+				for (var param in extra_config) {
+					reqParamStr += param + "=" + encodeURIComponent(extra_config[param]) + "\n";
+				}
+				reqParamStr += JSON.stringify(config, undefined, 2);
 			} else {
-				reqParamStr = JSON.stringify(config, undefined, 2);
+				reqParamStr = "null";
 			}
 			var jqxhr = $.post("/cgi-bin/fetch_cgminer_conf.cgi", reqParamStr, function(configStr) {
+				var configLines = configStr.split(/\r\n|[\n\v\f\r\x85\u2028\u2029]/);
+				
+				var res;
+				while (res = configLines[0].match(/([^{].*)="?([^"]*)"?/)) {
+					extra_config[res[1]] = res[2]
+					configLines.shift();
+				}
+
+				config = JSON.parse(configLines.join("\n"));
 				try
 				{
-					config = JSON.parse(configStr);
 					renderNormalSettnings();
-					setEditMode(false);
+
+					// Set failover strategy according to config
+					$('select[name="strategy"]').val((config && config['load-balance']) ? 1 : 0);
 				}
 				catch(err)
 				{
-					$('#manualText').val(configStr);
-					setEditMode(true);
+					$('#manualText').val(JSON.stringify(config, undefined, 2));
 					manualMode();
-					alert('Invalid CGMiner configuration file. Edit manually or reset to default.');
+					alert('Invalid Miner configuration file. Edit manually or reset to default.');
 				}
+				setEditMode(false);
 			}, "text");
 			jqxhr
 				.fail(function() {
@@ -110,9 +138,10 @@
 				var el = $(element);
 				var newPool; 
 				var url = el.find('input[name="url"]').val();
-				if (url.match && url.match(/^\d+;/)) { // url start with a quota ?
+				var quota = el.find('input[name="quota"]').val();
+				if (quota !== '' /*url.match && url.match(/^\d+;/)*/) { // url start with a quota ?
 					newPool = {
-						quota: el.find('input[name="url"]').val(),
+						quota: quota + ';' + el.find('input[name="url"]').val(),
 						user: el.find('input[name="user"]').val(),
 						pass: el.find('input[name="pass"]').val()
 					}
@@ -125,12 +154,19 @@
 				}
 				config.pools.push(newPool);
 			});
+
+			if($('select[name="strategy"]').val() === '1') {
+				config['load-balance'] = true;
+			} 
+			else if(config['load-balance']) {
+				delete config['load-balance'];
+			}
 			
-			config["api-listen"] = true;
-			if ($('#r_mgmt_on').prop('checked')) {
-				config["api-network"] = true;
+			if (extra_config['remote_mgmt'] != "") {
+				if (!('api-allow' in config))
+					config['api-allow'] = 'W:0/0';
 			} else {
-				delete config["api-network"];
+				delete config['api-allow'];
 			}
 		}
 		
@@ -189,6 +225,7 @@
 		$(document).ready(function() {
 			
 			config = null;
+			extra_config = new Object();
 			editMode = false;
 			restartMode = false;
 			setRestartMode(false);
@@ -203,8 +240,23 @@
 				addPool();
 			});
 			
-			$('#configSettings').on('change keydown', function() {
+			$('#configSettings').on('change keyup', function() {
 				setEditMode(true);
+			});
+			
+			$('#configManualSettings').on('change keyup', function() {
+				// try if it's well-formed json
+				try
+				{
+					config = JSON.parse($('#manualText').val());
+					$('#gotoNormalModeBtn').removeAttr('disabled');
+					setEditMode(true);
+				}
+				catch(err)
+				{
+					$('#gotoNormalModeBtn').attr('disabled', 'disabled');
+					setEditMode(false);
+				}
 			});
 			
 			$('#saveBtn').click(function(e) {
@@ -235,24 +287,6 @@
 				submitAndGetConfig(true, "RestartCGMiner"); 
 			});
 
-			$('#manualText').on('change keyup', function() {
-				// try if it's well-formed json
-				try
-				{
-					config = JSON.parse($('#manualText').val());
-					$('#saveBtn').removeAttr('disabled');
-					$('#manualSaveBtn').removeAttr('disabled');
-					$('#gotoNormalModeBtn').removeAttr('disabled');
-					setEditMode(true);
-				}
-				catch(err)
-				{
-					$('#saveBtn').attr('disabled', 'disabled');
-					$('#manualSaveBtn').attr('disabled', 'disabled');
-					$('#gotoNormalModeBtn').attr('disabled', 'disabled');
-				}
-			});
-			
 			$('#gotoNormalModeBtn').click(function() {
 				normalMode();
 				renderNormalSettnings();
@@ -260,10 +294,26 @@
 			
 			$('#gotoManualModeBtn').click(function() {
 				createConfig();
+				$('#manual_bfg').prop('checked', $('#bfg').prop('checked'));
+				$('#manual_r_mgmt').val($('#r_mgmt').val());
 				$('#manualText').val(JSON.stringify(config, undefined, 2));
 				manualMode();
 			});
-			
+
+			$('#bfg').change(function() {
+				extra_config['use_bfgminer'] = $('#bfg').prop('checked');
+			});
+
+			$('#manual_bfg').change(function() {
+				extra_config['use_bfgminer'] = $('#manual_bfg').prop('checked');
+			});
+
+			$('#r_mgmt').change(function() {
+				extra_config['remote_mgmt'] = $('#r_mgmt').val();
+			});
+			$('#manual_r_mgmt').change(function() {
+				extra_config['remote_mgmt'] = $('#manual_r_mgmt').val();
+			});
 		});
 	</script>
 </head>
@@ -280,7 +330,7 @@
                         <a href="/miner_setting.html" class="active">Mining</a>
                         <a href="/cgi-bin/get_network_conf.cgi">Networking</a>
                         <a href="/services_conf.html">Services</a>
-                        <a href="/system_management.html">System</a>
+                        <a href="/system_management.cgi">System</a>
                         <a href="/advanced_settings.html">Advanced</a>
                         <a href="/firmware_upgrade.html">Upgrade</a>
                     </div>
@@ -293,7 +343,7 @@
                         <div class="span_12_of_12">
                             <h1>Miner Settings</h1>
                             <p>
-                                Edit mining parameters, press "Save changes" to save settings on miner,</br> and press "Restart CGMiner" to apply changes.
+                                Edit mining parameters, press "Save changes" to save settings on miner,</br> and press "Restart Miner" to apply changes.
                             </p>
                         </div>
                     </div>
@@ -305,11 +355,22 @@
                         <button id="addBtn">Add pool</button>
                         <h1>Pools</h1>
                         <div id="pools" class="box"></div>
-                        <div class="inline"><input type="checkbox" name="r_mgmt_on" id="r_mgmt_on"><label for="r_mgmt_on">CGMiner Remote Management Enabled</label></div>
+                        <div>
+                        	<label for="strategy">Strategy</label>
+                        	<select name="strategy">
+                        		<option value="0">Failover</option>
+														<option value="1">Load balance</option>
+                        	</select>
+                        </div>
+                        <div><input type="checkbox" name="bfg" id="bfg"><label for="bfg">Use BFGMiner (if unchecked - use default CGMiner)</label></div>
+                        <div>
+<label for="r_mgmt">Miner Remote Management Server(s)</label>
+<input type="text" name="r_mgmt" id="r_mgmt">
+</div>
                         <div class="form-actions">
                           <button id="gotoManualModeBtn" type="button">Manual edit mode</button>
                           <button id="saveBtn" type="button" disabled="disabled">Save changes</button>
-                          <button id="restartCGMinerBtn" type="button" disabled="disabled">Restart CGMiner</button>
+                          <button id="restartCGMinerBtn" type="button" disabled="disabled">Restart Miner</button>
                           <button class="factoryDefaultBtn" type="button">Reset to Factory Defaults</button>
                         </div>
                     </div>
@@ -326,9 +387,14 @@
                           </div>
                         </div>
                         <div class="form-actions col span_12_of_12">
+                        <div><input type="checkbox" name="manual_bfg" id="manual_bfg"><label for="manual_bfg">Use BFGMiner (if unchecked - use default CGMiner)</label></div>
+                        <div>
+<label for="manual_r_mgmt">Miner Remote Management Server(s)</label>
+<input type="text" name="manual_r_mgmt" id="manual_r_mgmt">
+</div>
                           <button id="gotoNormalModeBtn" type="button" disabled="disabled">Normal edit mode</button>
                           <button id="manualSaveBtn" type="button" disabled="disabled">Save changes</button>
-                          <button id="manualRestartCGMinerBtn" type="button" disabled="disabled">Restart CGMiner</button>
+                          <button id="manualRestartCGMinerBtn" type="button" disabled="disabled">Restart Miner</button>
                           <button class="factoryDefaultBtn" type="button">Reset to Factory Defaults</button>
                         </div>
                         <div class="section"></div>
