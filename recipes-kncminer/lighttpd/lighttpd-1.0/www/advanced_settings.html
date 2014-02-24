@@ -78,13 +78,14 @@
 					voltageBox.appendTo(innerBox);
 				}
 
+				var withTemp = ("dcdc0_Temp" in config.current_status[asicStrX]);
 				var table = $('<table border="1">' + 
-								'<tr><td>DC/DC</td><td>Voltage (V)</td><td>Current (A)</td><td>Power (W)</td></tr>' +
+								'<tr><td>DC/DC</td><td>Voltage (V)</td><td>Current (A)</td><td>Power (W)</td>' + (withTemp ? '<td>Temperature (&deg;C)</td>' : '') + '</tr>' +
 								'</table>');
 				for(var k = 0; k <=7; k++) {
 					if (config.current_status[asicStrX] != 'temperature') {
 						if(config.current_status[asicStrX]['dcdc' + k + '_Vout'] != "") {
-							table.append('<tr><td>' + k + '</td><td id="' + asic + '_dcdc' + k + 'Voltage"></td><td id="' + asic + '_dcdc' + k + 'Current"></td><td id="' + asic + '_dcdc' + k + 'Power"></td></tr>');
+							table.append('<tr><td>' + k + '</td><td id="' + asic + '_dcdc' + k + 'Voltage"></td><td id="' + asic + '_dcdc' + k + 'Current"></td><td id="' + asic + '_dcdc' + k + 'Power"></td>' + (withTemp ? '<td id="' + asic + '_dcdc' + k + 'Temp"></td>' : '') + '</tr>');
 						}
 					}
 				}
@@ -104,9 +105,11 @@
 					var I = config.current_status[asicStrX]['dcdc' + j + '_Iout'];
 					var P = U * I;
 					power = power + P;
+					var T = 1.0 * (config.current_status[asicStrX]['dcdc' + j + '_Temp'] || 0);
 					$('#' + asic + '_dcdc' + j + 'Voltage').html(config.current_status[asicStrX]['dcdc' + j + '_Vout'] || 0);
 					$('#' + asic + '_dcdc' + j + 'Current').html(config.current_status[asicStrX]['dcdc' + j + '_Iout'] || 0);
 					$('#' + asic + '_dcdc' + j + 'Power').html(P.toFixed(3));
+					$('#' + asic + '_dcdc' + j + 'Temp').html(T.toFixed(3));
 				}
 				$('#' + asic + '_temp').html('Temp : ' + config.current_status[asicStrX].temperature + ' °C');
 				$('#' + asic + '_power #powerVal').html(power.toFixed(3) + '&nbsp;W');
