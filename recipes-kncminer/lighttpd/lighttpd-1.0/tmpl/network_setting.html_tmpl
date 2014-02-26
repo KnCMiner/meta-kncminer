@@ -126,6 +126,7 @@ function ValidateForm()
 							<label>Netmask</label><input type="text" name="netmask" value="#%#Netmask#%#"><br>
 							<label>Gateway</label><input type="text" name="gateway" value="#%#Gateway#%#"><br>
 							<label>DNS Servers</label><input type="text" name="dnsservers" value="#%#DNSServers#%#" placeholder="Space separated"><br>
+							<label>NTP server</label><input type="text" name="ntpserver" value="#%#ntpserver#%#"><br>
 							<label>SNMP managers</label><input type="text" name="snmp_managers" value="#%#SNMPmanagers#%#" placeholder="Space separated"><br>
 							<label>SNMP community</label><input type="text" name="snmp_community" value="#%#SNMPcommunity#%#"><br>
 						<label>Management</label><input type="hidden" name="old-remote_mgmt" value="#%#remote_mgmt#%#"><input type="text" name="remote_mgmt" value="#%#remote_mgmt#%#" placeholder="Space separated"><br>Management is list of addresses/networks with access to web console and SSH (if enabled). Use LAN for local LAN addresses only (same network) or RFC1918 for private networks.<br>

@@ -28,6 +28,7 @@ s!#%#IP_Address#%#!$ipaddress!g
 s!#%#Netmask#%#!$netmask!g
 s!#%#Gateway#%#!$gateway!g
 s!#%#DNSServers#%#!$dnsservers!g
+s!#%#ntpserver#%#!$ntpserver!g
 s!#%#SNMPmanagers#%#!$SNMP_MANAGERS!g
 s!#%#SNMPcommunity#%#!$SNMP_COMMUNITY!g
 s!#%#REMOTE_ADDR#%#!$REMOTE_ADDR!g

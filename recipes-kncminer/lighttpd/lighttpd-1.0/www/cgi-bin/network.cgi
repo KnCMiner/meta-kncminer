@@ -71,6 +71,8 @@ for i in $@; do
 	else
 	    echo "hostname=$current_hostname" >> /tmp/network.conf.$$
 	fi
+    elif [ "$1" = "ntpserver" ]; then
+	echo "ntpserver=\"`urldecode "$2"`\"" >> /tmp/network.conf.$$
     elif [ "$1" = "remote_mgmt" ]; then
 	echo "remote_mgmt=\"`urldecode "$2"`\"" >> /tmp/network.conf.$$
     elif [ "$1" = "snmp_managers" ]; then
@@ -92,6 +94,8 @@ if [ "$dhcp" != true ] ; then
 	elif [ "$1" = "dhcp" ]; then
 	    : # handled above
 	elif [ "$1" = "hostname" ]; then
+	    : # handled above
+	elif [ "$1" = "ntpserver" ]; then
 	    : # handled above
 	elif [ "$1" = "remote_mgmt" ]; then
 	    : # handled above

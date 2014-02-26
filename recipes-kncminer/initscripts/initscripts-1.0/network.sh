@@ -12,6 +12,11 @@ else
     hostname=Jupiter-XXX
 fi
 
+# Setup ntp server
+if [ "x$ntpserver" != "x" ] ; then
+  sed -i "s/^server pool.ntp.org.*$/server $ntpserver/" /etc/ntp.conf
+fi
+
 if [ -n "$hostname" ] ; then
 	hostname $hostname
 	echo $hostname > /etc/hostname
