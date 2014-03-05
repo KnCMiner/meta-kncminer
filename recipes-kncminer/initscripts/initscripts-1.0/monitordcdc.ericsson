@@ -93,7 +93,13 @@ while true; do
 
 		id=$(i2cget -y $bus 0x48 7 2>/dev/null)
 		if [[ "x$id" != "x0xa1" ]] ; then
-			echo "asic$asic=OFF" >> $TMP_FILE
+			# Try detect EEPROM
+			dd if=/sys/bus/i2c/devices/${bus}-0050/eeprom of=/dev/null bs=1 count=1 1>/dev/null 2>&1
+			if [[ "$?" = "0" ]] ; then
+				echo "asic$asic=0.0" >> $TMP_FILE
+			else
+				echo "asic$asic=OFF" >> $TMP_FILE
+			fi
 		else
 			temp1=$(i2cget -y $bus 0x48 0 w 2>/dev/null)
 			deg=$(echo $temp1 | cut -c5-6)
