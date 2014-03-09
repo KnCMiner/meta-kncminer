@@ -1,13 +1,13 @@
 SUMMARY = "SSL encryption wrapper between remote client and local (inetd-startable) or remote server."
 SECTION = "net"
 LICENSE = "GPLv2"
-LIC_FILES_CHKSUM = "file://COPYING;md5=f41ebed8571077706fee0b860c4d6666"
+LIC_FILES_CHKSUM = "file://COPYING;md5=45e8e7befe9a0f7e0543b78dfeebde20"
 DEPENDS = "openssl"
 
 SRC_URI = "https://www.stunnel.org/downloads/${BP}.tar.gz"
 
-SRC_URI[md5sum] = "ac4c4a30bd7a55b6687cbd62d864054c"
-SRC_URI[sha256sum] = "9cae2cfbe26d87443398ce50d7d5db54e5ea363889d5d2ec8d2778a01c871293"
+SRC_URI[md5sum] = "4f00fd0faf99e3c9cf258a19dd83d14a"
+SRC_URI[sha256sum] = "88986d52a7ef1aff0cc26fc0a9830361c991baba7ee591d5cf1cc8baef75bc13"
 
 inherit autotools
 
