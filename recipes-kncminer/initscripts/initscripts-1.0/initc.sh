@@ -32,23 +32,17 @@ chmod a+x /sbin/reboot.safe
 echo low > /sys/class/gpio/gpio70/direction
 echo low > /sys/class/gpio/gpio71/direction
 
-echo Starting initc
+echo Starting ioboard
 cd /usr/bin
 
-exit_code=252
-i=0
-while [ $exit_code -eq 252 ] ; do
-        echo low > /sys/class/gpio/gpio49/direction # !pwr_en
-        echo low > /sys/class/gpio/gpio76/direction # reset
-        sleep 1
-        echo high > /sys/class/gpio/gpio76/direction # !reset
-        ./initc
-        exit_code=$?
-        i=$((i+1))
-        if [[ $i -gt 10 ]] ; then
-                break
-        fi
-done
+# Enable IO-board power
+io-pwr init
+
+# Program FPGA
+program-fpga spimux.rbf
+exit_code=$?
+
+lcd-message "Starting..."
 
 if [ ! -f /config/advanced.conf ] ; then
         ./waas -rd -o /config/advanced.conf
