@@ -27,6 +27,7 @@ IMAGE_INSTALL = " \
 	led-blink \
 	iptables \
 	net-snmp-client net-snmp-mibs \
+	asiccmd \
 "
 
 inherit image
