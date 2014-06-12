@@ -28,6 +28,7 @@ IMAGE_INSTALL = " \
 	iptables \
 	net-snmp-client net-snmp-mibs \
 	asiccmd \
+	spi-test \
 "
 
 inherit image
