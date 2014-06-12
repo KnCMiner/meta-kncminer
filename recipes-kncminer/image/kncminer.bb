@@ -17,7 +17,6 @@ IMAGE_INSTALL = " \
 	bfgminer \
 	dtc \
 	stunnel \
-	initc-bin \
 	openssl \
 	curl \
 	monitor-pwbtn \

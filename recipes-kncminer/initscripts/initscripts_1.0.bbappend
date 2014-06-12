@@ -12,6 +12,9 @@ do_install_append() {
 	install -m 0755 ${WORKDIR}/kncminer_setup.sh ${D}${sysconfdir}/init.d
 	update-rc.d -r ${D} kncminer_setup.sh start 38 S .
 
+	install -m 0755 ${WORKDIR}/initc.sh ${D}${sysconfdir}/init.d
+	update-rc.d -r ${D} initc.sh start 39 S .
+
 	install -m 0755 ${WORKDIR}/ntpdate.sh ${D}${sysconfdir}/init.d
 	update-rc.d -r ${D} ntpdate.sh start 39 S .
 
@@ -35,6 +38,7 @@ do_install_append() {
 
 SRC_URI_append = " file://mountdevtmpfs.sh"
 SRC_URI_append = " file://network.sh"
+SRC_URI_append = " file://initc.sh"
 SRC_URI_append = " file://cgminer.sh"
 SRC_URI_append = " file://ntpdate.sh"
 SRC_URI_append = " file://shadow.factory"
