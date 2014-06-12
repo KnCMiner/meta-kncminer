@@ -42,7 +42,10 @@ io-pwr init
 program-fpga spimux.rbf
 exit_code=$?
 
-lcd-message "Starting..."
+# Show IP ASAP
+local_net="$(ip addr show eth0 | sed -n 's/^.*inet[[:space:]]*\([^[:space:]]*\)[[:space:]].*$/\1/p')"
+local_ip=${local_net%%/*}
+lcd-message -l 2 "$local_ip"
 
 if [ ! -f /config/advanced.conf ] ; then
         ./waas -rd -o /config/advanced.conf

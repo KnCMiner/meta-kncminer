@@ -12,6 +12,8 @@ fi
 remote_mgmt_miner=$remote_mgmt
 
 local_net="$(ip addr show eth0 | sed -n 's/^.*inet[[:space:]]*\([^[:space:]]*\)[[:space:]].*$/\1/p')"
+local_ip=${local_net%%/*}
+lcd-message -l 2 "$local_ip"
 
 miner_port=4028
 

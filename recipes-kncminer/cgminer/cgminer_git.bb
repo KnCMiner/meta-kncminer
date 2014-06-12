@@ -4,10 +4,10 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d32239bcb673463ab874e80d47fae504"
 
 DEPENDS = "ncurses curl"
 
-SRCREV = "v4.2.3-knc.1"
+SRCREV = "v4.3.5-N.1"
 PV = "${SRCREV}+git${SRCPV}"
 
-SRC_URI = "git://github.com/KnCMiner/cgminer.git;protocol=https;branch=master"
+SRC_URI = "git://git@stockholm.kandc.se/projects/kncminer/cgminer;protocol=ssh;branch=knc-nostatetracker"
 
 S = "${WORKDIR}/git"
 
