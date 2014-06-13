@@ -7,6 +7,7 @@ LOG_FILE="/var/log/monitordcdc.log"
 INTERVAL=5
 THRESHOLD=3
 IOUT_THRESHOLD_AMPS=5
+DEFAULT_MHZ=750
 
 echo [$(date +"%F %T")] Start >> $LOG_FILE
 
@@ -36,7 +37,7 @@ reset_die() {
 	usleep 100000
 
 	# Restart die
-	i2cset -y 2 0x2$lchannel 0xe5 $ldie >/dev/null 2>&1
+	asic $lchannel $ldie freq $DEFAULT_MHZ >/dev/null 2>&1
 	usleep 100000
 
 	echo [$(date +"%F %T")] Die $lchannel-$ldie restarted >> $LOG_FILE
@@ -57,19 +58,15 @@ iout_dcdc() {
 }
 
 for channel in 0 1 2 3 4 5 ; do
-	for d in 0 1 2 3 ; do
+	bus=$((channel+3))
+	# Try detect EEPROM
+	dd if=/sys/bus/i2c/devices/${bus}-0050/eeprom of=/dev/null bs=1 count=1 1>/dev/null 2>&1
+	if [[ "$?" = "0" ]] ; then
+		good=1
+	else
 		good=0
-		i=$((d*48))
-		end=$((d*48+48))
-		while [ $i -lt $end ] ; do
-			a=$(i2cget -y 2 0x2$channel $i)
-			b=$((a))
-			if [ $b -ge 2 ] ; then
-				good=1
-				break
-			fi
-			i=$((i+1))
-		done
+	fi
+	for d in 0 1 2 3 ; do
 		if [ "x$good" != "x1" ] ; then
 			echo 1000 > /var/run/die${channel}${d}
 		else
