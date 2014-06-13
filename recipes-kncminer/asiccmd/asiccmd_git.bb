@@ -4,19 +4,11 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d41d8cd98f00b204e9800998ecf8427e"
 PN="asiccmd"
 
 SRCREV = "752da01fcc1f2f8f3bf672bd78c6076ed895cba6"
-PV = "git${SRCREV}"
+PV = "${SRCREV}+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-do_fetch() {
-	git clone git@stockholm.kandc.se:projects/kncminer/asic_cmd ${S}
-}
-
-do_unpack() {
-}
-
-do_configure() {
-}
+SRC_URI = "git://git@stockholm.kandc.se/projects/kncminer/asic_cmd;protocol=ssh;branch=master"
 
 do_install() {
         install -d ${D}${bindir}
