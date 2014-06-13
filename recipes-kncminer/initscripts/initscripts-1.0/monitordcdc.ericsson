@@ -37,7 +37,21 @@ reset_die() {
 	usleep 100000
 
 	# Restart die
-	asic $lchannel $ldie freq $DEFAULT_MHZ >/dev/null 2>&1
+	freqs_waas="$(cat /var/run/.waas_curfreq 2>/dev/null)"
+	freqs="$freqs_waas $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ $DEFAULT_MHZ"
+	i=0
+	num=$(( lchannel*4 + ldie ))
+	for freq in $freqs ; do
+		if [ $i -eq $num ]; then
+			break
+		fi
+		i=$(( i + 1 ))
+	done
+	if [ $freq -le 0 ]; then
+		freq=$DEFAULT_MHZ
+	fi
+	echo [$(date +"%F %T")] asic $lchannel $ldie freq $freq >> $LOG_FILE
+	asic $lchannel $ldie freq $freq >/dev/null 2>&1
 	usleep 100000
 
 	echo [$(date +"%F %T")] Die $lchannel-$ldie restarted >> $LOG_FILE
