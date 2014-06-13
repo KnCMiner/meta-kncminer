@@ -3,12 +3,16 @@ LICENSE = "GPLv3"
 LIC_FILES_CHKSUM = "file://COPYING;md5=d41d8cd98f00b204e9800998ecf8427e"
 PN="asiccmd"
 
-SRCREV = "752da01fcc1f2f8f3bf672bd78c6076ed895cba6"
+SRCREV = "c4f335dcc07a25142503649fd9ce5712b954cf8c"
 PV = "${SRCREV}+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
 SRC_URI = "git://git@stockholm.kandc.se/projects/kncminer/asic_cmd;protocol=ssh;branch=master"
+
+do_compile_append() {
+	make waas
+}
 
 do_install() {
         install -d ${D}${bindir}
@@ -16,6 +20,7 @@ do_install() {
         install -m 0755 ${S}/program-fpga ${D}${bindir}/program-fpga
         install -m 0755 ${S}/lcd-message ${D}${bindir}/lcd-message
         install -m 0644 ${S}/spimux.rbf ${D}${bindir}/spimux.rbf
+        install -m 0755 ${S}/waas/waas ${D}${bindir}/waas
 }
  
 inherit pkgconfig
