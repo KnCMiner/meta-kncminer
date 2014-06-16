@@ -21,7 +21,7 @@ fi
 cp /config/dropbear /etc/default/dropbear
 
 # Remove mdns stuff for faster ssh connections
-sed -i -e "s/^.*hosts:.*$/hosts:\t\tfiles/" /etc/nsswitch.conf
+sed -i -e "s/^.*hosts:.*$/hosts:\t\tfiles dns/" /etc/nsswitch.conf
 
 ###########################
 
