@@ -63,3 +63,6 @@ else
         echo low > /sys/class/gpio/gpio70/direction
         echo high > /sys/class/gpio/gpio71/direction
 fi
+
+# Show revision on the LCD
+lcd-message -l 1 $(cat /etc/knc-release)
