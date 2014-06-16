@@ -11,27 +11,12 @@
 
 	<script type="text/javascript">
 		function renderTuningParam() {
-			renderSpiVoltDropdown();
-			renderSpiFreqDropdown();
 			renderAsics();
 			
-			//renderCurrentConfig(true);
 			renderCurrentConfig(false);
 			renderCurrentStatus();
 			$('#loading').hide();
 			$('#settings').show();
-		}
-
-		function renderSpiVoltDropdown() {
-			for(var i = 0; i < config.valid_spi_voltages.length; i++) {
-				$('#spiVoltage').append('<option value="' + config.valid_spi_voltages[i] + '">' + config.valid_spi_voltages[i] + ' V</option>');
-			}
-		}
-
-		function renderSpiFreqDropdown() {
-			for(var i = 0; i < config.valid_spi_frequencies.length; i++) {
-				$('#spiFrequency').append('<option value="' + config.valid_spi_frequencies[i] + '">' + config.valid_spi_frequencies[i] + ' Hz</option>');
-			}
 		}
 
 		function renderAsics()
@@ -121,10 +106,6 @@
 		}
 
 		function validConfig() {
-			if(!("spi_voltage" in config.current_settings)) {return false;}
-			if(!("auto_spi_voltage" in config.current_settings)) {return false;}
-			if(!("spi_frequency" in config.current_settings)) {return false;}
-
 			for(var i = 0; i < config.enabled_asics.length; i++) {
 				var asic_X_voltage = config.enabled_asics[i].slice(0, 4) + "_" + config.enabled_asics[i].slice(4) + '_voltage';
 				var asic_X_frequency = config.enabled_asics[i].slice(0, 4) + "_" + config.enabled_asics[i].slice(4) + '_frequency';
@@ -143,27 +124,7 @@
 			var validFile = validConfig();
 
 			if(validFile == true || recreatedConfig == true) {
-				
-				$('#spiFrequency').val(config.current_settings.spi_frequency);
-				$('#auto_spi_voltage').prop('checked', config.current_settings.auto_spi_voltage || false);
-				
-				if(config.current_settings.auto_spi_voltage) {
-					$("#spiVoltage").attr('disabled', 'disabled');
-					autoSpiVoltage = true;
-				} else {
-					$("#spiVoltage").removeAttr('disabled');
-					autoSpiVoltage = false;
-				}
-
-				if (config.valid_spi_voltages.length > 1) {
-					$('#spiVoltage').val(config.current_settings.spi_voltage);
-					$("#auto_spi_voltage").removeAttr('disabled');
-				} else {
-					$('#spiVoltage').val(config.valid_spi_voltages[0]);
-					$("#spiVoltage").attr('disabled', 'disabled');
-					$("#auto_spi_voltage").attr('disabled', 'disabled');
-				}
-				
+								
 				if(!initialize){
 					$.each(config.enabled_asics, function(i, asic) {
 						for(var j = 1; j <= 4; j++) {
@@ -219,10 +180,6 @@
 		}
 
 		function createConfig() {
-			config.current_settings.spi_voltage = $('#spiVoltage').val();
-			config.current_settings.spi_frequency = $('#spiFrequency').val();	
-			config.current_settings["auto_spi_voltage"] = $('#auto_spi_voltage').prop('checked');	
-
 			$.each(config.enabled_asics, function(i, asic) {
 				for(var j = 1; j <= 4; j++) {
 					var asic_X_voltage = asic.slice(0, 4) + "_" + asic.slice(4) + '_voltage';
@@ -331,17 +288,13 @@
                         "die2": "0",
                         "die3": "0",
                         "die4": "0"
-                },
-                "spi_frequency": "0",
-                "spi_voltage": "0.0",
-                "auto_spi_voltage": true
+                }
             }
         }
 
 		$(document).ready(function() {
 			config = null;
 			editMode = false;
-			autoSpiVoltage = false;
 		    requesting=false;
 		    recreatedConfig=false;
 		    var interval;
@@ -365,28 +318,6 @@
 				clearInterval(interval);
 				submitAndGetConfig("FactoryDefault");
 			    interval = self.setInterval(function(){myTimer()}, 5000);
-			});
-
-			$('#spiVoltage').on('change', function(e) {
-				e.preventDefault();
-				setEditMode(true); 
-			});
-
-			$('#auto_spi_voltage').on('change', function(e) {
-				e.preventDefault();
-				if(autoSpiVoltage) {
-					$("#spiVoltage").removeAttr('disabled');
-					autoSpiVoltage = false;
-				} else {
-					$("#spiVoltage").attr('disabled', 'disabled');
-					autoSpiVoltage = true;
-				}
-				setEditMode(true); 
-			});
-
-			$('#spiFrequency').on('change', function(e) {
-				e.preventDefault();
-				setEditMode(true); 
 			});
 
 			$('#asics').on('change', function(e) {
@@ -433,15 +364,6 @@
 			<div class="xbox">
                 <div id='loading'>Loading configuration, please wait...</div>
 				<div id="settings" class="span_12_of_12">
-					<div class="col span_3_of_12">
-						<h5> SPI voltage </h5>
-						<select id="spiVoltage"></select><br>
-						<div class="inline"><input type="checkbox" name="auto_spi_voltage" id="auto_spi_voltage"><label for="auto_spi_voltage">Auto SPI Voltage</label></div>
-					</div>
-					<div class="col span_3_of_12">
-						<h5> SPI Frequency </h5>
-						<select id="spiFrequency"></select>
-					</div>
                     <div class="col span_3_of_12">
 						<h5> Power Consumption </h5>
 						<div>
