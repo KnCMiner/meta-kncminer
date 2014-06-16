@@ -7,7 +7,7 @@ else
 fi
 
 case $DEVICE in
-	AE|BE)
+	AE|BE|NE)
 		exec /sbin/monitordcdc.ericsson
 	;;
 	*)
