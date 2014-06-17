@@ -27,6 +27,10 @@ set -e
 test -x "$DAEMON" || exit 0
 
 do_start() {
+	if [ ! -f /config/cgminer.conf ]; then
+		echo "ERROR: no cgminer.conf, can't mine!"
+		exit 1
+	fi
 	start-stop-daemon -b -S -x screen -- -S cgminer -t cgminer -m -d "$DAEMON" --api-listen -c /config/cgminer.conf $EXTRA_OPT
 }
 

@@ -5,7 +5,6 @@ dir=/tmp/backup$$
 bkup_files=" \
     advanced.conf \
     cgminer.conf \
-    cgminer.conf.factory \
     dropbear \
     dropbear_rsa_host_key \
     led-blink.conf \

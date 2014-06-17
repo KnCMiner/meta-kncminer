@@ -1,9 +1,5 @@
 #!/bin/sh
 
-if [ ! -f /config/network.conf ] ; then
-    cp /config/network.conf.factory /config/network.conf
-fi
-
 dhcp=true
 hostname=Neptune
 

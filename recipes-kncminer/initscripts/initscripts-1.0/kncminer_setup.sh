@@ -14,24 +14,11 @@ fi
 # dropbear
 NO_START=0
 
-if [ ! -f /config/dropbear ] ; then
-    echo NO_START=1 > /config/dropbear
-fi
-
-cp /config/dropbear /etc/default/dropbear
+ln -sf /config/dropbear /etc/default
 
 # Remove mdns stuff for faster ssh connections
 sed -i -e "s/^.*hosts:.*$/hosts:\t\tfiles dns/" /etc/nsswitch.conf
 
-###########################
-
-
-###########################
-# miner.conf
-# No configuration, create it!
-if [ ! -f /config/cgminer.conf ] ; then
-    cp /config/cgminer.conf.factory /config/cgminer.conf
-fi
 ###########################
 
 
@@ -42,13 +29,8 @@ if [ ! -f /config/lighttpd-htdigest.user ] ; then
 fi
 
 # shadow
-if [ ! -f /config/shadow.factory ] ; then
-    cp -p /etc/shadow.factory /config/shadow.factory
-    chmod 0400 /config/shadow.factory
-fi
-
 if [ ! -f /config/shadow ] ; then
-    cp -p /config/shadow.factory /config/shadow
+    cp -p /etc/shadow.factory /config/shadow
     chmod 0400 /config/shadow
     rm -f /etc/shadow
     ln -s /config/shadow /etc/shadow
