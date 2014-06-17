@@ -4,12 +4,12 @@ if [ ! -f /config/network.conf ] ; then
     cp /config/network.conf.factory /config/network.conf
 fi
 
+dhcp=true
+hostname=Neptune
+
 # Read network configuration
 if [ -s /config/network.conf ] ; then
     . /config/network.conf
-else
-    dhcp=true
-    hostname=Jupiter-XXX
 fi
 
 # Setup ntp server
