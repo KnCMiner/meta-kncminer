@@ -12,8 +12,6 @@ fi
 
 ###########################
 # dropbear
-NO_START=0
-
 ln -sf /config/dropbear /etc/default
 
 # Remove mdns stuff for faster ssh connections

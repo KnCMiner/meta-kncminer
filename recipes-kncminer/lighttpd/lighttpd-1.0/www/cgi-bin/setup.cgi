@@ -72,9 +72,8 @@ fi
 echo "remote_mgmt=\"${remote_mgmt}\"" >>/config/network.conf
 
 if [ ! -f /config/dropbear ]; then
-	echo NO_START=1 >/config/dropbear
-	cp /config/dropbear /etc/default/dropbear
 	/etc/init.d/dropbear stop
+	echo NO_START=1 >/config/dropbear
 fi
 
 QUIET=true /etc/init.d/network.sh

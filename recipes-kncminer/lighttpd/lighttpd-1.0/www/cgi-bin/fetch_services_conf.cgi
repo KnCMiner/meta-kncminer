@@ -85,8 +85,8 @@ if [ "$input" != "null" ] && [ "$input" != "" ] ; then
 		cp $dropbear_conf_file /etc/default/dropbear
 		/etc/init.d/dropbear start > /dev/null
 	    else
-		echo "NO_START=1" > $dropbear_conf_file
 		/etc/init.d/dropbear stop > /dev/null
+		echo "NO_START=1" > $dropbear_conf_file
 		cp $dropbear_conf_file /etc/default/dropbear
 	    fi
 	fi
