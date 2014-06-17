@@ -13,7 +13,7 @@ do_install_append() {
 	update-rc.d -r ${D} kncminer_setup.sh start 38 S .
 
 	install -m 0755 ${WORKDIR}/initc.sh ${D}${sysconfdir}/init.d
-	update-rc.d -r ${D} initc.sh start 39 S .
+	update-rc.d -r ${D} initc.sh start 65 S .
 
 	install -m 0755 ${WORKDIR}/ntpdate.sh ${D}${sysconfdir}/init.d
 	update-rc.d -r ${D} ntpdate.sh start 39 S .
