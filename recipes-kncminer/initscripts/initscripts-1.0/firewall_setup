@@ -6,6 +6,7 @@ if [ -f /config/network.conf ] ; then
         . /config/network.conf
 fi
 remote_mgmt_network=$remote_mgmt
+remote_mgmt=
 if [ -f /config/miner.conf ] ; then
         . /config/miner.conf
 fi
