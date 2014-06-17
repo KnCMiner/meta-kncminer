@@ -3,7 +3,7 @@ LICENSE = "GPLv3"
 LIC_FILES_CHKSUM = "file://COPYING;md5=d41d8cd98f00b204e9800998ecf8427e"
 PN="asiccmd"
 
-SRCREV = "ce7c80394aed946d6c6b45e0587e18659f7ec28d"
+SRCREV = "8af30e71e86df6cee7492f193da563b1af1d9d7b"
 PV = "${SRCREV}+git${SRCPV}"
 
 S = "${WORKDIR}/git"
