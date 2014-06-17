@@ -1,5 +1,7 @@
 #!/bin/sh
 
+dhcp=true
+
 # Read network configuration
 if [ -s /config/network.conf ] ; then
     . /config/network.conf
