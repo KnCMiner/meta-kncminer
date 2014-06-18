@@ -50,7 +50,16 @@ board $BOARD5
 
 show_boards()
 {
+	lcd-message -l 1 $model
 	lcd-message -l 2 `echo $BOARD0$BOARD1$BOARD2$BOARD3$BOARD4$BOARD5 | sed -e 's/OFF/__/g'`
+}
+
+show_system()
+{
+	lcd-message -l 1 "* `cat /etc/knc-release`"
+	local_net="$(ip addr show eth0 | sed -n 's/^.*inet[[:space:]]*\([^[:space:]]*\)[[:space:]].*$/\1/p')"
+	local_ip=${local_net%%/*}
+	lcd-message -l 2 "$local_ip"
 }
 
 model=Alien-$neptune.$jupiter
@@ -84,7 +93,7 @@ if [ -n "$check_release" ] && [ "$check_release" != "$installed_release" ]; then
 	rm -rf /tmp/install
 	mkdir /tmp/install
 	cd /tmp/install
-	curl http://192.168.100.1/install/$check_release.bin | tar zxvf -
+	curl -s http://192.168.100.1/install/$check_release.bin | tar zxvf -
 	lcd-message Upgrading..
 	if ./runme.sh; then
 		reboot.safe
@@ -98,8 +107,6 @@ if [ -z "$check_release" ]; then
 else
 	echo "Software up to date"
 fi
-
-lcd-message "$model"
 
 cgminer_conf() {
 cat << EOF
@@ -134,9 +141,13 @@ do_configure()
 }
 
 while factory_reset_mode; do
+	lcd-message "$model"
 	curl -s "http://192.168.100.1:8080/getconfig?serialno=$SERIAL_IO&serialbb=$SERIAL_BB&model=$model&asic1=$SERIAL0&asic2=$SERIAL1&asic3=$SERIAL2&asic4=$SERIAL3&asic5=$SERIAL4&asic6=$SERIAL5" | sed -e 's/^{//' -e 's/^}//' -e 's/^ *"/cf_/' -e 's/, *$//' -e 's/": /=/' > /config/factory.conf
 	cat /config/factory.conf
 	. /config/factory.conf
+	if [ -n "$cf_error" ]; then
+		cf_status=error
+	fi
 	case "$cf_status" in
 	configuring)
 		do_configure
@@ -144,12 +155,13 @@ while factory_reset_mode; do
 	connected)
 		lcd-message "Waiting.."
 		;;
-	""|error)
+	error)
 		lcd-message -l 2 "$cf_error"
 		sleep 1
 		show_boards
+		sleep 1
 		;;
 	esac
+	show_system
 	sleep 1
 done
-
