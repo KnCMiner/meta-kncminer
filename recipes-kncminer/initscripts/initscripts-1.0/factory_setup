@@ -83,16 +83,20 @@ if [ -n "$check_release" ] && [ "$check_release" != "$installed_release" ]; then
 	lcd-message Upgrade needed
 	rm -rf /tmp/install
 	mkdir /tmp/install
-	cd /tmp/instal
-	umount /config
-	curl http://192.168.100.1/install/$check_release.img | tar zxvf -
+	cd /tmp/install
+	curl http://192.168.100.1/install/$check_release.bin | tar zxvf -
 	lcd-message Upgrading..
 	if ./runme.sh; then
-		lcd-message Rebooting..
 		reboot.safe
 	fi
 	lcd-message Failed upgrade
 	exit 1
+fi
+
+if [ -z "$check_release" ]; then
+	echo "NOTICE: no upgrade server found"
+else
+	echo "Software up to date"
 fi
 
 lcd-message "$model"
