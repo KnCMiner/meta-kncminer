@@ -5,8 +5,6 @@ trap atexit 0
 
 lock_file=/var/run/lighttpd_advanced.cgi
 
-asic_stat_file=/var/run/stats.knc
-
 input=`cat /dev/stdin`
 
 atexit() {
@@ -32,42 +30,31 @@ fetch_advanced_settings_and_ranges()
 
     # valid_ranges
     waas -i valid-ranges
+
+    . /etc/revision
+
     echo ","
     
     # enabled asics
-    echo "\"enabled_asics\" : "
-    echo "["
-    if [ -f $asic_stat_file ] ; then
-	i=0
-
-	OIFS=$IFS
-	IFS="="
-	noof_enabled=`cat $asic_stat_file|grep asic|grep -v OFF|wc -l`
-	while read status ; do
-	    set -- $status
-	    if [ "$1" != "" ] ; then  
-		if [ "$2" != "OFF" ] ; then
-		    i=`expr $i + 1`
-		    if [ $i -lt $noof_enabled ] ; then
-			 echo "\"$1\", "
-		    else
-			 echo "\"$1\""
-		    fi
-		fi
-	    fi
-	    
-	done <  $asic_stat_file
-	IFS=$OIFS
-    fi
+    echo -n "\"enabled_asics\" : "
+    sep=""
+    echo -n "["
+    for a in 0 1 2 3 4 5; do
+	if eval test \$BOARD$a != OFF; then
+	    echo -n $sep
+	    echo -n "\"asic$((a+1))\""
+	    sep=", "
+	fi
+    done
     echo "],"
 	
     # current status
-    echo "\"current_status\" : "
+    echo -n "\"current_status\" : "
     waas -g all-asic-info 
     echo ","
 
     # current settings
-    echo "\"current_settings\" : "
+    echo -n "\"current_settings\" : "
 
     get_current_config
 
