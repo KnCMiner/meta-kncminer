@@ -66,3 +66,5 @@ fi
 
 # Show revision on the LCD
 lcd-message -l 1 $(cat /etc/knc-release)
+
+factory_setup </dev/null &
