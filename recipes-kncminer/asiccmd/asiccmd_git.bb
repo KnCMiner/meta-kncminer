@@ -1,6 +1,6 @@
 DESCRIPTION = "Hardware initialization routines"
-LICENSE = "GPLv3"
-LIC_FILES_CHKSUM = "file://COPYING;md5=d41d8cd98f00b204e9800998ecf8427e"
+LICENSE = "MIT"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=40ed95ac273a015f655b41d0fff4f9b4"
 PN="asiccmd"
 
 SRCREV = "v1.0"
