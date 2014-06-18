@@ -8,14 +8,14 @@
 
 void toggle_blue_led(void)
 {
-   system("i2cset -y 2 0x71 5 1");
+   system("asic 0 0 led 0 0 15 >/dev/null");
    sleep(1);
-   system("i2cset -y 2 0x71 5 0");
+   system("asic 0 0 led 0 0 0 >/dev/null");
    sleep(1);
 }
 void handle_SigKill(int sig)
 {
-   system("i2cset -y 2 0x71 5 0");
+   system("asic 0 0 led 0 0 0 >/dev/null");
    unlink(RUN_FILE);
    exit(0);
 }
