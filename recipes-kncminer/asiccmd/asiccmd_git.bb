@@ -8,7 +8,7 @@ PV = "${SRCREV}+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-SRC_URI = "git://git@github.com:KnCMiner/knc-asic.git;protocol=ssh;branch=master"
+SRC_URI = "git://git@github.com/KnCMiner/knc-asic.git;protocol=ssh;branch=master"
 
 do_install() {
         install -d ${D}${bindir}

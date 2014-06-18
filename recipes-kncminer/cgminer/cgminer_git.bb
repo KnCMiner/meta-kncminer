@@ -7,7 +7,7 @@ DEPENDS = "ncurses curl"
 SRCREV = "v4.4.0-knc2.0"
 PV = "${SRCREV}+git${SRCPV}"
 
-SRC_URI = "git://git@github.com:KnCMiner/knc-asic.git;protocol=ssh;branch=knc2"
+SRC_URI = "git://git@github.com/KnCMiner/knc-asic.git;protocol=ssh;branch=knc2"
 
 S = "${WORKDIR}/git"
 
