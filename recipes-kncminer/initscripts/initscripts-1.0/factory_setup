@@ -128,6 +128,9 @@ do_configure()
 		arg="${arg}&$cf=$value"
 	done
 	curl -s "http://192.168.100.1:8080/done?serialno=$SERIAL_IO&shipmentid=$cf_shipmentid"
+	i2cset -y 1 0x24 0xb 0x6b
+	i2cset -y 1 0x24 0x16 0
+	poweroff
 }
 
 while factory_reset_mode; do
