@@ -3,16 +3,12 @@ LICENSE = "GPLv3"
 LIC_FILES_CHKSUM = "file://COPYING;md5=d41d8cd98f00b204e9800998ecf8427e"
 PN="asiccmd"
 
-SRCREV = "cda6346b2717cd6479b742308a92aeff3be8ac38"
+SRCREV = "v1.0"
 PV = "${SRCREV}+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-SRC_URI = "git://git@stockholm.kandc.se/projects/kncminer/asic_cmd;protocol=ssh;branch=master"
-
-do_compile_append() {
-	make waas
-}
+SRC_URI = "git://git@github.com:KnCMiner/knc-asic.git;protocol=ssh;branch=master"
 
 do_install() {
         install -d ${D}${bindir}
