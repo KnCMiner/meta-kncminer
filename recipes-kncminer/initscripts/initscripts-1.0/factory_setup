@@ -137,8 +137,8 @@ while factory_reset_mode; do
 	connected)
 		lcd-message "Waiting.."
 		;;
-	error)
-		lcd_message -l 2 "$cf_error"
+	""|error)
+		lcd-message -l 2 "$cf_error"
 		sleep 1
 		show_boards
 		;;
