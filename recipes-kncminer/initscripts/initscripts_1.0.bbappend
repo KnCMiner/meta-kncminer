@@ -35,6 +35,9 @@ do_install_append() {
 	install -m 0755 ${WORKDIR}/firewall_setup ${D}${sysconfdir}
 	install -d ${D}${sysconfdir}/udhcpc.d
 	install -m 0755 ${WORKDIR}/90firewall ${D}${sysconfdir}/udhcpc.d
+
+	install -d ${D}${bindir}
+	install -m 0755 ${WORKDIR}/lcd-loop ${D}${bindir}/lcd-loop
 }
 
 SRC_URI_append = " file://mountdevtmpfs.sh"
@@ -50,3 +53,4 @@ SRC_URI_append = " file://monitordcdc.ericsson"
 SRC_URI_append = " file://firewall_setup"
 SRC_URI_append = " file://90firewall"
 SRC_URI_append = " file://factory_setup"
+SRC_URI_append = " file://lcd-loop"

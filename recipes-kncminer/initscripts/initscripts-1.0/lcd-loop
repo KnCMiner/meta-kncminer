@@ -1,0 +1,14 @@
+#!/bin/sh
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+while true ; do
+  sleep 1
+  if [ ! -f /config/cgminer.conf ]; then
+    continue
+  fi
+
+  lcd-message $(cat /etc/knc-release)
+  sleep 1
+  lcd-message $(api-cgminer | sed -n -e 's/^.*\[MHS 1m\][^0123456789]\+\([0123456789]\+\).*$/\1/p') MHs
+done
