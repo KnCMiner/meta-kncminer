@@ -57,6 +57,25 @@ reset_die() {
 	echo [$(date +"%F %T")] Die $lchannel-$ldie restarted >> $LOG_FILE
 }
 
+detect_dcdcs() {
+	lchannel=$1
+	ldie=$2
+	lbus=$((lchannel+3))
+	ldcdc1=$((ldie*2))
+	ldcdc2=$((ldcdc1+1))
+
+	i2cget -y $lbus 0x1$ldcdc1 >/dev/null 2>&1
+	ldcdc1_present=$?
+	i2cget -y $lbus 0x1$ldcdc2 >/dev/null 2>&1
+	ldcdc2_present=$?
+
+	if [[ "x${ldcdc1_present}" = "x0" -o "x${ldcdc2_present}" = "x0" ]] ; then
+		echo 0
+	else
+		echo 1
+	fi
+}
+
 iout_dcdc() {
 	lbus=$1
 	ldcdc=$2
@@ -80,11 +99,16 @@ for channel in 0 1 2 3 4 5 ; do
 	else
 		good=0
 	fi
-	for d in 0 1 2 3 ; do
+	for q in 0 1 2 3 ; do
 		if [ "x$good" != "x1" ] ; then
-			echo 1000 > /var/run/die${channel}${d}
+			echo 1000 > /var/run/die${channel}${q}
 		else
-			echo 0 > /var/run/die${channel}${d}
+			detected=$(detect_dcdcs $channel $q)
+			if [[ "x${detected}" = "x0" ]] ; then
+				echo 0 > /var/run/die${channel}${q}
+			else
+				echo 1000 > /var/run/die${channel}${q}
+			fi
 		fi
 	done
 
@@ -98,15 +122,21 @@ echo 0 > /var/run/tm
 
 while true; do
 	echo > $TMP_FILE
+	hardware_changed=
 	for channel in 0 1 2 3 4 5; do
 		bus=$((channel+3))
 		asic=$((channel+1))
 
+		# Try detect EEPROM
+		asic_present=
+		dd if=/sys/bus/i2c/devices/${bus}-0050/eeprom of=/dev/null bs=1 count=1 1>/dev/null 2>&1
+		if [[ "$?" = "0" ]] ; then
+			asic_present=1
+		fi
+
 		id=$(i2cget -y $bus 0x48 7 2>/dev/null)
 		if [[ "x$id" != "x0xa1" ]] ; then
-			# Try detect EEPROM
-			dd if=/sys/bus/i2c/devices/${bus}-0050/eeprom of=/dev/null bs=1 count=1 1>/dev/null 2>&1
-			if [[ "$?" = "0" ]] ; then
+			if [[ ${asic_present} ]] ; then
 				echo "asic$asic=0.0" >> $TMP_FILE
 			else
 				echo "asic$asic=OFF" >> $TMP_FILE
@@ -122,8 +152,44 @@ while true; do
 				temp=$(printf "%u.%u" 0x$deg $half)
 				echo "asic$asic=$temp" >> $TMP_FILE
 			else
-				echo "asic$asic=OFF" >> $TMP_FILE
+				echo "asic$asic=0.0" >> $TMP_FILE
 			fi
+		fi
+
+		if [[ ${asic_present} ]] ; then
+			for q in 0 1 2 3; do
+				cnt=$(cat /var/run/die${channel}${q} 2>/dev/null)
+				if [ -z "$cnt" ] ; then
+					cnt=0
+				fi
+				if [ $cnt -ge 1000 ] ; then
+					detected=$(detect_dcdcs $channel $q)
+					if [[ "x${detected}" = "x0" ]] ; then
+						echo 0 > /var/run/die${channel}${q}
+						hardware_changed=1
+						echo [$(date +"%F %T")] Die $channel-$q came UP >> $LOG_FILE
+					fi
+				else
+					detected=$(detect_dcdcs $channel $q)
+					if [[ "x${detected}" != "x0" ]] ; then
+						echo 1000 > /var/run/die${channel}${q}
+						echo [$(date +"%F %T")] Die $channel-$q came DOWN >> $LOG_FILE
+						hardware_changed=1
+					fi
+				fi
+			done
+		else
+			for q in 0 1 2 3; do
+				cnt=$(cat /var/run/die${channel}${q} 2>/dev/null)
+				if [ -z "$cnt" ] ; then
+					cnt=0
+				fi
+				if [ $cnt -lt 1000 ] ; then
+					echo 1000 > /var/run/die${channel}${q}
+					hardware_changed=1
+					echo [$(date +"%F %T")] Die $channel-$q came DOWN '(ASIC not present)' >> $LOG_FILE
+				fi
+			done
 		fi
 
 		for d in 0 1 2 3 4 5 6 7; do
@@ -140,6 +206,12 @@ while true; do
 			sleep 1
 		done
 	done
+
+	if [[ ${hardware_changed} ]] ; then
+		waas -c /config/advanced.conf >/dev/null 2>&1
+		echo [$(date +"%F %T")] waas re-run >> $LOG_FILE
+		/etc/init.d/cgminer.sh restart
+	fi
 
 	mv $TMP_FILE $STAT_FILE
 
