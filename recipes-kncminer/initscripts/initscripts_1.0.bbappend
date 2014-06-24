@@ -30,6 +30,7 @@ do_install_append() {
 	install -m 0755 ${WORKDIR}/monitordcdc ${D}${base_sbindir}/
 	install -m 0755 ${WORKDIR}/monitordcdc.ge ${D}${base_sbindir}/
 	install -m 0755 ${WORKDIR}/monitordcdc.ericsson ${D}${base_sbindir}/
+	install -m 0755 ${WORKDIR}/stop_all_dcdc ${D}${base_sbindir}/
 	install -m 0755 ${WORKDIR}/factory_setup ${D}${base_sbindir}/
 
 	install -m 0755 ${WORKDIR}/firewall_setup ${D}${sysconfdir}
@@ -54,3 +55,4 @@ SRC_URI_append = " file://firewall_setup"
 SRC_URI_append = " file://90firewall"
 SRC_URI_append = " file://factory_setup"
 SRC_URI_append = " file://lcd-loop"
+SRC_URI_append = " file://stop_all_dcdc"

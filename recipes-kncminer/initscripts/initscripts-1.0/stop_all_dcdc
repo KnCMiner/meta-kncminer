@@ -1,0 +1,9 @@
+#!/bin/sh
+
+for a in 1 2 3 4 5; do
+  bus=$((a + 3))
+  for d in 0 1 2 3 4 5 6 7; do
+    i2cset -y $bus 0x1$d 0x01 0x00 >/dev/null 2>&1
+  done
+done
+usleep 100000

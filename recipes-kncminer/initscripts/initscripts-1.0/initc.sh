@@ -24,6 +24,7 @@ echo high > /sys/class/gpio/gpio59/direction
 
 echo '#!/bin/sh' > /sbin/reboot.safe
 echo "lcd-message -l 2 'Rebooting...'" >> /sbin/reboot.safe
+echo "stop_all_dcdc" >> /sbin/reboot.safe
 echo 'i2cset -y 1 0x24 0xb 0x6b' >> /sbin/reboot.safe
 echo 'i2cset -y 1 0x24 0x16 0' >> /sbin/reboot.safe
 echo 'reboot' >> /sbin/reboot.safe
