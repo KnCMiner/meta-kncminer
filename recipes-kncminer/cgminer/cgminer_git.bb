@@ -4,7 +4,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d32239bcb673463ab874e80d47fae504"
 
 DEPENDS = "ncurses curl"
 
-SRCREV = "v4.4.0-knc2.0"
+SRCREV = "2359e922b0381f849607f5a18dd1238553a0fcd5"
 PV = "${SRCREV}+git${SRCPV}"
 
 SRC_URI = "git://git@github.com/KnCMiner/cgminer.git;protocol=ssh;branch=knc2"
