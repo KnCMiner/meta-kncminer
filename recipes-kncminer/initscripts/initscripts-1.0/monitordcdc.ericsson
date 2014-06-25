@@ -9,6 +9,10 @@ THRESHOLD=3
 IOUT_THRESHOLD_AMPS=5
 DEFAULT_MHZ=475
 
+while [ ! -f /config/cgminer.conf ]; do
+	sleep 1
+done
+
 echo [$(date +"%F %T")] Start >> $LOG_FILE
 
 reset_die() {
