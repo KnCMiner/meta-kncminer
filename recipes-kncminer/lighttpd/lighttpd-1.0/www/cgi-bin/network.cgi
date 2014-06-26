@@ -40,17 +40,18 @@ valid_hostname()
 if [ -f /etc/hostname ] ; then
     current_hostname=`cat /etc/hostname`
 else
-    current_hostname=Jupiter-XXX
+    current_hostname=Neptune
 fi
 
 IFS="&"
 set -- $QUERY_STRING
 
-> /tmp/network.conf.$$
+echo 'dhcp=false' > /tmp/network.conf.$$
 for i in $@; do
     IFS="="
     set -- $i
     if [ "$1" = "dhcp" ] ; then
+	sed -i "/dhcp=/d" /tmp/network.conf.$$
 	echo $1=$2 >> /tmp/network.conf.$$
 	dhcp=true
     elif [ "$1" = "hostname" ] ; then
