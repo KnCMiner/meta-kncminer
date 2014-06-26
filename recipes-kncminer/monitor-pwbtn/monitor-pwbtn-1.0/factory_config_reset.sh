@@ -8,6 +8,6 @@ rm -f /config/*
 
 # restore factory settings
 /etc/init.d/kncminer_setup.sh
-
+/usr/bin/waas -rd -o /config/advanced.config
 /etc/init.d/network.sh
 /etc/init.d/dropbear start
