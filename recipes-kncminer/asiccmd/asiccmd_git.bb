@@ -3,7 +3,7 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=40ed95ac273a015f655b41d0fff4f9b4"
 PN="asiccmd"
 
-SRCREV = "v1.2"
+SRCREV = "v1.3"
 PV = "${SRCREV}+git${SRCPV}"
 
 S = "${WORKDIR}/git"
@@ -17,6 +17,7 @@ do_install() {
         install -m 0755 ${S}/program-fpga ${D}${bindir}/program-fpga
         install -m 0755 ${S}/lcd-message ${D}${bindir}/lcd-message
         install -m 0755 ${S}/knc-serial ${D}${bindir}/knc-serial
+        install -m 0755 ${S}/knc-led ${D}${bindir}/knc-led
         install -m 0644 ${S}/spimux.rbf ${D}${bindir}/spimux.rbf
         install -m 0755 ${S}/waas/waas ${D}${bindir}/waas
 }

@@ -54,8 +54,8 @@ reset_die() {
 	if [ $freq -le 0 ]; then
 		freq=$DEFAULT_MHZ
 	fi
-	echo [$(date +"%F %T")] asic $lchannel $ldie freq $freq >> $LOG_FILE
-	asic $lchannel $ldie freq $freq >/dev/null 2>&1
+	echo [$(date +"%F %T")] asic freq $lchannel $ldie $freq >> $LOG_FILE
+	asic freq $lchannel $ldie $freq >/dev/null 2>&1
 	usleep 100000
 
 	echo [$(date +"%F %T")] Die $lchannel-$ldie restarted >> $LOG_FILE
