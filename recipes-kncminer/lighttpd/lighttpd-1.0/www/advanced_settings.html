@@ -105,6 +105,23 @@
 			$('#consumption').html(p.toFixed(3));
 		}
 
+		function createEnabledAsics() {
+			config.enabled_asics = new Array();
+			for (var i = 1; i <= 6; i++) {
+				var asicStrX = "asic_" + i;
+				var good_asic = false;
+				for(var j = 0; j < 4; j++) {
+					var F = config.current_status[asicStrX]['die' + j + '_Freq'];
+					if (parseInt(F) > 0) {
+						good_asic = true;
+						break;
+					}
+				}
+				if (good_asic)
+					config.enabled_asics.push("asic" + i);
+			}
+		}
+
 		function validConfig() {
 			for(var i = 0; i < config.enabled_asics.length; i++) {
 				var asic_X_voltage = config.enabled_asics[i].slice(0, 4) + "_" + config.enabled_asics[i].slice(4) + '_voltage';
@@ -156,10 +173,12 @@
 				success: function(configStr) {
 					if(fetchType == 'fetch-advanced-settings-and-ranges') {
                                                 config = JSON.parse(configStr);
+						createEnabledAsics();
                                                 renderTuningParam();
                                                 setEditMode(false);
                                         } else if(fetchType == 'get-current-status') {
                                                 config.current_status = JSON.parse(configStr); 
+						createEnabledAsics();
                                                 renderCurrentStatus();                                          
                                         } else {
                                                 config.current_settings = JSON.parse(configStr); 

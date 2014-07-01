@@ -1,7 +1,5 @@
 #!/bin/sh
 
-TMP_FILE="/tmp/stat_tmp"
-STAT_FILE="/var/run/stats.knc"
 LOG_FILE="/var/log/monitordcdc.log"
 
 INTERVAL=5
@@ -125,7 +123,6 @@ done
 echo 0 > /var/run/tm
 
 while true; do
-	echo > $TMP_FILE
 	hardware_changed=
 	for channel in 0 1 2 3 4 5; do
 		bus=$((channel+3))
@@ -136,28 +133,6 @@ while true; do
 		dd if=/sys/bus/i2c/devices/${bus}-0050/eeprom of=/dev/null bs=1 count=1 1>/dev/null 2>&1
 		if [[ "$?" = "0" ]] ; then
 			asic_present=1
-		fi
-
-		id=$(i2cget -y $bus 0x48 7 2>/dev/null)
-		if [[ "x$id" != "x0xa1" ]] ; then
-			if [[ ${asic_present} ]] ; then
-				echo "asic$asic=0.0" >> $TMP_FILE
-			else
-				echo "asic$asic=OFF" >> $TMP_FILE
-			fi
-		else
-			temp1=$(i2cget -y $bus 0x48 0 w 2>/dev/null)
-			deg=$(echo $temp1 | cut -c5-6)
-			half=$(echo $temp1 | cut -c3)
-			if [ -n "$deg" -a -n "$half" ] ; then
-				if [ "$half" = "8" ] ; then
-					half=5
-				fi
-				temp=$(printf "%u.%u" 0x$deg $half)
-				echo "asic$asic=$temp" >> $TMP_FILE
-			else
-				echo "asic$asic=0.0" >> $TMP_FILE
-			fi
 		fi
 
 		if [[ ${asic_present} ]] ; then
@@ -216,8 +191,6 @@ while true; do
 		echo [$(date +"%F %T")] waas re-run >> $LOG_FILE
 		/etc/init.d/cgminer.sh restart
 	fi
-
-	mv $TMP_FILE $STAT_FILE
 
 	tm=$(cat /var/run/tm 2>/dev/null)
 	if [ -z "$tm" ] ; then

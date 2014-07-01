@@ -30,24 +30,8 @@ fetch_advanced_settings_and_ranges()
 
     # valid_ranges
     waas -i valid-ranges
-
-    . /etc/revision
-
     echo ","
-    
-    # enabled asics
-    echo -n "\"enabled_asics\" : "
-    sep=""
-    echo -n "["
-    for a in 0 1 2 3 4 5; do
-	if eval test \$BOARD$a != OFF; then
-	    echo -n $sep
-	    echo -n "\"asic$((a+1))\""
-	    sep=", "
-	fi
-    done
-    echo "],"
-	
+
     # current status
     echo -n "\"current_status\" : "
     waas -g all-asic-info 
