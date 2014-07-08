@@ -1,7 +1,7 @@
 #!/bin/sh
 #set -x
 
-asic_status="<table border=\"1\"><tr><th style=\"text-align:center\">ASIC slot</th><th style=\"text-align:center\">Temperature</th><th style=\"text-align:center\">Clock</th><th style=\"text-align:center\">Type</th></tr>"
+asic_status="<table border=\"1\"><tr><th style=\"text-align:center\">ASIC slot</th><th style=\"text-align:center\">Temperature</th><th style=\"text-align:center\">DC/DC avg temp</th><th style=\"text-align:center\">Clock</th><th style=\"text-align:center\">Type</th></tr>"
 
 asic_stat_file=/var/run/stats.knc.$$
 { waas -g all-asic-info 2>/dev/null; cat /etc/revision;} | get_asic_stats.awk >$asic_stat_file 2>/dev/null
@@ -10,13 +10,17 @@ while read status ; do
   set -- $status
   temp=$2
   if [ $temp != '---' ]; then
-    temp=$temp' \&#x2103;'
+    temp=$temp'\&nbsp;\&#x2103;'
   fi
-  mhz=$3
+  dcdctemp=$3
+  if [ $dcdctemp != '---' ]; then
+    dcdctemp=$dcdctemp'\&nbsp;\&#x2103;'
+  fi
+  mhz=$4
   if [ $mhz != '---' ]; then
-    mhz=$mhz' MHz'
+    mhz=$mhz'\&nbsp;MHz'
   fi
-  asic_status="${asic_status}<tr><td style=\"text-align:center\">$1</td><td style=\"text-align:center\">$temp</td><td style=\"text-align:center\">$mhz</td><td style=\"text-align:center\">$4</td></tr>"
+  asic_status="${asic_status}<tr><td style=\"text-align:center\">$1</td><td style=\"text-align:center\">$temp</td><td style=\"text-align:center\">$dcdctemp</td><td style=\"text-align:center\">$mhz</td><td style=\"text-align:center\">$5</td></tr>"
 done < $asic_stat_file
 rm -f $asic_stat_file
 

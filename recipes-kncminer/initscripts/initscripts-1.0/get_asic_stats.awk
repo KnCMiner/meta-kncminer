@@ -3,12 +3,13 @@ BEGIN {
   for (asic = 0; asic < 6; asic++) {
     asic_temp[asic] = "";
     asic_type[asic] = "OFF";
-    asic_freq[asic, 0] = 0;
-    asic_freq[asic, 1] = 0;
-    asic_freq[asic, 2] = 0;
-    asic_freq[asic, 3] = 0;
+    for (die = 0; die < 4; die++) {
+        asic_freq[asic, die] = 0;
+    }
+    for (dcdc = 0; dcdc < 8; dcdc++)
+      asic_dcdctemp[asic, dcdc] = "";
   }
-  cur_asic=0;
+  cur_asic = 0;
  }
 
 /"asic_1"/ { cur_asic = 0 }
@@ -22,6 +23,15 @@ BEGIN {
 /"die1_Freq"/ { gsub(/"/, "", $2); gsub(/,/, "", $2); asic_freq[cur_asic, 1] = $2 }
 /"die2_Freq"/ { gsub(/"/, "", $2); gsub(/,/, "", $2); asic_freq[cur_asic, 2] = $2 }
 /"die3_Freq"/ { gsub(/"/, "", $2); gsub(/,/, "", $2); asic_freq[cur_asic, 3] = $2 }
+
+/"dcdc0_Temp"/ { gsub(/"/, "", $2); gsub(/,/, "", $2); asic_dcdctemp[cur_asic, 0] = $2 }
+/"dcdc1_Temp"/ { gsub(/"/, "", $2); gsub(/,/, "", $2); asic_dcdctemp[cur_asic, 1] = $2 }
+/"dcdc2_Temp"/ { gsub(/"/, "", $2); gsub(/,/, "", $2); asic_dcdctemp[cur_asic, 2] = $2 }
+/"dcdc3_Temp"/ { gsub(/"/, "", $2); gsub(/,/, "", $2); asic_dcdctemp[cur_asic, 3] = $2 }
+/"dcdc4_Temp"/ { gsub(/"/, "", $2); gsub(/,/, "", $2); asic_dcdctemp[cur_asic, 4] = $2 }
+/"dcdc5_Temp"/ { gsub(/"/, "", $2); gsub(/,/, "", $2); asic_dcdctemp[cur_asic, 5] = $2 }
+/"dcdc6_Temp"/ { gsub(/"/, "", $2); gsub(/,/, "", $2); asic_dcdctemp[cur_asic, 6] = $2 }
+/"dcdc7_Temp"/ { gsub(/"/, "", $2); gsub(/,/, "", $2); asic_dcdctemp[cur_asic, 7] = $2 }
 
 /BOARD0=/ { gsub(/BOARD0=/, "", $1); asic_type[0] = $1 }
 /BOARD1=/ { gsub(/BOARD1=/, "", $1); asic_type[1] = $1 }
@@ -37,10 +47,26 @@ END {
     num = asic + 1;
     temp = "---";
     if ("" != asic_temp[asic])
-      temp = (0.0+asic_temp[asic]);
-    freq = ((0.0+asic_freq[asic, 0]+asic_freq[asic, 1]+asic_freq[asic, 2]+asic_freq[asic, 3])/4);
+      temp = (0.0 + asic_temp[asic]);
+    freq = 0.0;
+    for (die = 0; die < 4; die++) {
+      freq += asic_freq[asic, die];
+    }
+    freq /= 4.0;
     if (freq <= 0)
       freq = "---";
-    print num, temp, freq, asic_type[asic];
+    dcdctemp = 0;
+    dcdcnum = 0;
+    for (dcdc = 0; dcdc < 8; dcdc++) {
+      if ("" == asic_dcdctemp[asic, dcdc])
+        continue;
+      dcdctemp += asic_dcdctemp[asic, dcdc];
+      dcdcnum++;
+    }
+    if (0 == dcdcnum)
+      dcdctemp = "---";
+    else
+      dcdctemp = sprintf("%.1f", dcdctemp / dcdcnum);
+    print num, temp, dcdctemp, freq, asic_type[asic];
   }
 }
