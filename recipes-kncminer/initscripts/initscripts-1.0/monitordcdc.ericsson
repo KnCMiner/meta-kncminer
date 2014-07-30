@@ -126,7 +126,7 @@ echo 0 > /var/run/tm
 
 while true; do
 	hardware_changed=
-	restart_cgminer=
+	cgminer_cmds=
 	for channel in 0 1 2 3 4 5; do
 		bus=$((channel+3))
 		asic=$((channel+1))
@@ -150,22 +150,14 @@ while true; do
 						echo 0 > /var/run/die${channel}${q}
 						hardware_changed=1
 						echo [$(date +"%F %T")] Die $channel-$q came UP >> $LOG_FILE
-						echo "knc-configure-die|ASIC:${channel};DIE:${q};MODE:ENABLE;" | timeout -t 15 nc localhost 4028 2>/dev/null
-						if [[ $? -gt 100 ]] ; then
-							# Timeout; cgminer hangs, restart it
-							restart_cgminer=1
-						fi
+						cgminer_cmds="$cgminer_cmds knc-configure-die|ASIC:${channel};DIE:${q};MODE:ENABLE;"
 					fi
 				else
 					if [[ "x${detected}" != "x0" ]] ; then
 						echo 1000 > /var/run/die${channel}${q}
 						hardware_changed=1
 						echo [$(date +"%F %T")] Die $channel-$q came DOWN >> $LOG_FILE
-						echo "knc-configure-die|ASIC:${channel};DIE:${q};MODE:DISABLE;" | timeout -t 15 nc localhost 4028 2>/dev/null
-						if [[ $? -gt 100 ]] ; then
-							# Timeout; cgminer hangs, restart it
-							restart_cgminer=1
-						fi
+						cgminer_cmds="$cgminer_cmds knc-configure-die|ASIC:${channel};DIE:${q};MODE:DISABLE;"
 					fi
 				fi
 			done
@@ -198,9 +190,19 @@ while true; do
 		done
 	done
 
+	restart_cgminer=
 	if [[ ${hardware_changed} ]] ; then
 		waas -c /config/advanced.conf >/dev/null 2>&1
 		echo [$(date +"%F %T")] waas re-run >> $LOG_FILE
+		for cmd in $cgminer_cmds ; do
+			echo $cmd | timeout -t 15 nc localhost 4028 2>/dev/null >> $LOG_FILE
+			if [[ $? -gt 100 ]] ; then
+				# Timeout; cgminer hangs, restart it
+				restart_cgminer=1
+				break
+			fi
+			echo >> $LOG_FILE
+		done
 		if [[ ${restart_cgminer} ]] ; then
 			echo [$(date +"%F %T")] Restarting cgminer >> $LOG_FILE
 			/etc/init.d/cgminer.sh restart
