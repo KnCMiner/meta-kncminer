@@ -4,14 +4,14 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d32239bcb673463ab874e80d47fae504"
 
 DEPENDS = "ncurses curl"
 
-SRCREV = "v4.4.1-knc3.6"
+SRCREV = "v4.5.0-knc4.1"
 PV = "${SRCREV}+git${SRCPV}"
 
 SRC_URI = "git://git@github.com/KnCMiner/cgminer.git;protocol=ssh;branch=knc2"
 
 S = "${WORKDIR}/git"
 
-CFLAGS_prepend = "-I ${S}/compat/jansson-2.5/src"
+CFLAGS_prepend = "-I ${S}/compat/jansson-2.6/src"
 
 EXTRA_OECONF = " \
 	     --enable-knc \
