@@ -7,14 +7,11 @@ if [ -f /config/miner.conf ]; then
 	. /config/miner.conf
 fi
 
-# No BFGMiner support yet
-use_bfgminer=false
-
 if [ "$use_bfgminer" = true ] ; then
 	DAEMON=/usr/bin/bfgminer
 	NAME=bfgminer
 	DESC="BFGMiner daemon"
-	EXTRA_OPT="-S knc:auto"
+	EXTRA_OPT="-S kncasic:auto"
 else
 	DAEMON=/usr/bin/cgminer
 	NAME=cgminer
