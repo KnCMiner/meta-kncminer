@@ -68,4 +68,10 @@ fi
 # Show revision on the LCD
 lcd-message -l 1 $(cat /etc/knc-release)
 
+if [ "${exit_code}" = "0" ] ; then
+        knc-led 0 1 0
+else
+        knc-led 1 0 0
+fi
+
 factory_setup </dev/null &

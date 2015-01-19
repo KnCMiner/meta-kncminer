@@ -3,12 +3,16 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=40ed95ac273a015f655b41d0fff4f9b4"
 PN="asiccmd"
 
-SRCREV = "v1.6"
+SRCREV = "v2.3"
 PV = "${SRCREV}+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
 SRC_URI = "git://git@github.com/KnCMiner/knc-asic.git;protocol=ssh;branch=master"
+
+do_compile() {
+        make beaglebone
+}
 
 do_install() {
         install -d ${D}${bindir}
