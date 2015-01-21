@@ -4,7 +4,7 @@ LIC_FILES_CHKSUM = "file://COPYING;md5=d32239bcb673463ab874e80d47fae504"
 
 DEPENDS = "ncurses curl"
 
-SRCREV = "v4.5.0-knc4.1"
+SRCREV = "v4.9.0-knc4.2"
 PV = "${SRCREV}+git${SRCPV}"
 
 SRC_URI = "git://git@github.com/KnCMiner/cgminer.git;protocol=ssh;branch=knc2"
@@ -15,8 +15,6 @@ CFLAGS_prepend = "-I ${S}/compat/jansson-2.6/src"
 
 EXTRA_OECONF = " \
 	     --enable-knc \
-	     --disable-adl \
-	     --disable-opencl \
 	     "
 
 do_compile_append() {
