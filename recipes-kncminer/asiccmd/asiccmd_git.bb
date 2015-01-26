@@ -8,7 +8,7 @@ PV = "${SRCREV}+git${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-SRC_URI = "git://git@github.com/KnCMiner/knc-asic.git;protocol=ssh;branch=master"
+SRC_URI = "git://github.com/KnCMiner/knc-asic.git;protocol=https;branch=master"
 
 do_compile() {
         make beaglebone
