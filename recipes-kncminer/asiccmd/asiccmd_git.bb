@@ -3,7 +3,7 @@ LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=40ed95ac273a015f655b41d0fff4f9b4"
 PN="asiccmd"
 
-SRCREV = "v2.3"
+SRCREV = "v2.4"
 PV = "${SRCREV}+git${SRCPV}"
 
 S = "${WORKDIR}/git"
