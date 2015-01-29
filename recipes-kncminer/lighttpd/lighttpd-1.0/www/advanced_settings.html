@@ -112,7 +112,8 @@
 				var good_asic = false;
 				for(var j = 0; j < 4; j++) {
 					var F = config.current_status[asicStrX]['die' + j + '_Freq'];
-					if (parseInt(F) > 0) {
+					var V = config.current_status[asicStrX]['die' + j + '_Voffset'];
+					if ((parseInt(F) > 0) || (!isNaN(parseFloat(V)))) {
 						good_asic = true;
 						break;
 					}
