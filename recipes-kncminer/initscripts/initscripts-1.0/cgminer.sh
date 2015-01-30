@@ -7,17 +7,17 @@ if [ -f /config/miner.conf ]; then
 	. /config/miner.conf
 fi
 
-if [ "$use_bfgminer" = true ] ; then
-	DAEMON=/usr/bin/bfgminer
-	NAME=bfgminer
-	DESC="BFGMiner daemon"
-	EXTRA_OPT="-S kncasic:auto"
-else
+#if [ "$use_bfgminer" = true ] ; then
+#	DAEMON=/usr/bin/bfgminer
+#	NAME=bfgminer
+#	DESC="BFGMiner daemon"
+#	EXTRA_OPT="-S kncasic:auto"
+#else
 	DAEMON=/usr/bin/cgminer
 	NAME=cgminer
 	DESC="Cgminer daemon"
 	EXTRA_OPT=
-fi
+#fi
 
 set -e
 
