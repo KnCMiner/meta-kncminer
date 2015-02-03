@@ -14,6 +14,7 @@ IMAGE_INSTALL = " \
 	libcurl \
 	lighttpd \
 	cgminer \
+	bfgminer \
 	dtc \
 	stunnel \
 	openssl \
