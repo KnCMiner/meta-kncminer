@@ -7,7 +7,6 @@ LOG_LIMIT=10000000
 INTERVAL=5
 THRESHOLD=3
 IOUT_THRESHOLD_AMPS=5
-DEFAULT_MHZ=475
 
 while [ ! -f /config/cgminer.conf ]; do
 	sleep 1
@@ -28,15 +27,27 @@ else
 	exit 1
 fi
 
+is_die_off() {
+	# Check if die is administratively off
+	lchannel=$1
+	ldie=$2
+	MHZ_str=$(awk '{print $'$((lchannel*4+ldie+1))'}' /var/run/.waas_curfreq)
+	MHZ=$((MHZ_str))
+	[[ $MHZ -le 0 ]]
+}
+
 reset_die() {
 	lchannel=$1
 	ldie=$2
 
 	waas -s "${lchannel}:${ldie}" 2>/dev/null >> $LOG_FILE
+	if is_die_off $lchannel $ldie ; then
+		return
+	fi
 	cmd="knc-configure-die|ASIC:${lchannel};DIE:${ldie};MODE:ENABLE;"
 	response=$(echo $cmd | $NC 2>/dev/null)
 	if ! echo $response | grep 'STATUS=S' >/dev/null 2>&1 ; then
-		echo "No answer to API $cmd" >> $LOG_FILE
+		echo "Bad answer to API $cmd = [${response}]" >> $LOG_FILE
 		# Timeout or error while processing command (e.g. command not implemented)
 		# Check that miner is running, if not then restart it
 		response=$(echo -n summary | $NC 2>/dev/null)
@@ -165,6 +176,9 @@ while true; do
 
 		if [[ ${asic_present} ]] ; then
 			for q in 0 1 2 3; do
+				if is_die_off $channel $q ; then
+					continue
+				fi
 				cnt=$(cat /var/run/die${channel}${q} 2>/dev/null)
 				if [ -z "$cnt" ] ; then
 					cnt=0
@@ -227,12 +241,17 @@ while true; do
 		waas_rerun
 		for cmd in $miner_cmds ; do
 			response=$(echo $cmd | $NC 2>/dev/null)
-			echo $response >> $LOG_FILE
 			if ! echo $response | grep 'STATUS=S' >/dev/null 2>&1 ; then
+				echo "Bad answer to API $cmd = [${response}]" >> $LOG_FILE
 				# Timeout or error while processing command (e.g. command not implemented)
-				# Restart miner in either case
-				restart_miner=1
-				break
+				# Check that miner is running, if not then restart it
+				response=$(echo -n summary | $NC 2>/dev/null)
+				if ! echo $response | grep 'STATUS=S' >/dev/null 2>&1 ; then
+					echo "No answer to API summary. Miner will be restarted." >> $LOG_FILE
+					restart_miner=1
+				fi
+			else
+				echo $response >> $LOG_FILE
 			fi
 		done
 		if [[ ${restart_miner} ]] ; then
