@@ -11,7 +11,7 @@ if [ "$use_bfgminer" = true ] ; then
 	DAEMON=/usr/bin/bfgminer
 	NAME=bfgminer
 	DESC="BFGMiner daemon"
-	EXTRA_OPT="-S kncasic:auto"
+	EXTRA_OPT="-S kncasic:auto --no-retroactive-diff"
 else
 	DAEMON=/usr/bin/cgminer
 	NAME=cgminer
