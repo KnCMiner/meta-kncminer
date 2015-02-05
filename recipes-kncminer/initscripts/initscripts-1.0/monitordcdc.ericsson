@@ -29,6 +29,7 @@ fi
 
 is_die_off() {
 	# Check if die is administratively off
+	local lchannel ldie
 	lchannel=$1
 	ldie=$2
 	MHZ_str=$(awk '{print $'$((lchannel*4+ldie+1))'}' /var/run/.waas_curfreq)
@@ -37,6 +38,7 @@ is_die_off() {
 }
 
 reset_die() {
+	local lchannel ldie cmd response
 	lchannel=$1
 	ldie=$2
 
@@ -63,6 +65,7 @@ reset_die() {
 }
 
 detect_dcdcs() {
+	local lchannel ldie ldcdc1 ldcdc2 ldcdc1_present ldcdc2_present
 	lchannel=$1
 	ldie=$2
 
@@ -90,6 +93,7 @@ detect_dcdcs() {
 }
 
 iout_dcdc() {
+	local lbus ldcdc ltemp lexp lmant
 	lbus=$1
 	ldcdc=$2
 
