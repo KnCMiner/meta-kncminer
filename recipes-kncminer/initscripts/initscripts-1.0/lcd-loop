@@ -10,5 +10,11 @@ while true ; do
 
   lcd-message $(cat /etc/knc-release)
   sleep 1
-  lcd-message $(api-cgminer | sed -n -e 's/^.*\[MHS 1m\][^0123456789]\+\([0123456789]\+\).*$/\1/p') MHs
+  # 1m average - for CGMiner
+  speed=$(api-cgminer | sed -n -e 's/^.*\[MHS 1m\][^0123456789]\+\([0123456789]\+\).*$/\1/p')
+  if [ "x${speed}" = "x" ] ; then
+    # 20s average - for BFGMiner
+    speed=$(api-cgminer | sed -n -e 's/^.*\[MHS 20s\][^0123456789]\+\([0123456789]\+\).*$/\1/p')
+  fi
+  lcd-message $speed MHs
 done
